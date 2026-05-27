@@ -9,7 +9,8 @@ import { Avatar, Container, Row, Spinner, Text } from '@zextras/carbonio-design-
 import { useTranslation } from 'react-i18next';
 
 import { ConfigurationMessageLabel } from '../../../hooks/useConfigurationMessageLabel';
-import { getLastMessageSelector } from '../../../store/selectors/ChatsRegistrySelectors';
+import useMessage from '../../../hooks/useMessage';
+import { getLastMessageIdSelector } from '../../../store/selectors/ChatsRegistrySelectors';
 import {
 	getRoomNameSelector,
 	getRoomTypeSelector,
@@ -18,7 +19,7 @@ import {
 import { getExportedChat, getUserId } from '../../../store/selectors/SessionSelectors';
 import { getUserName } from '../../../store/selectors/UsersSelectors';
 import useStore from '../../../store/Store';
-import { MessageType } from '../../../types/store/ChatsRegistryTypes';
+import { Message, MessageType } from '../../../types/store/ChatsRegistryTypes';
 import { RoomType } from '../../../types/store/RoomTypes';
 
 type ChatItemProps = {
@@ -34,7 +35,8 @@ const ChatItem: React.FC<ChatItemProps> = ({ roomId, onClick }: ChatItemProps) =
 	const roomName = useStore((store) => getRoomNameSelector(store, roomId));
 	const roomType = useStore((store) => getRoomTypeSelector(store, roomId));
 	const exportedChat = useStore(getExportedChat);
-	const lastMessageOfRoom = useStore((state) => getLastMessageSelector(state, roomId));
+	const lastMessageId = useStore((state) => getLastMessageIdSelector(state, roomId));
+	const lastMessageOfRoom: Message | undefined = useMessage(roomId, lastMessageId ?? '');
 	const userNameOfLastMessageOfRoom = useStore((store) =>
 		lastMessageOfRoom?.type === MessageType.TEXT_MSG
 			? getUserName(store, lastMessageOfRoom.from)

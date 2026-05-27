@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { act } from '@testing-library/react';
 import { Button, Text } from '@zextras/carbonio-design-system';
 import { produce } from 'immer';
@@ -360,7 +362,7 @@ describe('Shell primary bar', () => {
 			);
 
 			act(() => {
-				vi.advanceTimersByTime(2000);
+				jest.advanceTimersByTime(2000);
 			});
 
 			expect(screen.getByText(view.label)).toBeVisible();

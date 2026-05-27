@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import {
 	Container,
@@ -15,7 +15,7 @@ import {
 } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { updateRoom } from '../../../../network';
+import { RoomsApi } from '../../../../network';
 import {
 	getRoomDescriptionSelector,
 	getRoomNameSelector
@@ -35,7 +35,6 @@ const EditConversationModal: FC<EditConversationProps> = ({
 }) => {
 	const roomName = useStore((state) => getRoomNameSelector(state, roomId));
 	const roomDescription = useStore((state) => getRoomDescriptionSelector(state, roomId));
-	const inputRef = useRef<HTMLInputElement>(null);
 
 	const [t] = useTranslation();
 	const errorSnackbar = t(
@@ -105,7 +104,7 @@ const EditConversationModal: FC<EditConversationProps> = ({
 
 	const editAction = useCallback(() => {
 		setLoading(true);
-		updateRoom(roomId, { name: newName, description: newDescription })
+		RoomsApi.updateRoom(roomId, { name: newName, description: newDescription })
 			.then(() => closeModal())
 			.catch(() => {
 				createSnackbar({
@@ -116,12 +115,6 @@ const EditConversationModal: FC<EditConversationProps> = ({
 			})
 			.finally(() => setLoading(false));
 	}, [roomId, newName, newDescription, closeModal, createSnackbar, errorSnackbar]);
-
-	useEffect(() => {
-		if (editModalOpen) {
-			inputRef.current?.focus();
-		}
-	}, [editModalOpen]);
 
 	return (
 		<Modal
@@ -139,7 +132,6 @@ const EditConversationModal: FC<EditConversationProps> = ({
 		>
 			<Container gap="0.5rem">
 				<Input
-					inputRef={inputRef}
 					data-testid="name_input"
 					value={newName}
 					label={`${namePlaceholder}*`}

@@ -8,7 +8,6 @@ import { onComposingMessageStanza } from './composingMessageHandler';
 import useStore from '../../../store/Store';
 import { buildComposingStanza } from '../../../tests/buildXmppStanza';
 import { createMockMember, createMockRoom, createMockUser } from '../../../tests/createMock';
-import { xmppClient } from '../XMPPClient';
 
 const user0 = createMockUser({ id: 'user0' });
 const mockedRoom = createMockRoom({
@@ -18,7 +17,7 @@ const mockedRoom = createMockRoom({
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: 'myUserId', name: 'User' });
+	store.setLoginInfo('myUserId', 'User');
 	store.addRooms([mockedRoom]);
 });
 
@@ -26,7 +25,7 @@ describe('XMPP composingMessageHandler', () => {
 	test('New composing message arrives', () => {
 		// A new composing message arrives
 		onComposingMessageStanza.call(
-			xmppClient,
+			useStore.getState().connections.xmppClient,
 			buildComposingStanza({
 				roomId: mockedRoom.id,
 				from: user0.id,
@@ -42,7 +41,7 @@ describe('XMPP composingMessageHandler', () => {
 	test('New paused message arrives', () => {
 		// A new composing message arrives
 		onComposingMessageStanza.call(
-			xmppClient,
+			useStore.getState().connections.xmppClient,
 			buildComposingStanza({
 				roomId: mockedRoom.id,
 				from: user0.id,
@@ -58,7 +57,7 @@ describe('XMPP composingMessageHandler', () => {
 	test('New composing message arrives from me', () => {
 		// A new composing message arrives
 		onComposingMessageStanza.call(
-			xmppClient,
+			useStore.getState().connections.xmppClient,
 			buildComposingStanza({
 				roomId: mockedRoom.id,
 				from: 'myUserId',

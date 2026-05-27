@@ -6,27 +6,18 @@
 
 import { createContext, useContext } from 'react';
 
-export type PreviewItem = {
-	id: string;
-	[key: string]: any;
-};
-
 export interface PreviewManagerContextType {
 	createPreview: (item: any) => void;
 	initPreview: (items: any[]) => void;
 	openPreview: (id: string) => void;
 	emptyPreview: () => void;
-	previews: PreviewItem[];
-	currentIndex: number;
 }
 
 const defaultContextValue: PreviewManagerContextType = {
 	createPreview: () => {},
 	initPreview: () => {},
 	openPreview: () => {},
-	emptyPreview: () => {},
-	previews: [],
-	currentIndex: -1
+	emptyPreview: () => {}
 };
 
 export const PreviewsManagerContext = createContext<PreviewManagerContextType>(defaultContextValue);

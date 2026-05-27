@@ -43,7 +43,6 @@ export {
 	getUserRight,
 	getUserRights,
 	useAuthenticated,
-	useChangePasswordURL,
 	updateSettings,
 	updateAccount
 } from '../../store/account';
@@ -92,8 +91,7 @@ export const {
 	upsertApp
 } = useAppStore.getState();
 
-export { useIsCarbonioCE, useFeatureFlag } from '../../store/login/hooks';
-export type { FeatureFlags } from '../../store/login/store';
+export { useIsCarbonioCE } from '../../store/login/hooks';
 
 export type { NewAction } from '../../shell/creation-button';
 export type { AccountMenuAction } from '../../utility-bar/bar';

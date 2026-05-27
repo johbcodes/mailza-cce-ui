@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import type { ReactNode } from 'react';
+import React from 'react';
 
 import { useAuthenticated } from '../store/account';
 

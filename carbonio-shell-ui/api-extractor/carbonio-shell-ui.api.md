@@ -159,12 +159,12 @@ type AppActions = {
 // Warning: (ae-forgotten-export) The symbol "AppContextProviderProps" needs to be exported by the entry point lib.d.ts
 //
 // @public
-export const AppContextProvider: (input: AppContextProviderProps) => React.JSX.Element;
+export const AppContextProvider: ({ pkg, children }: AppContextProviderProps) => React_2.JSX.Element;
 
 // @public (undocumented)
 interface AppContextProviderProps {
     // (undocumented)
-    children: React.ReactNode | React.ReactNode[];
+    children: React_2.ReactNode | React_2.ReactNode[];
     // (undocumented)
     pkg: string;
 }
@@ -220,7 +220,7 @@ export type AudioNotificationConfig = {
 };
 
 // @public (undocumented)
-export const AuthGuard: (input: AuthGuardProps) => ReactNode;
+export const AuthGuard: ({ children }: AuthGuardProps) => ReactNode;
 
 // @public (undocumented)
 export type AuthGuardProps = {
@@ -431,11 +431,6 @@ type Exactify<T, X extends T> = T & {
 
 // @public (undocumented)
 export const expandBoards: () => void;
-
-// @public (undocumented)
-export type FeatureFlags = {
-    totalQuota?: boolean;
-};
 
 // @public (undocumented)
 type FolderView = 'search folder' | 'tag' | 'conversation' | 'message' | 'contact' | 'document' | 'appointment' | 'virtual conversation' | 'remote folder' | 'wiki' | 'task' | 'chat';
@@ -896,7 +891,7 @@ export const setRouteVisibility: (id: string, visible: boolean) => void;
 export const SETTINGS_APP_ID = "settings";
 
 // @public (undocumented)
-export const SettingsHeader: (input: SettingsHeaderProps) => React_2.JSX.Element;
+export const SettingsHeader: ({ onSave, onCancel, isDirty, title, hasError, hideSavingOptions }: SettingsHeaderProps) => React_2.JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "SettingsHeaderPropsWithSaving" needs to be exported by the entry point lib.d.ts
 // Warning: (ae-forgotten-export) The symbol "SettingsHeaderPropsWithoutSaving" needs to be exported by the entry point lib.d.ts
@@ -1162,16 +1157,10 @@ export const useBoardContextById: <T>(id: string) => T | undefined;
 // @public
 export const useBoardHooks: () => BoardHooksContext;
 
-// @public (undocumented)
-export const useChangePasswordURL: () => string | undefined;
-
 // Warning: (ae-forgotten-export) The symbol "AppRoute" needs to be exported by the entry point lib.d.ts
 //
 // @public (undocumented)
 export const useCurrentRoute: () => AppRoute | undefined;
-
-// @public
-export function useFeatureFlag<K extends keyof FeatureFlags>(key: K): boolean | undefined;
 
 // @public (undocumented)
 export const useIntegratedComponent: <TComponent extends React_2.ComponentType<any> = React_2.ComponentType<Record<string, unknown>>>(id: string) => [TComponent, boolean];
@@ -1261,11 +1250,11 @@ interface ZimletProp {
 // lib/store/integrations/store.d.ts:31:9 - (ae-forgotten-export) The symbol "Component" needs to be exported by the entry point lib.d.ts
 // lib/types/account/index.d.ts:8:5 - (ae-forgotten-export) The symbol "AccountSettingsAttrs" needs to be exported by the entry point lib.d.ts
 // lib/types/account/index.d.ts:10:5 - (ae-forgotten-export) The symbol "ZimletProp" needs to be exported by the entry point lib.d.ts
-// lib/types/account/index.d.ts:43:9 - (ae-forgotten-export) The symbol "Signature" needs to be exported by the entry point lib.d.ts
-// lib/types/account/index.d.ts:48:5 - (ae-forgotten-export) The symbol "AccountRights" needs to be exported by the entry point lib.d.ts
-// lib/types/account/index.d.ts:103:5 - (ae-forgotten-export) The symbol "AccountRightTargetEmail" needs to be exported by the entry point lib.d.ts
-// lib/types/account/index.d.ts:108:9 - (ae-forgotten-export) The symbol "AccountRightName" needs to be exported by the entry point lib.d.ts
-// lib/types/account/index.d.ts:109:9 - (ae-forgotten-export) The symbol "AccountRightTarget" needs to be exported by the entry point lib.d.ts
+// lib/types/account/index.d.ts:42:9 - (ae-forgotten-export) The symbol "Signature" needs to be exported by the entry point lib.d.ts
+// lib/types/account/index.d.ts:47:5 - (ae-forgotten-export) The symbol "AccountRights" needs to be exported by the entry point lib.d.ts
+// lib/types/account/index.d.ts:102:5 - (ae-forgotten-export) The symbol "AccountRightTargetEmail" needs to be exported by the entry point lib.d.ts
+// lib/types/account/index.d.ts:107:9 - (ae-forgotten-export) The symbol "AccountRightName" needs to be exported by the entry point lib.d.ts
+// lib/types/account/index.d.ts:108:9 - (ae-forgotten-export) The symbol "AccountRightTarget" needs to be exported by the entry point lib.d.ts
 // lib/types/apps/index.d.ts:59:5 - (ae-forgotten-export) The symbol "PanelMode" needs to be exported by the entry point lib.d.ts
 // lib/types/misc/index.d.ts:45:9 - (ae-forgotten-export) The symbol "SoapPolicy" needs to be exported by the entry point lib.d.ts
 // lib/types/misc/index.d.ts:64:5 - (ae-forgotten-export) The symbol "FolderView" needs to be exported by the entry point lib.d.ts

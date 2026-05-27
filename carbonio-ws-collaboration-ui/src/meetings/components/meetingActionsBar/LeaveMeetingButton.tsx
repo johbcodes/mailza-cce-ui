@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import usePiPWindow from '../../../hooks/usePipWindow';
 import useRouting from '../../../hooks/useRouting';
-import { leaveMeeting } from '../../../network';
+import { MeetingsApi } from '../../../network';
 import { PAGE_INFO_TYPE, RouterContext } from '../../contexts/routerContext';
 
 const CustomContainer = styled(Container)`
@@ -58,10 +58,10 @@ const LeaveMeetingButton = ({
 		[leaveMeetingButtonLabel]
 	);
 
-	const leaveMeetingAction = useCallback(
+	const leaveMeeting = useCallback(
 		(event: React.MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent) => {
 			event.stopPropagation();
-			leaveMeeting(meetingId!).then(() => {
+			MeetingsApi.leaveMeeting(meetingId!).then(() => {
 				goToInfoPage(PAGE_INFO_TYPE.MEETING_ENDED);
 				if (isPip) {
 					closePipWindow();
@@ -101,7 +101,7 @@ const LeaveMeetingButton = ({
 					size="large"
 					color="error"
 					icon="LogOutOutline"
-					onClick={active || oneClickLeave ? leaveMeetingAction : activeButton}
+					onClick={active || oneClickLeave ? leaveMeeting : activeButton}
 					$active={active}
 				/>
 			</Tooltip>

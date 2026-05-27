@@ -5,34 +5,17 @@
  */
 
 import { EventName, sendCustomEvent } from '../../../hooks/useEventListener';
+import { getPinnedMessage } from '../../../store/selectors/ActiveConversationsSelectors';
 import useStore from '../../../store/Store';
-import type { Attachment } from '../../../types/network/models/attachmentTypes';
 import {
 	FasteningAction,
 	MessageType,
-	OperationType,
-	TextMessage
+	OperationType
 } from '../../../types/store/ChatsRegistryTypes';
 import { getTagElement } from '../utility/decodeStanza';
 import { decodeXMPPMessageStanza } from '../utility/decodeXMPPMessageStanza';
 import displayMessageBrowserNotification from '../utility/displayMessageBrowserNotification';
 import displayReactionBrowserNotification from '../utility/displayReactionBrowserNotification';
-import { xmppClient } from '../XMPPClient';
-
-const toGalleryAttachment = (message: TextMessage): Attachment | undefined => {
-	if (!message.attachment) return undefined;
-	return {
-		id: message.attachment.id,
-		name: message.attachment.name,
-		mimeType: message.attachment.mimeType,
-		size: Number(message.attachment.size) || 0,
-		userId: message.from,
-		roomId: message.roomId,
-		createdAt: new Date(message.date).toISOString(),
-		messageId: message.id,
-		stanzaId: message.stanzaId
-	};
-};
 
 export function onNewMessageStanza(message: Element): true {
 	if (getTagElement(message, 'result') != null) return true;
@@ -41,17 +24,12 @@ export function onNewMessageStanza(message: Element): true {
 	if (!newMessage) return true;
 
 	const store = useStore.getState();
+	const { xmppClient } = store.connections;
 	const sessionId: string | undefined = useStore.getState().session.id;
 
-	store.setInboxMessages([newMessage]);
 	switch (newMessage.type) {
 		case MessageType.TEXT_MSG: {
 			store.newMessage(newMessage);
-
-			const galleryAttachment = toGalleryAttachment(newMessage);
-			if (galleryAttachment) {
-				store.prependMediaGalleryAttachment(newMessage.roomId, galleryAttachment);
-			}
 
 			if (newMessage.from !== sessionId) {
 				sendCustomEvent({ name: EventName.NEW_MESSAGE, data: newMessage });
@@ -88,41 +66,17 @@ export function onNewMessageStanza(message: Element): true {
 			}
 			if (newMessage.operation === OperationType.MESSAGE_UNPINNED) {
 				store.removePinnedMessage(newMessage.roomId);
-				store.setSelectedPinnedMessage(newMessage.roomId, undefined);
-			}
-			// Mark message as read if the message configuration is sent after user action
-			if (newMessage.from === sessionId) {
-				xmppClient.readMessage(newMessage.roomId, newMessage.id);
 			}
 			break;
 		}
 		case MessageType.FASTENING: {
 			store.addFastening([newMessage]);
-
-			// Update lastMessage
-			const lastMessage = store.chatsRegistry[newMessage.roomId]?.lastMessage;
+			const pinnedMessage = getPinnedMessage(store, newMessage.roomId);
 			if (
-				[FasteningAction.EDIT, FasteningAction.DELETE].includes(newMessage.action) &&
-				lastMessage?.type === MessageType.TEXT_MSG &&
-				newMessage.originalStanzaId === lastMessage.stanzaId
+				newMessage.action === FasteningAction.DELETE &&
+				pinnedMessage?.stanzaId === newMessage.originalStanzaId
 			) {
-				if (newMessage.action === FasteningAction.DELETE) {
-					store.setLastMessage(newMessage.roomId, {
-						...lastMessage,
-						deleted: true,
-						text: '',
-						attachment: undefined,
-						replyTo: undefined
-					} as TextMessage);
-				}
-				if (newMessage.action === FasteningAction.EDIT) {
-					store.setLastMessage(newMessage.roomId, {
-						...lastMessage,
-						edited: true,
-						text: newMessage.value ?? '',
-						attachment: lastMessage.attachment
-					} as TextMessage);
-				}
+				store.removePinnedMessage(newMessage.roomId);
 			}
 			if (newMessage.action === FasteningAction.REACTION && newMessage.from !== sessionId) {
 				displayReactionBrowserNotification(newMessage);

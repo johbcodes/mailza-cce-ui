@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import React from 'react';
+
 import styled from '@emotion/styled';
 import { Row } from '@zextras/carbonio-design-system';
 import { isEmpty, map } from 'lodash';

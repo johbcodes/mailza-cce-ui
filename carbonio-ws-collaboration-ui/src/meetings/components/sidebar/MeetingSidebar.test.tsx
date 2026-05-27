@@ -94,7 +94,7 @@ const scheduledMeeting: MeetingBe = createMockMeeting({
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: sessionUser.id, name: sessionUser.name });
+	store.setLoginInfo(sessionUser.id, sessionUser.name);
 	store.setAttributes(createMockAttributesList({ carbonioWscRecordingEnabled: 'TRUE' }));
 	store.addRooms([oneToOneRoom, groupRoom, temporaryRoom, temporaryRoomMod]);
 	store.addMeetings([oneToOneMeeting, groupMeeting, scheduledMeeting, scheduledMeetingMod]);

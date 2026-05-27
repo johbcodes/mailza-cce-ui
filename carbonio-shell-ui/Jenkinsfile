@@ -3,14 +3,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 library(
-    identifier: 'jenkins-lib-common@v2.8.5',
+    identifier: 'jenkins-lib-ui@1.0.9',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         credentialsId: 'jenkins-integration-with-github-account',
-        remote: 'git@github.com:zextras/jenkins-lib-common.git',
+        remote: 'git@github.com:zextras/jenkins-lib-ui.git',
     ])
 )
 
 withCredentials([string(credentialsId: 'posthog-api-token', variable: 'POSTHOG_API_KEY')]) {
-    uiPipeline()
+    zappPipeline(
+      publishOnNpm: true,
+      disableAutoTranslationsSync: true
+    )
 }

@@ -8,7 +8,7 @@ import React, { ReactElement, useCallback, useContext, useEffect, useRef } from 
 import { Button, CreateSnackbarFn, Tooltip, useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { raiseHand } from '../../../network';
+import { MeetingsApi } from '../../../network';
 import {
 	getUserHasHandRaised,
 	getUserIsTalking
@@ -32,18 +32,16 @@ const RaiseHandButton = (): ReactElement | null => {
 
 	const iAmTalking = useStore((store) => getUserIsTalking(store, sessionId ?? ''));
 	const iHaveHandRaised = useStore((store) => getUserHasHandRaised(store, sessionId ?? ''));
-	const websocketNetworkStatus = useStore(({ connections }) => connections.status.websocket);
-	const messageBrokerStatus = useStore(({ connections }) => connections.status.messageBroker);
 
 	const createSnackbar: CreateSnackbarFn = useSnackbar();
 
 	const toggleRaiseHand = useCallback(() => {
-		raiseHand(meetingId!, !iHaveHandRaised);
+		MeetingsApi.raiseHand(meetingId!, !iHaveHandRaised);
 	}, [iHaveHandRaised, meetingId]);
 
 	const handleAutoHandDown = useCallback(() => {
 		setTimeout(() => {
-			raiseHand(meetingId!, false).then(() => {
+			MeetingsApi.raiseHand(meetingId!, false).then(() => {
 				createSnackbar({
 					key: new Date().toLocaleString(),
 					severity: 'info',
@@ -78,7 +76,6 @@ const RaiseHandButton = (): ReactElement | null => {
 				labelColor="gray6"
 				icon={iHaveHandRaised ? 'Hand' : 'HandOutline'}
 				onClick={toggleRaiseHand}
-				disabled={!websocketNetworkStatus || !messageBrokerStatus}
 			/>
 		</Tooltip>
 	);

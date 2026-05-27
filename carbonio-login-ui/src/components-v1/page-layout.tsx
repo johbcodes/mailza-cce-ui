@@ -76,18 +76,13 @@ const LoginContainer = styled(Container)<LoginContainerProps>`
 		`}
 `;
 
-const FormContainer = styled.div<{ isWide?: boolean }>`
+const FormContainer = styled.div`
 	max-width: 100%;
 	max-height: 100vh;
 	box-shadow: 0px 0px 20px -7px rgba(0, 0, 0, 0.3);
-	${({ isWide }): false | SerializedStyles =>
-		!!isWide &&
-		css`
-			width: 720px;
-		`}
 `;
 
-const FormWrapper = styled(Container)<{ screenMode: string; isWide?: boolean }>`
+const FormWrapper = styled(Container)<{ screenMode: string }>`
 	&& {
 		height: auto;
 		background: #ffffff;
@@ -97,17 +92,6 @@ const FormWrapper = styled(Container)<{ screenMode: string; isWide?: boolean }>`
 		min-height: 620px;
 		overflow-y: auto;
 	}
-
-	${({ isWide }): false | SerializedStyles =>
-		!!isWide &&
-		css`
-			&& {
-				width: 720px;
-				min-height: auto;
-				padding: 80px;
-				max-height: 85vh;
-			}
-		`}
 
 	${({ screenMode }): false | SerializedStyles =>
 		screenMode !== DESKTOP &&
@@ -165,7 +149,7 @@ export default function PageLayout({
 	const [isDefaultBg, setIsDefaultBg] = useState(true);
 	const [copyrightBanner, setCopyrightBanner] = useState('');
 	// @ts-expect-error probably unused
-	const { setDomainName, isOtpWizardActive } = useLoginConfigStore();
+	const { setDomainName } = useLoginConfigStore();
 	const [showModal, setShowModal] = useState(true);
 	const [showMobileAppModal, setShowMobileAppModal] = useState(true);
 	const [doNotShowAgain, setDoNotShowAgain] = useState(false);
@@ -279,7 +263,6 @@ export default function PageLayout({
 						}
 
 						setLogo(_logo);
-						useLoginConfigStore.setState({ loginLogo: _logo });
 					}
 				})
 				.catch(() => {
@@ -287,9 +270,6 @@ export default function PageLayout({
 				});
 		} else {
 			setLogo({ image: logoCarbonio, width: '221px', url: CARBONIO_LOGO_URL });
-			useLoginConfigStore.setState({
-				loginLogo: { image: logoCarbonio, width: '221px', url: CARBONIO_LOGO_URL }
-			});
 			document.title = t('carbonio_authentication', 'Carbonio Authentication');
 		}
 
@@ -336,60 +316,168 @@ export default function PageLayout({
 		);
 
 		return (
-			<div id="module-auth" className="auth-viewport" data-testid="login-container">
+			<LoginContainer
+				screenMode={screenMode}
+				isDefaultBg={isDefaultBg}
+				backgroundImage={bg}
+				crossAlignment="flex-start"
+			>
 				<DarkReaderListener />
-				<div className="auth-card-container">
-					
-					{/* Left Branding Panel */}
-					<div className="auth-graphic-side">
-						<div className="auth-logo-row">
-							<div className="logo-mark">
-                                {/* Use Carbonio logo config dynamically */}
-								{logo.url ? (
-									<a target="_blank" href={logo.url} rel="noreferrer">
-										{logoHtml}
-									</a>
-								) : (
-									logoHtml
-								)}
-							</div>
-							<span className="logo-text brand-font">Mailza</span>
-						</div>
-						<div className="auth-graphic-content">
-							<h1>Smarter B2B Collaboration for East African SMEs</h1>
-							<p>Bring your emails, calendar schedules, workspace folders, and instant chats into one highly secure, consumer-grade desktop platform.</p>
-							<div className="trusted-badge-row">
-								<div className="badge-item"><span>256-bit Encryption</span></div>
-								<div className="badge-item"><span>Instant Syncing</span></div>
-							</div>
-						</div>
-					</div>
-					
-					{/* Right Form Control Panel */}
-					<div className="auth-form-side">
-						<div className="form-scroll-wrapper">
-							<div className="auth-form-header">
-								<h2 id="auth-welcome-header">Welcome back to Mailza</h2>
-								<p className="text-muted" id="auth-welcome-subheader">Your secure B2B gateway for SME collaboration in East Africa.</p>
-							</div>
-							
-							{/* Credentials Input Form (Delegated to Carbonio Components) */}
-							<div className="auth-fields-stack">
-								{isAdvanced ? (
-									<FormSelector domain={domain} destinationUrl={destinationUrl} />
-								) : (
-									<ZimbraForm destinationUrl={destinationUrl} />
-								)}
-							</div>
-							
-							<div className="auth-form-footer">
-								<span className="text-muted text-xs" id="auth-secure-badge">Industry-grade 256-bit secure collaboration layer</span>
-							</div>
-						</div>
-					</div>
-					
-				</div>
-			</div>
+				<FormContainer data-testid="form-container">
+					<FormWrapper mainAlignment="space-between" screenMode={screenMode}>
+						<Container mainAlignment="flex-start" height="auto">
+							<Padding value="28px 0 28px" width="100%">
+								<Container crossAlignment="center">
+									{logo.url ? (
+										<a target="_blank" href={logo.url} rel="noreferrer">
+											{logoHtml}
+										</a>
+									) : (
+										logoHtml
+									)}
+								</Container>
+							</Padding>
+						</Container>
+
+						{isAdvanced ? (
+							<FormSelector domain={domain} destinationUrl={destinationUrl} />
+						) : (
+							<ZimbraForm destinationUrl={destinationUrl} />
+						)}
+
+						<Container
+							crossAlignment="flex-start"
+							height="auto"
+							padding={{ bottom: 'extralarge', top: 'extralarge' }}
+						>
+							<Row padding={{ top: 'large', bottom: 'large' }} wrap="nowrap">
+								<Padding right="extrasmall">
+									<Icon
+										color="secondary"
+										icon={isSupportedBrowser ? 'CheckmarkOutline' : 'InfoOutline'}
+										size="medium"
+									/>
+								</Padding>
+
+								<Text size="small" color="secondary" weight="light">
+									<Trans
+										i18nKey={
+											isSupportedBrowser ? 'browser_fully_supported' : 'browser_limited_supported'
+										}
+										defaults={
+											isSupportedBrowser
+												? 'Your browser is fully <a>supported</a>'
+												: 'Having troubles? Try a fully <a>supported</a> browser'
+										}
+										components={{
+											a: (
+												<LinkText
+													to={
+														isAdvanced
+															? CARBONIO_SUPPORTED_BROWSER_LINK
+															: CARBONIO_CE_SUPPORTED_BROWSER_LINK
+													}
+												/>
+											)
+										}}
+									/>
+								</Text>
+							</Row>
+
+							{copyrightBanner ? (
+								<Text size="small" overflow="break-word">
+									{copyrightBanner}
+								</Text>
+							) : (
+								<Text size="small" overflow="break-word" data-testid="default-banner">
+									Copyright &copy;
+									{` ${new Date().getFullYear()} Zextras, `}
+									{t('all_rights_reserved', 'All rights reserved')}
+								</Text>
+							)}
+						</Container>
+					</FormWrapper>
+				</FormContainer>
+
+				{showMobileAppModal && screenMode !== DESKTOP && isTouchDevice && (
+					<Modal
+						size={screenMode === MOBILE ? 'small' : 'medium'}
+						title={t('are_you_using_a_small_screen?', 'Are you using a small screen?')}
+						open={showModal}
+						customFooter={
+							<Container orientation="horizontal" mainAlignment="flex-end">
+								<Row style={{ gap: '1rem' }} />
+							</Container>
+						}
+						showCloseIcon
+						onClose={() => {
+							if (doNotShowAgain) {
+								localStorage.setItem('doNotShowMobileAppModal', JSON.stringify(true));
+							}
+							setShowModal(false);
+						}}
+					>
+						<Row
+							padding={{ vertical: 'extralarge' }}
+							mainAlignment="center"
+							crossAlignment="center"
+						>
+							<Row mainAlignment="center" crossAlignment="center" padding={{ bottom: 'large' }}>
+								<Text
+									style={{ lineHeight: '1.5rem' }}
+									size={screenMode === MOBILE ? 'small' : 'medium'}
+									overflow="break-word"
+								>
+									<Trans
+										i18nKey="login_with_app"
+										defaults="You can login using the dedicated app for <bold> Android </bold> and  <bold> Iphone, </bold> download your version using the buttons below!"
+										components={{ bold: <strong /> }}
+									/>
+								</Text>
+							</Row>
+
+							<Row mainAlignment="center" crossAlignment="center" padding={{ bottom: 'large' }}>
+								<a target="_blank" href={PLAY_STORE_URL} rel="noreferrer">
+									<img
+										alt="play-store-logo"
+										src={playStore}
+										style={{
+											maxHeight: '150px',
+											display: 'block',
+											marginLeft: 'auto',
+											marginRight: 'auto'
+										}}
+									/>
+								</a>
+								<a target="_blank" href={APP_STORE_URL} rel="noreferrer">
+									<img
+										alt="app-store-logo"
+										src={appStore}
+										style={{
+											maxHeight: '150px',
+											display: 'block',
+											marginLeft: 'auto',
+											marginRight: 'auto'
+										}}
+									/>
+								</a>
+							</Row>
+
+							<Row width="80%" mainAlignment="center" crossAlignment="center">
+								<Checkbox
+									iconColor="primary"
+									size="small"
+									label={t('do_not_show_this_again', 'Do not show this again')}
+									value={doNotShowAgain}
+									onClick={() => {
+										setDoNotShowAgain(!doNotShowAgain);
+									}}
+								/>
+							</Row>
+						</Row>
+					</Modal>
+				)}
+			</LoginContainer>
 		);
 	}
 

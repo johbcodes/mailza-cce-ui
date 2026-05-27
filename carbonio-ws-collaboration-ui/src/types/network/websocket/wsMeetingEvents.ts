@@ -10,7 +10,6 @@ import { STREAM_TYPE } from '../../store/ActiveMeetingTypes';
 export type WsMeetingEvent =
 	| MeetingCreatedEvent
 	| MeetingStartedEvent
-	| MeetingDeclinedEvent
 	| MeetingJoinedEvent
 	| MeetingLeftEvent
 	| MeetingStoppedEvent
@@ -156,9 +155,4 @@ export type MeetingParticipantHandRaisedEvent = BasicMeetingEvent & {
 export type MeetingParticipantHandRaisedListEvent = BasicMeetingEvent & {
 	type: WsEventType.MEETING_PARTICIPANT_HAND_RAISED_LIST;
 	participants: string[];
-};
-
-export type MeetingDeclinedEvent = BasicMeetingEvent & {
-	type: WsEventType.MEETING_DECLINED;
-	userId: string;
 };

@@ -10,7 +10,5 @@ import { LoginConfigStore } from '../../../types/loginConfig';
 
 export const useLoginConfigStore = create<LoginConfigStore>((set) => ({
 	carbonioDomainName: '',
-	isOtpWizardActive: false,
-	loginLogo: undefined,
 	setDomainName: (carbonioDomainName: string): void => set({ carbonioDomainName })
 }));

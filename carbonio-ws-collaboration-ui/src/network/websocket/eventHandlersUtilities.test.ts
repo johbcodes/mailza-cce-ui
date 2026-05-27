@@ -63,11 +63,9 @@ export const meetingEvents = [
 
 describe('eventHandlersUtilities tests', () => {
 	describe('getEventArea tests', () => {
-		test('Event area is GENERAL for initialization, pong and messageBroker events', () => {
+		test('Event area is GENERAL for initialization and pong events', () => {
 			expect(getEventArea(WsEventType.INITIALIZATION)).toBe(EventArea.GENERAL);
 			expect(getEventArea(WsEventType.PONG)).toBe(EventArea.GENERAL);
-			expect(getEventArea(WsEventType.MESSAGE_BROKER_DISCONNECTED)).toBe(EventArea.GENERAL);
-			expect(getEventArea(WsEventType.MESSAGE_BROKER_RESTORED)).toBe(EventArea.GENERAL);
 		});
 
 		test.each(conversationEvents)('Event area is CONVERSATION for %s', (event) => {
@@ -85,12 +83,12 @@ describe('eventHandlersUtilities tests', () => {
 
 	describe('isMyId tests', () => {
 		test('isMyId returns true if the id is the same as the session userId', () => {
-			useStore.getState().setLoginInfo({ id: 'userId', name: 'User' });
+			useStore.getState().setLoginInfo('userId', 'User');
 			expect(isMyId('userId')).toBe(true);
 		});
 
 		test('isMyId returns false if the id is different from the session userId', () => {
-			useStore.getState().setLoginInfo({ id: 'userId', name: 'User' });
+			useStore.getState().setLoginInfo('userId', 'User');
 			expect(isMyId('otherId')).toBe(false);
 		});
 	});

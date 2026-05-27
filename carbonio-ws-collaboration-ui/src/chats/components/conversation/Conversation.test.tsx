@@ -12,7 +12,7 @@ import Conversation from './Conversation';
 import { mockDarkReaderIsEnabled } from '../../../../__mocks__/darkreader';
 import { mockUseMediaQueryCheck } from '../../../hooks/__mocks__/useMediaQueryCheck';
 import { mockGoToMainPage } from '../../../hooks/__mocks__/useRouting';
-import * as api from '../../../network/apis/RoomsApi';
+import roomsApi from '../../../network/apis/RoomsApi';
 import { wsEventsHandler } from '../../../network/websocket/wsEventsHandler';
 import useStore from '../../../store/Store';
 import { createMockMember, createMockRoom, createMockUser } from '../../../tests/createMock';
@@ -69,7 +69,7 @@ vi.mock('../../../hooks/useMediaQueryCheck');
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: user1Info.id, name: user1Info.email, displayName: user1Info.name });
+	store.setLoginInfo(user1Info.id, user1Info.email, user1Info.name);
 	store.setUserInfo([user2Info]);
 	store.addRooms([testRoom, testRoom2]);
 });
@@ -105,7 +105,7 @@ describe('Conversation view', () => {
 		const { user } = setup(<Conversation roomId={testRoom.id} />);
 		expect(screen.getByText('Info')).toBeVisible();
 		const searchIcons = screen.getAllByTestId('icon: Search');
-		expect(searchIcons).toHaveLength(1);
+		expect(searchIcons).toHaveLength(2);
 		await user.click(searchIcons[0]);
 		expect(screen.queryByText('Info')).not.toBeInTheDocument();
 		expect(screen.getByRole('textbox', { name: /search messages/i })).toBeVisible();
@@ -118,16 +118,16 @@ describe('Conversation view', () => {
 			const { user } = setup(<Conversation roomId={testRoom.id} />);
 			await user.click(screen.getByTestId(InfoIconTestId));
 			expect(screen.getByText('Info')).toBeInTheDocument();
+			const userName = screen.getByText(/User 2/i);
+			expect(userName).toBeInTheDocument();
 			const roomName = screen.getByText(/Name of the group/i);
 			expect(roomName).toBeInTheDocument();
 			const roomDescription = screen.getByText(/A description/i);
 			expect(roomDescription).toBeInTheDocument();
-			await user.click(screen.getByText('Members'));
-			expect(screen.getByText(/User 2/i)).toBeInTheDocument();
 		});
 
 		test('Leave a group and check everything is shown correctly', async () => {
-			const spyOnDeleteRoomMember = vi.spyOn(api, 'deleteRoomMember');
+			const spyOnDeleteRoomMember = vi.spyOn(roomsApi, 'deleteRoomMember');
 			mockUseMediaQueryCheck.mockReturnValue(true);
 			const { user } = setup(<Conversation roomId={testRoom.id} />);
 			expect(screen.getByText(/Leave Group/i)).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe('Conversation view', () => {
 
 		test('Add moderator and check everything is shown correctly', async () => {
 			mockUseMediaQueryCheck.mockReturnValue(true);
-			const { user } = setup(<Conversation roomId={testRoom.id} />);
+			setup(<Conversation roomId={testRoom.id} />);
 			act(() => {
 				useStore.getState().setMemberModeratorStatus(testRoom.id, user1Info.id, true);
 				wsEventsHandler({
@@ -170,7 +170,6 @@ describe('Conversation view', () => {
 					userId: user1Info.id
 				} as RoomOwnerPromotedEvent);
 			});
-			await user.click(screen.getByText('Members'));
 			const crownCounter = await screen.findAllByTestId('icon: Crown');
 			expect(crownCounter).toHaveLength(2);
 			const snackbar = await screen.findByText(

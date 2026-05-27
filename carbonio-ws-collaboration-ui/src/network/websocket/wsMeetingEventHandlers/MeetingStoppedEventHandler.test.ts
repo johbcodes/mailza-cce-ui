@@ -39,7 +39,7 @@ const groupEvent: MeetingStoppedEvent = {
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: 'myUserId', name: 'User' });
+	store.setLoginInfo('myUserId', 'myusername');
 	store.addRooms([oneToOneRoom, groupRoom]);
 	store.addMeetings([oneToOneMeeting, groupMeeting]);
 });

@@ -25,10 +25,8 @@ function noop(): void {
 }
 
 const PrimaryBarContainer = styled(Container)`
-	border-right: 1px solid rgba(226, 232, 240, 0.8);
+	border-right: 0.0625rem solid ${({ theme }): string => theme.palette.gray3.regular};
 	z-index: ${BOARD_CONTAINER_ZINDEX + 1};
-	background: #f8fafc !important;
-	box-shadow: 4px 0 24px rgba(15, 23, 42, 0.03);
 `;
 
 const ToggleBoardIcon = (): React.JSX.Element | null => {

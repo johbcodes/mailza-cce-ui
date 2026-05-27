@@ -19,12 +19,12 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import AttachmentSmallView from './AttachmentSmallView';
-import usePreviewNavigation from '../../../../hooks/usePreviewNavigation';
+import usePreview from '../../../../hooks/usePreview';
+import { AttachmentsApi } from '../../../../network';
 import { getUserName } from '../../../../store/selectors/UsersSelectors';
 import useStore from '../../../../store/Store';
 import { AttachmentMessageType } from '../../../../types/store/ChatsRegistryTypes';
 import {
-	downloadAttachment,
 	getAttachmentDimensions,
 	getAttachmentThumbnailURL
 } from '../../../../utils/attachmentUtils';
@@ -131,16 +131,12 @@ type AttachmentViewProps = {
 	attachment: AttachmentMessageType;
 	isMyMessage?: boolean;
 	from: string;
-	roomId: string;
-	messageDate: number;
 	messageListRef?: React.RefObject<HTMLDivElement | undefined>;
 };
 
 const AttachmentView: FC<AttachmentViewProps> = ({
 	attachment,
 	from,
-	roomId,
-	messageDate,
 	isMyMessage = false,
 	messageListRef
 }) => {
@@ -200,15 +196,18 @@ const AttachmentView: FC<AttachmentViewProps> = ({
 		[attachment.id, attachment.mimeType]
 	);
 
-	const download = useCallback(
-		() => downloadAttachment(attachment.id, attachment.name),
-		[attachment.id, attachment.name]
-	);
+	const download = useCallback(() => {
+		const downloadUrl = AttachmentsApi.getURLAttachment(attachment.id);
+		const linkTag: HTMLAnchorElement = document.createElement('a');
+		document.body.appendChild(linkTag);
+		linkTag.href = downloadUrl;
+		linkTag.download = attachment.name;
+		linkTag.target = '_blank';
+		linkTag.click();
+		linkTag.remove();
+	}, [attachment.id, attachment.name]);
 
-	const { openFromChat } = usePreviewNavigation();
-	const onPreviewClick = useCallback(() => {
-		openFromChat(roomId, attachment, messageDate);
-	}, [attachment, messageDate, openFromChat, roomId]);
+	const { onPreviewClick } = usePreview(attachment);
 
 	const imageLabel = useMemo(
 		() => (
@@ -306,7 +305,7 @@ const AttachmentView: FC<AttachmentViewProps> = ({
 			$userBorderColor={isMyMessage ? undefined : userColor}
 		>
 			<Row wrap="nowrap">
-				<AttachmentSmallView attachment={attachment} roomId={roomId} messageDate={messageDate} />
+				<AttachmentSmallView attachment={attachment} />
 			</Row>
 			<Row takeAvailableSpace wrap="nowrap" height="100%">
 				<Container padding={{ vertical: 'small' }} crossAlignment="flex-start">

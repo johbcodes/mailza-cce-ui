@@ -4,17 +4,29 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import useStore from '../../store/Store';
-import { AttributesList } from '../../types/store/SessionTypes';
-import { fetchAPI, RequestType } from '../../utils/FetchUtils';
+import { RequestType } from '../../types/network/apis/IBaseAPI';
+import IInfoApi from '../../types/network/apis/IInfoApi';
+import { GetLicenseResponse, GetTokenResponse } from '../../types/network/responses/infoResponses';
+import { fetchAPI } from '../../utils/FetchUtils';
 
-export const getLicense = (): Promise<{ licensed: boolean }> =>
-	fetchAPI(`license`, RequestType.GET);
+class InfoApi implements IInfoApi {
+	// Singleton design pattern
+	private static instance: IInfoApi;
 
-export const getToken = (): Promise<{ zmToken: string }> => fetchAPI(`auth/token`, RequestType.GET);
+	public static getInstance(): IInfoApi {
+		if (!InfoApi.instance) {
+			InfoApi.instance = new InfoApi();
+		}
+		return InfoApi.instance;
+	}
 
-export const getCapabilities = (): Promise<AttributesList> =>
-	fetchAPI<AttributesList>('users/capabilities', RequestType.GET).then((resp) => {
-		useStore.getState().setCapabilities(resp);
-		return resp;
-	});
+	public getLicense(): Promise<GetLicenseResponse> {
+		return fetchAPI(`license`, RequestType.GET);
+	}
+
+	public getToken(): Promise<GetTokenResponse> {
+		return fetchAPI(`auth/token`, RequestType.GET);
+	}
+}
+
+export default InfoApi.getInstance();

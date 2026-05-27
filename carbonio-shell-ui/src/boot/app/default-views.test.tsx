@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { produce } from 'immer';
 
 import { DefaultViewsRegister } from './default-views';
@@ -76,7 +78,7 @@ describe('DefaultViews', () => {
 		});
 	});
 
-	it('should register privacy settings subsection and not the user quota subsection if it is carbonio CE ', () => {
+	it('should register privacy settings subsection if it is carbonio CE ', () => {
 		useAccountStore.setState(
 			produce((state) => {
 				state.settings.attrs.zimbraFeatureOptionsEnabled = 'TRUE';
@@ -93,6 +95,7 @@ describe('DefaultViews', () => {
 					{ label: 'Language', id: 'language' },
 					{ label: 'Out of Office Settings', id: 'out_of_office' },
 					{ label: 'Search', id: 'search_prefs' },
+					{ label: "User's quota", id: 'user_quota' },
 					{ label: 'Privacy', id: 'privacy-settings' }
 				]
 			})

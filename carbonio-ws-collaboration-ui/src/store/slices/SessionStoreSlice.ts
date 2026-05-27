@@ -14,7 +14,6 @@ import ChatExporter from '../../settings/components/chatExporter/ChatExporter';
 import {
 	AttributesList,
 	ExportStatus,
-	Session,
 	SessionStoreSlice,
 	Version
 } from '../../types/store/SessionTypes';
@@ -30,15 +29,7 @@ export const useSessionStoreSlice: StateCreator<
 	session: {
 		_persistedAt: Date.now()
 	},
-	setLoginInfo: ({
-		id,
-		name,
-		displayName,
-		userType,
-		zmAuthToken,
-		zxAuthToken,
-		server
-	}: Session): void => {
+	setLoginInfo: (id: string, name: string, displayName?: string, userType?: UserType): void => {
 		set(
 			produce((draft: RootStore) => {
 				draft.session = {
@@ -46,9 +37,6 @@ export const useSessionStoreSlice: StateCreator<
 					id,
 					name,
 					displayName,
-					zmAuthToken,
-					zxAuthToken,
-					server,
 					userType: userType ?? UserType.INTERNAL
 				};
 			}),
@@ -61,8 +49,8 @@ export const useSessionStoreSlice: StateCreator<
 			produce((draft: RootStore) => {
 				const minutesToNumber = (time: string): number => Number(time.split('m')[0]);
 				draft.session.attributes = {
-					privateChatCreationEnabled: attrs.carbonioWscPrivateChatCreation === 'TRUE',
-					groupChatCreationEnabled:
+					privateChatCreation: attrs.carbonioWscPrivateChatCreation === 'TRUE',
+					groupChatCreation:
 						attrs.carbonioWscGroupChatCreation === 'TRUE' &&
 						Number(attrs.carbonioWscMaxGroupMembers || 0) > 2,
 					maxGroupMembers: Number(attrs.carbonioWscMaxGroupMembers || 0),
@@ -73,7 +61,7 @@ export const useSessionStoreSlice: StateCreator<
 						(attrs.carbonioWscMessageEditTimeLimit as string) || '0m'
 					),
 					maxRoomPictureSize: Number(attrs.carbonioWscMaxRoomPictureSize || 0),
-					attachmentUploadEnabled: attrs.carbonioWscAttachmentUpload === 'TRUE',
+					attachmentUpload: attrs.carbonioWscAttachmentUpload === 'TRUE',
 					maxAttachmentSize: Number(attrs.carbonioWscMaxAttachmentSize || 0),
 					showMessageReads: attrs.carbonioWscShowMessageReads === 'TRUE',
 					showUsersPresence: attrs.carbonioWscShowUsersPresence === 'TRUE',
@@ -84,15 +72,6 @@ export const useSessionStoreSlice: StateCreator<
 			}),
 			false,
 			'SESSION/SET_ATTRS'
-		);
-	},
-	setCapabilities: (capabilities: AttributesList): void => {
-		set(
-			produce((draft: RootStore) => {
-				draft.session.attributes = capabilities;
-			}),
-			false,
-			'SESSION/SET_CAPABILITIES'
 		);
 	},
 	setQueueId: (queueId: string): void => {
@@ -172,26 +151,6 @@ export const useSessionStoreSlice: StateCreator<
 			}),
 			false,
 			'SESSION/SET_SUPPORTED_VERSIONS'
-		);
-	},
-	reset: (): void => {
-		set(
-			produce((draft: RootStore) => {
-				draft.session = {
-					supportedVersions: draft.session.supportedVersions
-				};
-				draft.users = {};
-				draft.rooms = {};
-				draft.activeConversations = {};
-				draft.chatsRegistry = {};
-				draft.connections = {
-					status: {}
-				};
-				draft.meetings = {};
-				draft.activeMeeting = undefined;
-			}),
-			false,
-			'SESSION/RESET'
 		);
 	}
 });

@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { Link } from 'react-router-dom';
 
 import { TrackerPageView } from './page-view';
@@ -13,11 +15,11 @@ import { screen, setup } from '../tests/utils';
 describe('TrackerPageView', () => {
 	it('should capture pageview event when pathname change', async () => {
 		const tracker: Tracker = {
-			capture: vi.fn(),
-			enableTracker: vi.fn(),
-			reset: vi.fn()
+			capture: jest.fn(),
+			enableTracker: jest.fn(),
+			reset: jest.fn()
 		};
-		vi.spyOn(useTracker, 'useTracker').mockReturnValue(tracker);
+		jest.spyOn(useTracker, 'useTracker').mockReturnValue(tracker);
 		const { user } = setup(
 			<>
 				<TrackerPageView />
@@ -33,11 +35,11 @@ describe('TrackerPageView', () => {
 
 	it('should capture pageview event when search params change', async () => {
 		const tracker: Tracker = {
-			capture: vi.fn(),
-			enableTracker: vi.fn(),
-			reset: vi.fn()
+			capture: jest.fn(),
+			enableTracker: jest.fn(),
+			reset: jest.fn()
 		};
-		vi.spyOn(useTracker, 'useTracker').mockReturnValue(tracker);
+		jest.spyOn(useTracker, 'useTracker').mockReturnValue(tracker);
 		const { user } = setup(
 			<>
 				<TrackerPageView />

@@ -25,25 +25,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 - clone this repo
 - install the dependencies
 ```
-pnpm install
+npm install
 ```
 
 #### Build
 
 ```
-pnpm run build
+npm run build
 ```
 
 #### Tests
 
 ```
-pnpm run test
+npm run test
 ```
 
 #### Lint
 
 ```
-pnpm run lint
+npm run lint
 ```
 
 ## License

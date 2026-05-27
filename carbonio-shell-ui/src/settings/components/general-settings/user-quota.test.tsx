@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import React from 'react';
+
 import { faker } from '@faker-js/faker';
 import type { QuotaProps } from '@zextras/carbonio-design-system';
 import { produce } from 'immer';
@@ -22,10 +24,10 @@ function setupAccountStore(usedQuota: number, quotaMax: number): void {
 	);
 }
 
-const mockQuota = vi.fn().mockReturnValue(<div>mock Quota</div>);
+const mockQuota = jest.fn().mockReturnValue(<div>mock Quota</div>);
 
-vi.mock('@zextras/carbonio-design-system', async () => ({
-	...(await vi.importActual('@zextras/carbonio-design-system')),
+jest.mock('@zextras/carbonio-design-system', () => ({
+	...jest.requireActual('@zextras/carbonio-design-system'),
 	Quota: (props: QuotaProps): unknown => mockQuota(props)
 }));
 

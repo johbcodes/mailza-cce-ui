@@ -8,30 +8,13 @@ import { includes } from 'lodash';
 
 import { charToUnicode } from './textUtils';
 import useStore from '../store/Store';
+import { RequestType } from '../types/network/apis/IBaseAPI';
 import { AdditionalHeaders } from '../types/network/models/attachmentTypes';
 import { Version } from '../types/store/SessionTypes';
 
 export const BASE_PATH = '/services/chats/';
 export const wscApiVersionHeader = 'X-WSC-API-VERSION';
 export const contentTypeHeader = 'Content-Type';
-
-export enum RequestType {
-	GET = 'GET',
-	POST = 'POST',
-	PUT = 'PUT',
-	DELETE = 'DELETE'
-}
-
-export const buildQueryString = (
-	params: Record<string, string | number | boolean | undefined | null>
-): string => {
-	const searchParams = new URLSearchParams();
-	Object.entries(params).forEach(([key, value]) => {
-		if (value !== undefined && value !== null) searchParams.append(key, String(value));
-	});
-	const queryString = searchParams.toString();
-	return queryString ? `?${queryString}` : '';
-};
 
 const MAX_VERSION_MISMATCH_RETRIES = 3;
 
@@ -67,12 +50,12 @@ const handleResponse = async (response: Response): Promise<any> => {
 	return response;
 };
 
-export function fetchAPI<T>(
+export const fetchAPI = (
 	endpoint: string,
 	method: RequestType,
 	data?: Record<string, unknown> | Array<Record<string, unknown>>,
 	retryCount = 0
-): Promise<T> {
+): Promise<any> => {
 	const headers = buildHeaders();
 	headers.append(contentTypeHeader, 'application/json');
 	return fetch(BASE_PATH + endpoint, {
@@ -87,7 +70,7 @@ export function fetchAPI<T>(
 			}
 			return Promise.reject(err);
 		});
-}
+};
 
 export const sendFileFetchAPI = (
 	endpoint: string,

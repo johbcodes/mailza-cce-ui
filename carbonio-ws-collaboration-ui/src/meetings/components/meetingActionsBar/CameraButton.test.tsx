@@ -50,17 +50,4 @@ describe('Camera button', () => {
 		const cameraButton = await screen.findByTestId('cameraButton');
 		expect(cameraButton).toBeDisabled();
 	});
-
-	test('Camera button is disabled when message broker is down', async () => {
-		useStore.getState().setMessageBrokerStatus(false);
-		setup(
-			<CameraButton
-				videoDropdownRef={React.createRef<HTMLDivElement>()}
-				isVideoListOpen={false}
-				setIsVideoListOpen={vi.fn()}
-			/>
-		);
-		const cameraButton = await screen.findByTestId('cameraButton');
-		expect(cameraButton).toBeDisabled();
-	});
 });

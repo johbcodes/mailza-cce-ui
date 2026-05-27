@@ -6,10 +6,6 @@
 
 import { create } from 'zustand';
 
-export type FeatureFlags = {
-	totalQuota?: boolean;
-};
-
 export type LoginConfigStore = {
 	carbonioWebUiDarkMode?: boolean;
 	carbonioWebUiAppLogo?: string;
@@ -21,7 +17,6 @@ export type LoginConfigStore = {
 	carbonioWebUiLogoutURL?: string;
 	loaded: boolean;
 	isCarbonioCE: boolean | undefined;
-	featureFlags?: FeatureFlags;
 };
 
 // extra currying as suggested in https://github.com/pmndrs/zustand/blob/main/docs/guides/typescript.md#basic-usage

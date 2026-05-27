@@ -80,11 +80,11 @@ describe('ChatsRegistryStoreSlice tests', () => {
 	describe('newInboxMessage', () => {
 		test('Arrive an inbox text message', () => {
 			const inboxMessage = createMockTextMessage();
-			useStore.getState().setInboxMessages([inboxMessage]);
+			useStore.getState().newInboxMessages([inboxMessage]);
 
-			const { messages, lastMessage } = useStore.getState().chatsRegistry[newTextMessage.roomId];
-			expect(messages).toHaveLength(0);
-			expect(lastMessage).toBe(inboxMessage);
+			const { messages } = useStore.getState().chatsRegistry[newTextMessage.roomId];
+			expect(messages).toHaveLength(1);
+			expect(messages[0]).toBe(inboxMessage);
 		});
 
 		test('Arrive an inbox text message after a history request', () => {
@@ -93,13 +93,32 @@ describe('ChatsRegistryStoreSlice tests', () => {
 				date: dateToTimestamp('2024-05-01 13:01:05')
 			});
 			useStore.getState().updateHistory(inboxMessage.roomId, [textMessage0, textMessage1]);
-			useStore.getState().setInboxMessages([inboxMessage]);
+			useStore.getState().newInboxMessages([inboxMessage]);
 
 			const { messages } = useStore.getState().chatsRegistry[inboxMessage.roomId];
 			// Messages list: [MESSAGE0, MESSAGE1]]
 			expect(messages).toHaveLength(2);
 			expect(messages[0]).toBe(textMessage0);
 			expect(messages[1]).toBe(textMessage1);
+		});
+
+		test('Arrive an inbox message of a room in which history is been cleared before message date', () => {
+			const room = createMockRoom({
+				userSettings: {
+					muted: false,
+					clearedAt: dateToISODate(date1)
+				}
+			});
+			const inboxMessage = createMockTextMessage({
+				roomId: room.id,
+				date: date2
+			});
+			useStore.getState().addRooms([room]);
+			useStore.getState().newInboxMessages([inboxMessage]);
+
+			// Messages list: [DATE, INBOX MESSAGE]
+			const { messages } = useStore.getState().chatsRegistry[inboxMessage.roomId];
+			expect(messages[0]).toStrictEqual(inboxMessage);
 		});
 
 		test('Arrive an inbox message of a room in which history is been cleared after message date', () => {
@@ -114,7 +133,7 @@ describe('ChatsRegistryStoreSlice tests', () => {
 				date: date1
 			});
 			useStore.getState().addRooms([room]);
-			useStore.getState().setInboxMessages([inboxMessage]);
+			useStore.getState().newInboxMessages([inboxMessage]);
 
 			const { messages } = useStore.getState().chatsRegistry[inboxMessage.roomId];
 			// Messages list: []
@@ -124,14 +143,29 @@ describe('ChatsRegistryStoreSlice tests', () => {
 
 	describe('updateHistory', () => {
 		test('First update history after an inbox message', () => {
-			useStore.getState().setInboxMessages([newTextMessage]);
+			useStore.getState().newInboxMessages([newTextMessage]);
 			useStore.getState().updateHistory(newTextMessage.roomId, [textMessage0, textMessage1]);
 
 			const { messages } = useStore.getState().chatsRegistry[newTextMessage.roomId];
 			// Messages list: [MESSAGE0, MESSAGE1, INBOX MESSAGE]
-			expect(messages).toHaveLength(2);
+			expect(messages).toHaveLength(3);
 			expect(messages[0]).toBe(textMessage0);
 			expect(messages[1]).toBe(textMessage1);
+			expect(messages[2]).toBe(newTextMessage);
+		});
+
+		test('Last message of history is the inbox message', () => {
+			const inboxMessage = createMockTextMessage({
+				id: 'newMessage',
+				date: dateToTimestamp('2024-05-01 14:04')
+			});
+			useStore.getState().newInboxMessages([inboxMessage]);
+			useStore.getState().updateHistory(inboxMessage.roomId, [textMessage0, inboxMessage]);
+
+			const { messages } = useStore.getState().chatsRegistry[inboxMessage.roomId];
+			// Messages list: [MESSAGE0, INBOX MESSAGE]
+			expect(messages).toHaveLength(2);
+			expect(messages[1]).toBe(inboxMessage);
 		});
 
 		test('Load a history after another history', () => {

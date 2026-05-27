@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 
 import {
 	CreateSnackbarFn,
@@ -18,7 +18,7 @@ import { map, size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { valueItem } from '../../../../integrations/virtualRoomIntegration/SelectVirtualRoomWidget';
-import { addRoom } from '../../../../network';
+import { RoomsApi } from '../../../../network';
 import { getMeetingIdFromRoom } from '../../../../store/selectors/RoomsSelectors';
 import useStore from '../../../../store/Store';
 import { MemberBe } from '../../../../types/network/models/roomBeTypes';
@@ -85,7 +85,7 @@ const CreateVirtualRoomModal: FC<CreateVirtualRoomModalProps> = ({
 			owner: true
 		}));
 
-		addRoom({
+		RoomsApi.addRoom({
 			name: textRef.current?.value ?? '',
 			type: RoomType.TEMPORARY,
 			members: newOwnersToAdd
@@ -137,12 +137,6 @@ const CreateVirtualRoomModal: FC<CreateVirtualRoomModalProps> = ({
 		setContactsSelected([]);
 		onClose();
 	}, [onClose]);
-
-	useEffect(() => {
-		if (open) {
-			textRef.current?.focus();
-		}
-	}, [open]);
 
 	return (
 		<Modal

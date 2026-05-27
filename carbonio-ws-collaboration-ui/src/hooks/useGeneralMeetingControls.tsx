@@ -17,7 +17,7 @@ import useEventListener, {
 import usePiPWindow from './usePipWindow';
 import useRouting from './useRouting';
 import { PAGE_INFO_TYPE } from '../meetings/contexts/routerContext';
-import { getMeetingByMeetingId, leaveMeeting } from '../network';
+import { MeetingsApi } from '../network';
 import useTiles from './useTiles';
 import {
 	getMeetingActiveByMeetingId,
@@ -54,11 +54,9 @@ const useGeneralMeetingControls = (meetingId: string): void => {
 
 	const createSnackbar: CreateSnackbarFn = useSnackbar();
 
-	const isDeclined = useRef(false);
-
 	// Redirect to info page if meeting ended or some error occurred
 	useEffect(() => {
-		if (!isMeetingActive && !isDeclined.current) {
+		if (!isMeetingActive) {
 			meetingDisconnection(meetingId);
 			goToInfoPage(PAGE_INFO_TYPE.MEETING_ENDED);
 		}
@@ -70,14 +68,14 @@ const useGeneralMeetingControls = (meetingId: string): void => {
 	}, [goToInfoPage, isMeetingActive, meetingDisconnection, meetingId]);
 
 	// Leave meeting on window close
-	const leaveMeetingAction = useCallback(() => leaveMeeting(meetingId), [meetingId]);
+	const leaveMeeting = useCallback(() => MeetingsApi.leaveMeeting(meetingId), [meetingId]);
 
 	useEffect(() => {
-		window.parent.addEventListener('beforeunload', leaveMeetingAction);
+		window.parent.addEventListener('beforeunload', leaveMeeting);
 		return (): void => {
-			window.parent.removeEventListener('beforeunload', leaveMeetingAction);
+			window.parent.removeEventListener('beforeunload', leaveMeeting);
 		};
-	}, [leaveMeetingAction]);
+	}, [leaveMeeting]);
 
 	// Handle pinned tile disappearance
 	useEffect(() => {
@@ -125,14 +123,6 @@ const useGeneralMeetingControls = (meetingId: string): void => {
 	);
 	useEventListener(EventName.MEETING_PARTICIPANT_CLASHED, meetingParticipantClashedHandler);
 
-	// Redirect to info page when callee declines the call
-	const meetingDeclinedHandler = useCallback(() => {
-		isDeclined.current = true;
-		closePipWindow();
-		goToInfoPage(PAGE_INFO_TYPE.MEETING_DECLINED, meetingId);
-	}, [closePipWindow, goToInfoPage, meetingId]);
-	useEventListener(EventName.MEETING_DECLINED, meetingDeclinedHandler);
-
 	// Display snackbar when user is muted by moderator
 	const handleMutedEvent = useCallback(() => {
 		createSnackbar({
@@ -149,7 +139,7 @@ const useGeneralMeetingControls = (meetingId: string): void => {
 	const websocketNetworkStatusPrev = useRef(websocketNetworkStatus);
 	useEffect(() => {
 		if (websocketNetworkStatusPrev.current === false && websocketNetworkStatus === true) {
-			getMeetingByMeetingId(meetingId).then((meeting) => {
+			MeetingsApi.getMeetingByMeetingId(meetingId).then((meeting) => {
 				const userInMeeting = find(
 					meeting?.participants,
 					(member) => member.userId === useStore.getState().session.id

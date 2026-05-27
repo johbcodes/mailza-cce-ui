@@ -253,8 +253,6 @@ const Bubble: FC<BubbleProps> = ({
 							attachment={messageAttachment}
 							isMyMessage={isMyMessage}
 							from={message.from}
-							roomId={message.roomId}
-							messageDate={message.date}
 							messageListRef={messageListRef}
 						/>
 						<Padding bottom="0.5rem" />

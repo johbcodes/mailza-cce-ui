@@ -10,7 +10,6 @@ import { act, screen } from '@testing-library/react';
 
 import ExpandedSidebarListItem from './ExpandedSidebarListItem';
 import { onComposingMessageStanza } from '../../../../network/xmpp/handlers/composingMessageHandler';
-import { xmppClient } from '../../../../network/xmpp/XMPPClient';
 import useStore from '../../../../store/Store';
 import { buildComposingStanza } from '../../../../tests/buildXmppStanza';
 import {
@@ -149,7 +148,7 @@ const mockedAttachmentMessage = createMockTextMessage({
 
 beforeEach(() => {
 	const store: RootStore = useStore.getState();
-	store.setLoginInfo({ id: user1Be.id, name: user1Be.name });
+	store.setLoginInfo(user1Be.id, user1Be.name);
 	store.setUserInfo([user1Be, user2Be, user4Be]);
 	store.addRooms([mockedGroup, mockedOneToOne]);
 	store.setAttributes(createMockAttributesList({ carbonioWscShowMessageReads: 'TRUE' }));
@@ -158,9 +157,21 @@ beforeEach(() => {
 describe('Expanded sidebar list item', () => {
 	describe('ACK status', () => {
 		describe('carbonioWscShowMessageReads = true', () => {
+			test('User is sending a message but it is in pending state', async () => {
+				const store: RootStore = useStore.getState();
+				store.setPlaceholderMessage({
+					roomId: mockedTextMessageUnread.roomId,
+					id: mockedTextMessageUnread.id,
+					text: mockedTextMessageUnread.text
+				});
+				setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
+				expect(screen.getByTestId('icon: ClockOutline')).toBeVisible();
+				expect(screen.getByText(mockedTextMessageUnread.text)).toBeVisible();
+			});
+
 			test('User sent a message', async () => {
 				const store: RootStore = useStore.getState();
-				store.setInboxMessages([mockedTextMessageUnread]);
+				store.newMessage(mockedTextMessageUnread);
 				setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 				expect(screen.getByTestId('icon: Checkmark')).toBeVisible();
 				expect(screen.getByText(mockedTextMessageUnread.text)).toBeVisible();
@@ -168,7 +179,7 @@ describe('Expanded sidebar list item', () => {
 
 			test('User sent a message and someone read it', async () => {
 				const store: RootStore = useStore.getState();
-				store.setInboxMessages([mockedTextMessageReadBySomeone]);
+				store.newMessage(mockedTextMessageReadBySomeone);
 				setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 				expect(screen.getByTestId(iconDoneAll)).toBeVisible();
 				expect(screen.getByText(mockedTextMessageReadBySomeone.text)).toBeVisible();
@@ -176,7 +187,7 @@ describe('Expanded sidebar list item', () => {
 
 			test('User sent a message and everyone read it', async () => {
 				const store: RootStore = useStore.getState();
-				store.setInboxMessages([mockedTextMessageRead]);
+				store.newMessage(mockedTextMessageRead);
 				setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 				expect(screen.getByTestId(iconDoneAll)).toBeVisible();
 				expect(screen.getByText(mockedTextMessageRead.text)).toBeVisible();
@@ -184,10 +195,23 @@ describe('Expanded sidebar list item', () => {
 		});
 
 		describe('carbonioWscShowMessageReads = false', () => {
+			test('User is sending a message but it is in pending state', async () => {
+				const store: RootStore = useStore.getState();
+				store.setAttributes(createMockAttributesList({ carbonioWscShowMessageReads: 'FALSE' }));
+				store.setPlaceholderMessage({
+					roomId: mockedTextMessageUnread.roomId,
+					id: mockedTextMessageUnread.id,
+					text: mockedTextMessageUnread.text
+				});
+				setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
+				expect(screen.getByTestId('icon: ClockOutline')).toBeVisible();
+				expect(screen.getByText(mockedTextMessageUnread.text)).toBeVisible();
+			});
+
 			test('User sent a message', async () => {
 				const store: RootStore = useStore.getState();
 				store.setAttributes(createMockAttributesList({ carbonioWscShowMessageReads: 'FALSE' }));
-				store.setInboxMessages([mockedTextMessageUnread]);
+				store.newMessage(mockedTextMessageUnread);
 				setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 				expect(screen.queryByTestId('icon: Checkmark')).not.toBeInTheDocument();
 				expect(screen.getByText(mockedTextMessageUnread.text)).toBeInTheDocument();
@@ -196,7 +220,7 @@ describe('Expanded sidebar list item', () => {
 			test('User sent a message and someone read it', async () => {
 				const store: RootStore = useStore.getState();
 				store.setAttributes(createMockAttributesList({ carbonioWscShowMessageReads: 'FALSE' }));
-				store.setInboxMessages([mockedTextMessageReadBySomeone]);
+				store.newMessage(mockedTextMessageReadBySomeone);
 				setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 				expect(screen.queryByTestId(iconDoneAll)).not.toBeInTheDocument();
 				expect(screen.getByText(mockedTextMessageReadBySomeone.text)).toBeVisible();
@@ -207,7 +231,7 @@ describe('Expanded sidebar list item', () => {
 	describe('Group List Item', () => {
 		test('A user of a group sent a message', async () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedTextMessageSentBySomeoneElse]);
+			store.newMessage(mockedTextMessageSentBySomeoneElse);
 			setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 			const message = `${user2Be.name}: ${mockedTextMessageSentBySomeoneElse.text}`;
 			expect(screen.getByText(message)).toBeVisible();
@@ -215,7 +239,7 @@ describe('Expanded sidebar list item', () => {
 
 		test('Added a new member message', () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedAddMemberMessage]);
+			store.newMessage(mockedAddMemberMessage);
 			setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 			expect(
 				screen.getByText(new RegExp(`${user4Be.name} has been added to ${mockedGroup.name}`, 'i'))
@@ -224,8 +248,8 @@ describe('Expanded sidebar list item', () => {
 
 		test('Deleted image message', () => {
 			const store: RootStore = useStore.getState();
-			store.setLoginInfo({ id: user2Be.id, name: user2Be.name });
-			store.setInboxMessages([mockedConfigurationMessage]);
+			store.setLoginInfo(user2Be.id, user2Be.name);
+			store.newMessage(mockedConfigurationMessage);
 			setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 			expect(
 				screen.getByText(
@@ -238,14 +262,14 @@ describe('Expanded sidebar list item', () => {
 	describe('One to One List Item', () => {
 		test('Other user sent a message', async () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedTextMessageSentByOther]);
+			store.newMessage(mockedTextMessageSentByOther);
 			setup(<ExpandedSidebarListItem roomId={mockedOneToOne.id} />);
 			expect(screen.getByText(`${mockedTextMessageSentByOther.text}`)).toBeVisible();
 		});
 
 		test('when another user is typing, "is typing" message is rendered without an attachment icon', async () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedAttachmentMessage]);
+			store.newMessage(mockedAttachmentMessage);
 			store.setIsWriting(mockedOneToOne.id, user2Be.id, true);
 			setup(<ExpandedSidebarListItem roomId={mockedOneToOne.id} />);
 			expect(screen.queryByTestId('icon: FileTextOutline')).not.toBeInTheDocument();
@@ -257,7 +281,7 @@ describe('Expanded sidebar list item', () => {
 	describe('Icon and message', () => {
 		test('draft message situation', async () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedTextMessageRead]);
+			store.newMessage(mockedTextMessageRead);
 			const draftMessage = 'hi everyone!';
 			store.setDraftMessage(mockedGroup.id, draftMessage);
 			setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
@@ -275,7 +299,7 @@ describe('Expanded sidebar list item', () => {
 
 		test('should not render the attachment icon if there is a draft content and the last message is an attachment', async () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedAttachmentMessage]);
+			store.newMessage(mockedAttachmentMessage);
 			store.setDraftMessage(mockedGroup.id, 'draft');
 			setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 			expect(screen.queryByTestId('icon: FileTextOutline')).not.toBeInTheDocument();
@@ -283,7 +307,7 @@ describe('Expanded sidebar list item', () => {
 
 		test('when another user is typing and there is a draft, "is typing" message is rendered without an draft icon', async () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedTextMessageRead]);
+			store.newMessage(mockedTextMessageRead);
 			const draftMessage = 'hi everyone!';
 			store.setDraftMessage(mockedGroup.id, draftMessage);
 			store.setIsWriting(mockedGroup.id, user2Be.id, true);
@@ -296,11 +320,11 @@ describe('Expanded sidebar list item', () => {
 
 		test('when another user stops typing, after 7 seconds the last message sent is rendered', async () => {
 			const store: RootStore = useStore.getState();
-			store.setInboxMessages([mockedTextMessageSentByMeIntoGroup]);
+			store.newMessage(mockedTextMessageSentByMeIntoGroup);
 			setup(<ExpandedSidebarListItem roomId={mockedGroup.id} />);
 			act(() => {
 				onComposingMessageStanza.call(
-					xmppClient,
+					useStore.getState().connections.xmppClient,
 					buildComposingStanza({
 						roomId: mockedGroup.id,
 						from: user4Be.id,
@@ -312,7 +336,7 @@ describe('Expanded sidebar list item', () => {
 			vi.advanceTimersByTime(3000);
 			act(() => {
 				onComposingMessageStanza.call(
-					xmppClient,
+					useStore.getState().connections.xmppClient,
 					buildComposingStanza({
 						roomId: mockedGroup.id,
 						from: user4Be.id,

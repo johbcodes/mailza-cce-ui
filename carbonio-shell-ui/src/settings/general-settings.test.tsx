@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { faker } from '@faker-js/faker';
 import { screen, waitFor, within } from '@testing-library/react';
 import type { AccountSettingsPrefs } from '@zextras/carbonio-ui-soap-lib';
@@ -178,13 +180,11 @@ describe('General setting', () => {
 		}));
 		const { user } = setup(<GeneralSettings />);
 		expect(screen.getByRole('button', { name: /discard changes/i })).toBeDisabled();
-		const textbox = screen.getByRole('textbox', { name: 'Auto-Reply Message:' });
-		await user.clear(textbox);
-		await user.paste(userInput);
+		await user.type(screen.getByRole('textbox', { name: 'Auto-Reply Message:' }), userInput);
 
 		expect(screen.getByRole('button', { name: /discard changes/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /discard changes/i }));
-		expect(textbox).toHaveValue(initialValue);
+		expect(screen.getByRole('textbox', { name: 'Auto-Reply Message:' })).toHaveValue(initialValue);
 		expect(screen.getByRole('button', { name: /discard changes/i })).toBeDisabled();
 	});
 
@@ -205,15 +205,16 @@ describe('General setting', () => {
 		}));
 		const { user } = setup(<GeneralSettings />);
 		expect(screen.getByRole('button', { name: /discard changes/i })).toBeDisabled();
-		const textbox = screen.getByRole('textbox', {
-			name: 'Auto-Reply Message for External senders:'
-		});
-		await user.clear(textbox);
-		await user.paste(userInput);
+		await user.type(
+			screen.getByRole('textbox', { name: 'Auto-Reply Message for External senders:' }),
+			userInput
+		);
 
 		expect(screen.getByRole('button', { name: /discard changes/i })).toBeEnabled();
 		await user.click(screen.getByRole('button', { name: /discard changes/i }));
-		expect(textbox).toHaveValue(initialValue);
+		expect(
+			screen.getByRole('textbox', { name: 'Auto-Reply Message for External senders:' })
+		).toHaveValue(initialValue);
 		expect(screen.getByRole('button', { name: /discard changes/i })).toBeDisabled();
 	});
 
@@ -393,26 +394,6 @@ describe('General setting', () => {
 					)
 				).toBeVisible()
 			);
-		});
-	});
-
-	describe('User quota section', () => {
-		it('should be visible if Carbonio is not CE and totalQuota feature flag is not enabled', () => {
-			useLoginConfigStore.setState({ isCarbonioCE: false, featureFlags: { totalQuota: false } });
-			setup(<GeneralSettings />);
-			expect(screen.getByText("User's quota")).toBeVisible();
-		});
-
-		it('should not be visible if Carbonio is CE', () => {
-			useLoginConfigStore.setState({ isCarbonioCE: true, featureFlags: { totalQuota: false } });
-			setup(<GeneralSettings />);
-			expect(screen.queryByText("User's quota")).not.toBeInTheDocument();
-		});
-
-		it('should not be visible if totalQuota feature flag is enabled', () => {
-			useLoginConfigStore.setState({ isCarbonioCE: false, featureFlags: { totalQuota: true } });
-			setup(<GeneralSettings />);
-			expect(screen.queryByText("User's quota")).not.toBeInTheDocument();
 		});
 	});
 });

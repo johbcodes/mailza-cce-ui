@@ -1,87 +1,138 @@
 #!/bin/bash
 # ====================================================================
-# Mailza -> Carbonio CE CSS Injection Patch
-# Strategy: CSS-only overlay. No JS builds. No version conflicts.
-# Works with any installed version of Carbonio CE.
+# Mailza -> Carbonio CE Production Patch Script
+# Builds each UI module and deploys it into the Carbonio iris directory
+# using hash-versioned folders, index.html asset injection, and symlinks.
 # ====================================================================
 
 set -e
 
 IRIS_BASE="/opt/zextras/web/iris"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-MAILZA_CSS_DIR="$IRIS_BASE/mailza-css"
 
-echo "🚀  Starting Mailza CSS injection..."
-
-# ── 1. Deploy CSS files into iris ─────────────────────────────────
-echo ""
-echo "📁  Deploying Mailza CSS to $MAILZA_CSS_DIR..."
-sudo mkdir -p "$MAILZA_CSS_DIR"
-sudo cp "$SCRIPT_DIR/mailza-theme.css" "$MAILZA_CSS_DIR/mailza-theme.css"
-sudo cp "$SCRIPT_DIR/mailza-style.css" "$MAILZA_CSS_DIR/mailza-style.css"
-echo "   ✅  CSS files deployed."
-
-# ── 2. Inject <link> tags into every module's current/index.html ──
-echo ""
-echo "🔧  Injecting CSS into all module index.html files..."
-
-sudo python3 - << 'PYEOF'
-import glob, os, sys
-
-IRIS = "/opt/zextras/web/iris"
-INJECT = (
-    '<link rel="stylesheet" href="/static/iris/mailza-css/mailza-theme.css">'
-    '<link rel="stylesheet" href="/static/iris/mailza-css/mailza-style.css">'
+# Map: local repo dir -> carbonio module name in iris
+declare -A MODULES=(
+  ["carbonio-login-ui"]="login"
+  ["carbonio-shell-ui"]="carbonio-shell-ui"
+  ["carbonio-ws-collaboration-ui"]="carbonio-ws-collaboration-ui"
 )
 
-htmls = glob.glob(f"{IRIS}/*/current/index.html")
-if not htmls:
-    print("   ❌  No current/index.html files found. Check the iris path.")
-    sys.exit(1)
+# ──────────────────────────────────────────────────────────────────
+# Helper: deploy one module
+# ──────────────────────────────────────────────────────────────────
+deploy_module() {
+  local REPO="$1"           # e.g. carbonio-shell-ui
+  local CARBONIO_MOD="$2"   # e.g. carbonio-shell-ui  (iris folder name)
 
-for html_path in htmls:
-    try:
-        content = open(html_path).read()
-        if 'mailza-css' in content:
-            print(f"   ⏭️   Already injected: {html_path}")
-            continue
-        if '</head>' not in content:
-            print(f"   ⚠️   No </head> tag found in {html_path}, skipping.")
-            continue
-        patched = content.replace('</head>', INJECT + '</head>', 1)
-        open(html_path, 'w').write(patched)
-        print(f"   ✅  Patched: {html_path}")
-    except Exception as e:
-        print(f"   ❌  Error patching {html_path}: {e}", file=sys.stderr)
+  echo ""
+  echo "============================================================"
+  echo "📦  $REPO"
+  echo "============================================================"
+
+  cd "$REPO"
+
+  # ── 1. Build ──────────────────────────────────────────────────
+  echo "⚙️  Installing dependencies…"
+  pnpm install
+
+  echo "⚙️  Building…"
+  pnpm build
+
+  # ── 2. Collect artefact names & hashes ───────────────────────
+  COMMIT=$(git rev-parse --short HEAD)
+  FULL_HASH=$(git rev-parse HEAD)
+
+  # Grab hashed JS bundle — handles index.hash.js, index.js, app.hash.js
+  NEW_JS=$(ls dist/index.*.js dist/index.js dist/app.*.js 2>/dev/null | grep -v chunk | head -1 | xargs -r basename 2>/dev/null || true)
+  NEW_CSS=$(ls dist/style.*.css dist/index.*.css dist/*.css 2>/dev/null | head -1 | xargs -r basename 2>/dev/null || true)
+
+  echo "   Commit : $COMMIT"
+  echo "   JS     : ${NEW_JS:-<none>}"
+  echo "   CSS    : ${NEW_CSS:-<none>}"
+
+  # ── 3. Stage build into a Mailza-namespaced versioned folder ──
+  MAILZA_DIR="$IRIS_BASE/mailza-${REPO}/${COMMIT}"
+  echo "📂  Staging → $MAILZA_DIR"
+  sudo mkdir -p "$MAILZA_DIR"
+  sudo cp -rf dist/* "$MAILZA_DIR/"
+
+  # Drop the Mailza logo into the static path so our hardcoded React img src works
+  sudo cp ../mailza-logo.png "$IRIS_BASE/mailza-logo.png"
+
+  # ── 4. Patch the Carbonio module's index.html ─────────────────
+  INDEX_HTML="$IRIS_BASE/$CARBONIO_MOD/current/index.html"
+
+  if [ -f "$INDEX_HTML" ]; then
+    echo "🔧  Patching $INDEX_HTML"
+
+    sudo python3 - << PYEOF
+import re, sys
+
+index_path = "$INDEX_HTML"
+mailza_dir = "mailza-${REPO}/${COMMIT}"
+
+try:
+    content = open(index_path).read()
+    patched = content
+
+    if "$NEW_JS":
+        patched = re.sub(
+            r'src="/static/iris/[^"]+/index\.[^"]+\.js"',
+            f'src="/static/iris/{mailza_dir}/$NEW_JS"',
+            patched
+        )
+
+    if "$NEW_CSS":
+        patched = re.sub(
+            r'href="/static/iris/[^"]+/style\.[^"]+\.css"',
+            f'href="/static/iris/{mailza_dir}/$NEW_CSS"',
+            patched
+        )
+
+    if patched == content:
+        print("   ⚠️  No asset references matched in index.html – check the regex patterns.")
+    else:
+        open(index_path, 'w').write(patched)
+        print("   ✅  index.html updated.")
+except Exception as e:
+    print(f"   ❌  Failed to patch index.html: {e}", file=sys.stderr)
+    sys.exit(1)
 PYEOF
 
-# ── 3. Logo replacement ────────────────────────────────────────────
-echo ""
-echo "🖼️   Replacing logos..."
+  else
+    echo "   ⚠️  $INDEX_HTML not found – skipping index.html patch."
+  fi
 
-# Find and replace all known Carbonio logo PNGs with the Mailza logo
-MAILZA_LOGO="$SCRIPT_DIR/mailza-logo.png"
-if [ ! -f "$MAILZA_LOGO" ]; then
-    echo "   ⚠️   Mailza logo PNG not found at $MAILZA_LOGO — skipping logo replacement."
-    echo "       Drop a mailza-logo.png into the repo root to enable this."
-else
-    # Replace logos in the installed (hash-versioned) directories
-    # Look in each module's installed version directory (not current/ which is often a copy)
-    while IFS= read -r logo_path; do
-        sudo cp "$MAILZA_LOGO" "$logo_path"
-        echo "   ✅  Replaced: $logo_path"
-    done < <(sudo find "$IRIS_BASE" -not -path "*/mailza-*" -not -path "*/i18n/*" \
-              \( -name "logo-carbonio.png" -o -name "carbonio_logo.png" \
-              -o -name "logo-product-grey.png" -o -name "zextras-logo-gray.png" \) 2>/dev/null)
-fi
+  # ── 5. Create / replace the Carbonio versioned symlink ────────
+  CARBONIO_VERSION_DIR="$IRIS_BASE/$CARBONIO_MOD/$FULL_HASH"
+  echo "🔗  Symlinking $CARBONIO_VERSION_DIR → $MAILZA_DIR"
+  sudo mkdir -p "$(dirname "$CARBONIO_VERSION_DIR")"
+  sudo rm -f "$CARBONIO_VERSION_DIR"
+  sudo ln -sf "$MAILZA_DIR" "$CARBONIO_VERSION_DIR"
 
-# ── 4. Reload nginx ────────────────────────────────────────────────
+  cd ..
+  echo "✅  $REPO deployed."
+}
+
+# ──────────────────────────────────────────────────────────────────
+# Main loop
+# ──────────────────────────────────────────────────────────────────
+echo "🚀  Starting Mailza full-stack patch…"
+
+for REPO in "${!MODULES[@]}"; do
+  if [ -d "$REPO" ]; then
+    deploy_module "$REPO" "${MODULES[$REPO]}"
+  else
+    echo "⚠️  Directory '$REPO' not found – skipping."
+  fi
+done
+
+# ──────────────────────────────────────────────────────────────────
+# Reload Carbonio Nginx
+# ──────────────────────────────────────────────────────────────────
 echo ""
-echo "🔄  Reloading carbonio-nginx..."
-sudo systemctl reload carbonio-nginx.service \
-    && echo "   ✅  carbonio-nginx reloaded." \
-    || echo "   ⚠️   Reload failed — try: sudo systemctl restart carbonio-nginx.service"
+echo "🔄  Reloading carbonio-nginx…"
+sudo systemctl reload carbonio-nginx.service && echo "✅  carbonio-nginx reloaded." \
+  || echo "⚠️  Reload failed – try: sudo systemctl restart carbonio-nginx.service"
 
 echo ""
-echo "🎉  Mailza CSS injection complete!"
-echo "    Open your browser (hard-refresh with Ctrl+Shift+R) to see the changes."
+echo "🎉  All Mailza modules deployed to Carbonio!"

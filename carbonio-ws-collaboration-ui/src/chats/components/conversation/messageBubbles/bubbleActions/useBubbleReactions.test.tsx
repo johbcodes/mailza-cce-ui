@@ -8,7 +8,6 @@ import { screen, renderHook } from '@testing-library/react';
 import { forEach } from 'lodash';
 
 import useBubbleReactions, { ReactionType } from './useBubbleReactions';
-import { xmppClient } from '../../../../../network/xmpp/XMPPClient';
 import useStore from '../../../../../store/Store';
 import {
 	createMockMessageFastening,
@@ -40,7 +39,7 @@ const iconTestId = 'icon: SmileOutline';
 
 beforeEach(() => {
 	const store: RootStore = useStore.getState();
-	store.setLoginInfo({ id: sessionUser.id, name: sessionUser.name });
+	store.setLoginInfo(sessionUser.id, sessionUser.name);
 	store.addRooms([room]);
 	store.newMessage(simpleTextMessage);
 });
@@ -73,7 +72,10 @@ describe('Bubble Contextual Menu - other user messages', () => {
 	});
 
 	test('Send a reaction', async () => {
-		const spyOnSendChatMessageReaction = vi.spyOn(xmppClient, 'sendChatMessageReaction');
+		const spyOnSendChatMessageReaction = vi.spyOn(
+			useStore.getState().connections.xmppClient,
+			'sendChatMessageReaction'
+		);
 		const { result } = renderHook(() => useBubbleReactions(simpleTextMessage), {
 			wrapper: ProvidersWrapper
 		});
@@ -91,7 +93,10 @@ describe('Bubble Contextual Menu - other user messages', () => {
 
 	test('Sent reaction is highlight', async () => {
 		const store = useStore.getState();
-		const spyOnSendChatMessageReaction = vi.spyOn(xmppClient, 'sendChatMessageReaction');
+		const spyOnSendChatMessageReaction = vi.spyOn(
+			store.connections.xmppClient,
+			'sendChatMessageReaction'
+		);
 
 		store.addFastening([reactionToSimpleTextMessage]);
 		const { result } = renderHook(() => useBubbleReactions(simpleTextMessage), {

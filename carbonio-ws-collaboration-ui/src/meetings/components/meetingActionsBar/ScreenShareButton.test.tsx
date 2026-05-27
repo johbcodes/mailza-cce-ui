@@ -25,28 +25,21 @@ describe('ScreenShare button', () => {
 	test('Should render the component', async () => {
 		useParams.mockReturnValue({ meetingId: meeting.id });
 		setup(<ScreenShareButton />);
-		expect(await screen.findByRole('button')).toBeVisible();
+		expect(await screen.findByTestId('screenshare-button')).toBeVisible();
 	});
 
 	test('ScreenShare button is disabled when websocket is down', async () => {
 		useStore.getState().setWebsocketStatus(false);
 		useParams.mockReturnValue({ meetingId: meeting.id });
 		setup(<ScreenShareButton />);
-		expect(await screen.findByRole('button')).toBeDisabled();
-	});
-
-	test('ScreenShare button is disabled when message broker is down', async () => {
-		useStore.getState().setMessageBrokerStatus(false);
-		useParams.mockReturnValue({ meetingId: meeting.id });
-		setup(<ScreenShareButton />);
-		expect(await screen.findByRole('button')).toBeDisabled();
+		expect(await screen.findByTestId('screenshare-button')).toBeDisabled();
 	});
 
 	test('ScreenSharingOff icon when screenshare is disabled', async () => {
 		useParams.mockReturnValue({ meetingId: meeting.id });
 		const store = useStore.getState();
 		store.setWebsocketStatus(true);
-		store.setLoginInfo({ id: 'userId', name: 'User' });
+		store.setLoginInfo('userId', 'User', 'User');
 		store.addMeetings([
 			createMockMeeting({
 				id: meeting.id,
@@ -54,14 +47,14 @@ describe('ScreenShare button', () => {
 			})
 		]);
 		setup(<ScreenShareButton />);
-		const disabledScreenShareIcon = await screen.findByRole('button');
+		const disabledScreenShareIcon = await screen.findByTestId('icon: ScreenSharingOff');
 		expect(disabledScreenShareIcon).toBeVisible();
 	});
 
 	test('ScreenSharingOn icon when screenshare is enabled', async () => {
 		const store = useStore.getState();
 		store.setWebsocketStatus(true);
-		store.setLoginInfo({ id: 'userId', name: 'User' });
+		store.setLoginInfo('userId', 'User', 'User');
 		store.addMeetings([
 			createMockMeeting({
 				id: meeting.id,
@@ -72,7 +65,7 @@ describe('ScreenShare button', () => {
 			meetingId: meeting.id,
 			route: MEETINGS_ROUTES.MEETING
 		});
-		const enabledScreenShareIcon = await screen.findByRole('button');
+		const enabledScreenShareIcon = await screen.findByTestId('icon: ScreenSharingOn');
 		expect(enabledScreenShareIcon).toBeVisible();
 	});
 });

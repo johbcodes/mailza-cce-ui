@@ -10,7 +10,7 @@ import { useAuthenticated } from '@zextras/carbonio-shell-ui';
 import ShimmerEntryMeetingView from './shimmers/ShimmerEntryMeetingView';
 import { MEETINGS_PATH } from '../../constants/appConstants';
 import useRouting from '../../hooks/useRouting';
-import { getScheduledMeetingName } from '../../network';
+import { MeetingsApi } from '../../network';
 import { PAGE_INFO_TYPE } from '../contexts/routerContext';
 
 const AccessPage = (): ReactElement => {
@@ -33,7 +33,7 @@ const AccessPage = (): ReactElement => {
 
 	useEffect(() => {
 		if (!authenticated) {
-			getScheduledMeetingName(meetingId)
+			MeetingsApi.getScheduledMeetingName(meetingId)
 				.then(() => {
 					goToExternalLoginPage();
 				})

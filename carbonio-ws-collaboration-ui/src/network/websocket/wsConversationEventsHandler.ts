@@ -6,10 +6,11 @@
 import { EventName, sendCustomEvent } from '../../hooks/useEventListener';
 import { getMeetingIdFromRoom } from '../../store/selectors/RoomsSelectors';
 import useStore from '../../store/Store';
+import { GetMeetingResponse } from '../../types/network/responses/meetingsResponses';
+import { GetRoomResponse } from '../../types/network/responses/roomsResponses';
 import { WsEvent, WsEventType } from '../../types/network/websocket/wsEvents';
 import { RoomType } from '../../types/store/RoomTypes';
-import { getMeeting, getRoom } from '../index';
-import { xmppClient } from '../xmpp/XMPPClient';
+import { MeetingsApi, RoomsApi } from '../index';
 
 export const wsConversationEventsHandler = (event: WsEvent): void => {
 	const state = useStore.getState();
@@ -17,8 +18,10 @@ export const wsConversationEventsHandler = (event: WsEvent): void => {
 
 	switch (event.type) {
 		case WsEventType.ROOM_CREATED: {
-			getRoom(event.roomId).then((response) => state.addRooms([response]));
-			xmppClient.setOnline();
+			RoomsApi.getRoom(event.roomId).then((response: GetRoomResponse) =>
+				state.addRooms([response])
+			);
+			state.connections.xmppClient.setOnline();
 			break;
 		}
 		case WsEventType.ROOM_UPDATED: {
@@ -59,10 +62,12 @@ export const wsConversationEventsHandler = (event: WsEvent): void => {
 		}
 		case WsEventType.ROOM_MEMBER_ADDED: {
 			if (isMyId(event.userId)) {
-				getRoom(event.roomId).then((response) => {
+				RoomsApi.getRoom(event.roomId).then((response: GetRoomResponse) => {
 					state.addRooms([response]);
 					if (response.meetingId) {
-						getMeeting(response.id).then((meetingResponse) => state.addMeetings([meetingResponse]));
+						MeetingsApi.getMeeting(response.id).then((meetingResponse: GetMeetingResponse) =>
+							state.addMeetings([meetingResponse])
+						);
 					}
 				});
 			} else {

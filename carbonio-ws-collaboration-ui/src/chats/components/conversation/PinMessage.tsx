@@ -22,7 +22,6 @@ import AttachmentSmallView from './messageBubbles/AttachmentSmallView';
 import ForwardInfo from './messageBubbles/ForwardInfo';
 import useAvatarUtilities from '../../../hooks/useAvatarUtilities';
 import { usePinMessage } from '../../../hooks/usePinMessage';
-import { xmppClient } from '../../../network/xmpp/XMPPClient';
 import {
 	getIsMessageSelectedAlreadyStored,
 	getIsPinnedMessageSelected
@@ -76,14 +75,10 @@ const TextExpanded = styled(Text)`
 
 const ExpandedMessageWithThumbnail = ({
 	attachment,
-	messageText,
-	roomId,
-	messageDate
+	messageText
 }: {
 	attachment: AttachmentMessageType;
 	messageText: string;
-	roomId: string;
-	messageDate: number;
 }): React.JSX.Element => (
 	<Container gap={'0.5rem'} crossAlignment="flex-start">
 		<RoundedRow
@@ -93,7 +88,7 @@ const ExpandedMessageWithThumbnail = ({
 			width={'fill'}
 			mainAlignment="flex-start"
 		>
-			<AttachmentSmallView attachment={attachment} roomId={roomId} messageDate={messageDate} />
+			<AttachmentSmallView attachment={attachment} />
 			<Text overflow="break-word" color={'gray1'} size="small">
 				{attachment.name}
 			</Text>
@@ -146,6 +141,7 @@ export const PinMessage = ({ pinnedMessage }: PinMessageProps): React.JSX.Elemen
 		}, 5000);
 
 		if (!isMessageInStore && !isMessageSelected) {
+			const { xmppClient } = useStore.getState().connections;
 			xmppClient
 				.requestMessageResultHistoryToId(pinnedMessage.roomId, pinnedMessage.stanzaId)
 				.then(() => {
@@ -178,8 +174,6 @@ export const PinMessage = ({ pinnedMessage }: PinMessageProps): React.JSX.Elemen
 				<ExpandedMessageWithThumbnail
 					attachment={pinnedMessage.attachment}
 					messageText={pinnedMessage.text}
-					roomId={pinnedMessage.roomId}
-					messageDate={pinnedMessage.date}
 				/>
 			);
 		}

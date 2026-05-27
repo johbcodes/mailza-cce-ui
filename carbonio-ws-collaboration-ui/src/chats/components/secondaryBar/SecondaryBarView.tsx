@@ -51,9 +51,7 @@ const SecondaryBarView: React.FC<SecondaryBarSingleGroupsViewProps> = ({ expande
 	const videoCallEnabled = useStore((store) => getAttribute(store, 'videoCallEnabled'));
 	const areConversationsToShow = useStore(getAreConversationsToShowSelector);
 	const chatsBeNetworkStatus = useStore(({ connections }) => connections.status.chats_be);
-	const privateChatCreation = useStore((store) =>
-		getAttribute(store, 'privateChatCreationEnabled')
-	);
+	const privateChatCreation = useStore((store) => getAttribute(store, 'privateChatCreation'));
 
 	const [filteredInput, setFilteredInput] = useState('');
 

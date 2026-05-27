@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 import { MultiActionButton } from './MultiActionButton';
 import useMediaDevices from '../../../hooks/useMediaDevices';
-import { updateAudioStreamStatus } from '../../../network';
+import { MeetingsApi } from '../../../network';
 import { getSelectedAudioDeviceId } from '../../../store/selectors/ActiveMeetingSelectors';
 import { getParticipantAudioStatus } from '../../../store/selectors/MeetingSelectors';
 import { getUserId } from '../../../store/selectors/SessionSelectors';
@@ -60,7 +60,6 @@ const MicrophoneButton = ({
 	const setSelectedDeviceId = useStore((store) => store.setSelectedDeviceId);
 	const bidirectionalAudioConn = useStore((store) => store.activeMeeting?.bidirectionalAudioConn);
 	const websocketNetworkStatus = useStore(({ connections }) => connections.status.websocket);
-	const messageBrokerStatus = useStore(({ connections }) => connections.status.messageBroker);
 
 	const { permission, deviceList, noDevices } = useMediaDevices('audio');
 
@@ -97,7 +96,7 @@ const MicrophoneButton = ({
 				getAudioStream(selectedAudioDeviceId)
 					.then((stream) => {
 						bidirectionalAudioConn?.updateLocalStreamTrack(stream).then(() => {
-							updateAudioStreamStatus(meetingId!, !audioStatus);
+							MeetingsApi.updateAudioStreamStatus(meetingId!, !audioStatus);
 						});
 					})
 					.catch((e) => {
@@ -105,7 +104,7 @@ const MicrophoneButton = ({
 					});
 			} else {
 				bidirectionalAudioConn?.closeRtpSenderTrack();
-				updateAudioStreamStatus(meetingId!, !audioStatus);
+				MeetingsApi.updateAudioStreamStatus(meetingId!, !audioStatus);
 			}
 		},
 		[audioStatus, bidirectionalAudioConn, meetingId, selectedAudioDeviceId]
@@ -115,11 +114,6 @@ const MicrophoneButton = ({
 		if (!websocketNetworkStatus) return disableButtonLabel;
 		return audioStatus ? disableMicLabel : enableMicLabel;
 	}, [websocketNetworkStatus, disableButtonLabel, audioStatus, disableMicLabel, enableMicLabel]);
-
-	const disabled = useMemo(
-		() => !websocketNetworkStatus || !messageBrokerStatus || permission !== 'granted' || noDevices,
-		[messageBrokerStatus, noDevices, permission, websocketNetworkStatus]
-	);
 
 	return (
 		<Tooltip
@@ -131,7 +125,7 @@ const MicrophoneButton = ({
 				setShowItems={setIsAudioListOpen}
 				onClick={toggleAudioStream}
 				items={mediaAudioList}
-				disabled={disabled}
+				disabled={!websocketNetworkStatus || permission !== 'granted' || noDevices}
 				data-testid="microphone-button"
 				icon={audioStatus ? 'Mic' : 'MicOff'}
 				listRef={audioDropdownRef}

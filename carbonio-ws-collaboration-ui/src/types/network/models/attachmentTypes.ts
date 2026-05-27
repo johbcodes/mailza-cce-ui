@@ -12,8 +12,11 @@ export type Attachment = {
 	userId: string;
 	roomId: string;
 	createdAt: string;
-	messageId?: string;
-	stanzaId?: string;
+};
+
+export type AttachmentsPagination = {
+	filter: string;
+	attachments: Attachment[];
 };
 
 export type AdditionalHeaders = {
@@ -21,31 +24,4 @@ export type AdditionalHeaders = {
 	messageId?: string;
 	replyId?: string;
 	area?: string;
-};
-
-export type AttachmentsSortBy = 'created_at' | 'size';
-
-export type AttachmentsSortOrder = 'asc' | 'desc';
-
-export type GetRoomAttachmentsParams = {
-	limit: number;
-	cursor?: string;
-	userId?: string;
-	mimeType?: string;
-	createdAfter?: string;
-	createdBefore?: string;
-	minSize?: number;
-	maxSize?: number;
-	sortBy?: AttachmentsSortBy;
-	order?: AttachmentsSortOrder;
-};
-
-export type GetRoomAttachmentsResponse = {
-	attachments: Array<Attachment>;
-	cursor?: string;
-};
-
-export type BulkDeleteRoomAttachmentsResponse = {
-	successIds: Array<string>;
-	failedIds: Array<string>;
 };

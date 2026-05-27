@@ -32,7 +32,7 @@ const single2 = createMockRoom({
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: 'sessionId' });
+	store.setLoginInfo('sessionId', 'User Name');
 	store.setUserInfo([user1, user2, user3]);
 });
 

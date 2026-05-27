@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { act, screen, waitFor, within } from '@testing-library/react';
 import { Input } from '@zextras/carbonio-design-system';
 import { reduce, sample, size } from 'lodash';
@@ -67,7 +69,7 @@ describe('Board container', () => {
 			const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 			act(() => {
 				// run updateBoardPosition debounced fn
-				vi.advanceTimersToNextTimer();
+				jest.advanceTimersToNextTimer();
 			});
 			const title1 = screen.getByText('title1');
 			expect(title1).toBeVisible();
@@ -102,7 +104,7 @@ describe('Board container', () => {
 			const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 			act(() => {
 				// run updateBoardPosition debounced fn
-				vi.advanceTimersToNextTimer();
+				jest.advanceTimersToNextTimer();
 			});
 
 			const chevronDownIcon = getByRoleWithIcon('button', { icon: 'ChevronDown' });
@@ -213,7 +215,7 @@ describe('Board container', () => {
 								setup(<BoardContainer />);
 								act(() => {
 									// run updateBoardPosition debounced fn
-									vi.advanceTimersToNextTimer();
+									jest.advanceTimersToNextTimer();
 								});
 								const board = screen.getByTestId(TESTID_SELECTORS.board);
 								const boardInitialSizeAndPos = buildBoardSizeAndPosition(
@@ -254,7 +256,7 @@ describe('Board container', () => {
 			setup(<BoardContainer />);
 			act(() => {
 				// run updateBoardPosition debounced fn
-				vi.advanceTimersToNextTimer();
+				jest.advanceTimersToNextTimer();
 			});
 			const border: Border = 'nw';
 			const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -305,7 +307,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		setupBoardSizes(board, buildBoardSizeAndPosition());
@@ -321,7 +323,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -352,7 +354,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		setupBoardSizes(board, buildBoardSizeAndPosition());
@@ -368,7 +370,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -391,7 +393,7 @@ describe('Board container', () => {
 		await user.click(getByRoleWithIcon('button', { icon: ICONS.enlargeBoard }));
 		await user.click(getByRoleWithIcon('button', { icon: ICONS.reduceBoard }));
 		act(() => {
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		expect(board).toHaveStyle({
 			height: `${boardNewSizeAndPos.height}px`,
@@ -427,7 +429,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -452,7 +454,7 @@ describe('Board container', () => {
 			reopenBoards();
 		});
 		act(() => {
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		expect(board).toHaveStyle({
 			height: `${boardNewSizeAndPos.height}px`,
@@ -468,7 +470,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		const boardInitialSizeAndPos = buildBoardSizeAndPosition();
@@ -480,7 +482,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -507,7 +509,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -530,7 +532,7 @@ describe('Board container', () => {
 		await user.click(getByRoleWithIcon('button', { icon: ICONS.resetBoardSize }));
 		act(() => {
 			// run move timer
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		await waitFor(() =>
 			expect(JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_BOARD_SIZE) ?? '')).toEqual({})
@@ -546,7 +548,7 @@ describe('Board container', () => {
 		setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const rightBorder: Border = 'e';
 		const leftBorder: Border = 'w';
@@ -600,7 +602,7 @@ describe('Board container', () => {
 		};
 		act(() => {
 			window.resizeTo(newWindowSize.width, newWindowSize.height);
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		expect(board).toHaveStyle({
 			height: `${boardNewSizeAndPos.height}px`,
@@ -614,7 +616,7 @@ describe('Board container', () => {
 		setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const rightBorder: Border = 'e';
 		const leftBorder: Border = 'w';
@@ -683,7 +685,7 @@ describe('Board container', () => {
 
 		act(() => {
 			window.resizeTo(initialWindowSize.width, initialWindowSize.height);
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 
 		expect(board).toHaveStyle({
@@ -698,7 +700,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -734,7 +736,7 @@ describe('Board container', () => {
 		setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		const elementForMove = screen.getByTestId(TESTID_SELECTORS.boardHeader);
@@ -763,7 +765,7 @@ describe('Board container', () => {
 		setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		const elementForMove = screen.getByTestId(TESTID_SELECTORS.boardHeader);
@@ -808,7 +810,7 @@ describe('Board container', () => {
 		setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -859,7 +861,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const border: Border = 'n';
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
@@ -883,7 +885,7 @@ describe('Board container', () => {
 		await user.click(getByRoleWithIcon('button', { icon: ICONS.resetBoardSize }));
 		act(() => {
 			// run move timer
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		await waitFor(() =>
 			expect(JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_BOARD_SIZE) || '')).toEqual({})
@@ -920,7 +922,7 @@ describe('Board container', () => {
 		const { getAllByRoleWithIcon } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		const elementForMove = screen.getByTestId(TESTID_SELECTORS.boardHeader);
@@ -975,7 +977,7 @@ describe('Board container', () => {
 		const { user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const inputElement = screen.getByRole<HTMLInputElement>('textbox', { name: /board input/i });
 		expect(inputElement).toBeVisible();
@@ -990,7 +992,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		setupBoardSizes(board, buildBoardSizeAndPosition());
@@ -1015,7 +1017,7 @@ describe('Board container', () => {
 		const { getByRoleWithIcon, user } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		setupBoardSizes(board, buildBoardSizeAndPosition());
@@ -1038,7 +1040,7 @@ describe('Board container', () => {
 		const { user, getByRoleWithIcon } = setup(<BoardContainer />);
 		act(() => {
 			// run updateBoardPosition debounced fn
-			vi.advanceTimersToNextTimer();
+			jest.advanceTimersToNextTimer();
 		});
 		const board = screen.getByTestId(TESTID_SELECTORS.board);
 		const elementForMove = screen.getByTestId(TESTID_SELECTORS.boardHeader);

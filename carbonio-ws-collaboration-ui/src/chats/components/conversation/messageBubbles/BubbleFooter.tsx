@@ -7,7 +7,7 @@
 import React, { FC, useMemo, useRef } from 'react';
 
 import styled from '@emotion/styled';
-import { Container, Icon, Padding, Row, Text, Tooltip } from '@zextras/carbonio-design-system';
+import { Container, Icon, Row, Text, Tooltip } from '@zextras/carbonio-design-system';
 import { includes } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
@@ -148,14 +148,12 @@ const BubbleFooter: FC<BubbleFooterProps> = ({
 							ref={ref}
 						>
 							<Tooltip label={ackTooltip}>
-								<Padding width="fit-content" all="extrasmall">
-									<CustomIcon
-										$clickable={readByClickable}
-										size="small"
-										icon={ackIcon}
-										color={ackIconColor}
-									/>
-								</Padding>
+								<CustomIcon
+									$clickable={readByClickable}
+									size="small"
+									icon={ackIcon}
+									color={ackIconColor}
+								/>
 							</Tooltip>
 							{message.roomId && message.stanzaId && readByClickable && (
 								<ReadByPopoverList

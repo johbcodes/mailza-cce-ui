@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { act, waitFor } from '@testing-library/react';
 import { api } from '@zextras/carbonio-ui-soap-lib';
 
@@ -51,7 +53,7 @@ describe('Shell utility bar', () => {
 			id: 'account-menu-action',
 			label: 'Account menu action',
 			icon: 'CloudUploadOutline',
-			execute: vi.fn(),
+			execute: jest.fn(),
 			disabled: false
 		} satisfies AccountMenuAction;
 
@@ -76,7 +78,7 @@ describe('Shell utility bar', () => {
 			id: 'account-menu-action',
 			label: 'Account menu action',
 			icon: 'CloudUploadOutline',
-			execute: vi.fn(),
+			execute: jest.fn(),
 			disabled: false
 		} satisfies AccountMenuAction;
 
@@ -101,7 +103,7 @@ describe('Shell utility bar', () => {
 			id: 'account-menu-action',
 			label: 'Account menu action',
 			icon: 'CloudUploadOutline',
-			execute: vi.fn(),
+			execute: jest.fn(),
 			disabled: true
 		} satisfies AccountMenuAction;
 
@@ -126,7 +128,7 @@ describe('Shell utility bar', () => {
 			id: 'account-menu-action-1',
 			label: 'Account menu action 1',
 			icon: 'CloudUploadOutline',
-			execute: vi.fn(),
+			execute: jest.fn(),
 			disabled: false
 		} satisfies AccountMenuAction;
 		const action2 = {
@@ -134,7 +136,7 @@ describe('Shell utility bar', () => {
 			id: 'account-menu-action-2',
 			label: 'Account menu action 2',
 			icon: 'CloudUploadOutline',
-			execute: vi.fn(),
+			execute: jest.fn(),
 			disabled: false
 		} satisfies AccountMenuAction;
 		const action3 = {
@@ -142,7 +144,7 @@ describe('Shell utility bar', () => {
 			id: 'account-menu-action-3',
 			label: 'Account menu action 3',
 			icon: 'CloudUploadOutline',
-			execute: vi.fn(),
+			execute: jest.fn(),
 			disabled: false
 		} satisfies AccountMenuAction;
 
@@ -177,15 +179,15 @@ describe('Shell utility bar', () => {
 	});
 
 	it('should redirect to custom logout url when user clicks on logout', async () => {
-		vi.spyOn(api, 'endSession').mockReturnValueOnce(
+		jest.spyOn(api, 'endSession').mockReturnValueOnce(
 			Promise.resolve({
 				Header: { context: {} },
 				Body: {}
 			})
 		);
 		const customLogout = 'custom.logout.url';
-		const goToFn = vi.spyOn(networkUtils, 'goTo').mockImplementation(() => {});
-		const goToLoginFn = vi.spyOn(networkUtils, 'goToLogin').mockImplementation(() => {});
+		const goToFn = jest.spyOn(networkUtils, 'goTo').mockImplementation();
+		const goToLoginFn = jest.spyOn(networkUtils, 'goToLogin').mockImplementation();
 		useLoginConfigStore.setState((s) => ({ ...s, carbonioWebUiLogoutURL: customLogout }));
 		const { user } = setup(<ShellUtilityBar />);
 		const logout = waitForRequest('get', '/logout');
@@ -193,7 +195,7 @@ describe('Shell utility bar', () => {
 		await user.click(screen.getByText(/logout/i));
 		await logout;
 		act(() => {
-			vi.runOnlyPendingTimers();
+			jest.runOnlyPendingTimers();
 		});
 		await waitFor(() => expect(goToFn).toHaveBeenCalled());
 		expect(goToFn).toHaveBeenCalledTimes(1);
@@ -202,14 +204,14 @@ describe('Shell utility bar', () => {
 	});
 
 	test('should redirect to login if no custom logout url is set when user clicks on logout', async () => {
-		vi.spyOn(api, 'endSession').mockReturnValueOnce(
+		jest.spyOn(api, 'endSession').mockReturnValueOnce(
 			Promise.resolve({
 				Header: { context: {} },
 				Body: {}
 			})
 		);
-		const goToFn = vi.spyOn(networkUtils, 'goTo').mockImplementation(() => {});
-		const goToLoginFn = vi.spyOn(networkUtils, 'goToLogin').mockImplementation(() => {});
+		const goToFn = jest.spyOn(networkUtils, 'goTo').mockImplementation();
+		const goToLoginFn = jest.spyOn(networkUtils, 'goToLogin').mockImplementation();
 		useLoginConfigStore.setState((s) => ({ ...s, carbonioWebUiLogoutURL: '' }));
 		const { user } = setup(<ShellUtilityBar />);
 		const logout = waitForRequest('get', '/logout');
@@ -217,7 +219,7 @@ describe('Shell utility bar', () => {
 		await user.click(screen.getByText(/logout/i));
 		await logout;
 		act(() => {
-			vi.runOnlyPendingTimers();
+			jest.runOnlyPendingTimers();
 		});
 		await waitFor(() => expect(goToLoginFn).toHaveBeenCalled());
 		expect(goToLoginFn).toHaveBeenCalledTimes(1);
@@ -225,7 +227,7 @@ describe('Shell utility bar', () => {
 	});
 
 	it('should dispatch customEvent when updating the view', async () => {
-		const handlerFn = vi.fn();
+		const handlerFn = jest.fn();
 		window.addEventListener('updateView', handlerFn);
 		const { user } = setup(<ShellUtilityBar />);
 		const accountUtilityMenu = screen.getByRoleWithIcon('button', {

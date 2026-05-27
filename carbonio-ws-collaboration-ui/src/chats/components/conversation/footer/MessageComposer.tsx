@@ -23,7 +23,7 @@ import {
 	useSnackbar
 } from '@zextras/carbonio-design-system';
 import { useUserSettings } from '@zextras/carbonio-shell-ui';
-import { debounce, forEach, throttle } from 'lodash';
+import { debounce, find, forEach, map, throttle } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import AttachmentSelector from './AttachmentSelector';
@@ -33,23 +33,24 @@ import MessageArea from './MessageArea';
 import { IME_LANGUAGES, MESSAGE_CHAR_LIMIT } from '../../../../constants/messageConstants';
 import useLoadFiles from '../../../../hooks/useLoadFiles';
 import useMessage from '../../../../hooks/useMessage';
-import { addRoomAttachment } from '../../../../network';
-import { xmppClient } from '../../../../network/xmpp/XMPPClient';
+import { AttachmentsApi, RoomsApi } from '../../../../network';
 import {
 	getFilesToUploadArray,
 	getReferenceMessage
 } from '../../../../store/selectors/ActiveConversationsSelectors';
-import { getLastMessageSelector } from '../../../../store/selectors/ChatsRegistrySelectors';
+import { getLastMessageIdSelector } from '../../../../store/selectors/ChatsRegistrySelectors';
+import { getXmppClient } from '../../../../store/selectors/ConnectionSelector';
 import { getAttribute, getUserId } from '../../../../store/selectors/SessionSelectors';
 import { getIsUserGuest } from '../../../../store/selectors/UsersSelectors';
 import useStore from '../../../../store/Store';
+import { AddRoomAttachmentResponse } from '../../../../types/network/responses/roomsResponses';
 import {
 	FileToUpload,
 	messageActionType,
 	ReferenceMessage
 } from '../../../../types/store/ActiveConversationTypes';
-import { MessageType, TextMessage } from '../../../../types/store/ChatsRegistryTypes';
-import { getImageSize, isAttachmentImage } from '../../../../utils/attachmentUtils';
+import { Message, MessageType, TextMessage } from '../../../../types/store/ChatsRegistryTypes';
+import { isAttachmentImage } from '../../../../utils/attachmentUtils';
 import { BrowserUtils } from '../../../../utils/BrowserUtils';
 import { canPerformAction } from '../../../../utils/MessageActionsUtils';
 
@@ -83,6 +84,8 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 	textMessage,
 	setTextMessage
 }) => {
+	const xmppClient = useStore(getXmppClient);
+
 	const [t] = useTranslation();
 	const writeToSendTooltip = t('tooltip.writeToSend', 'Write a message to send it');
 	const sendMessageLabel = t('tooltip.sendMessage', 'Send message');
@@ -97,11 +100,15 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 	const unsetReferenceMessage = useStore((store) => store.unsetReferenceMessage);
 	const setDraftMessage = useStore((store) => store.setDraftMessage);
 	const removeFilesToAttach = useStore((store) => store.removeFilesToAttach);
+	const setFileDescription = useStore((store) => store.setFileDescription);
 	const filesToUploadArray = useStore((store) => getFilesToUploadArray(store, roomId));
+	const lastMessageId: string | undefined = useStore((state) =>
+		getLastMessageIdSelector(state, roomId)
+	);
 	const messageEditTimeLimit = useStore((store) =>
 		getAttribute(store, 'messageEditTimeLimit')
 	) as number;
-	const lastMessageOfRoom = useStore((state) => getLastMessageSelector(state, roomId));
+	const lastMessageOfRoom: Message | undefined = useMessage(roomId, lastMessageId ?? '');
 	const setReferenceMessage = useStore((store) => store.setReferenceMessage);
 	const maxAttachmentSize = useStore((store) => getAttribute(store, 'maxAttachmentSize'));
 
@@ -183,28 +190,28 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 	const uploadAttachmentPromise = async (
 		file: FileToUpload,
 		controller: AbortController
-	): Promise<{ id: string }> => {
+	): Promise<AddRoomAttachmentResponse> => {
 		const fileName = file.file.name;
 		const { signal } = controller;
 
-		const lastFileId = filesToUploadArray?.at(-1)?.fileId;
-		const isLastFile = filesToUploadArray && file.fileId === lastFileId;
+		// Send as reply only the first file of the array
+		const sendAsReply = filesToUploadArray && file.fileId === filesToUploadArray[0].fileId;
 
 		let area;
 		if (isAttachmentImage(file.file.type)) {
 			try {
-				const imageSize = await getImageSize(file.localUrl);
+				const imageSize = await AttachmentsApi.getImageSize(file.localUrl);
 				area = `${imageSize.width}x${imageSize.height}`;
 			} catch (err) {
 				return Promise.reject(err);
 			}
 		}
-		return addRoomAttachment(
+		return RoomsApi.addRoomAttachment(
 			roomId,
 			file.file,
 			{
-				description: isLastFile ? textMessage.trim() : '',
-				replyId: isLastFile ? referenceMessage?.stanzaId : undefined,
+				description: file.description,
+				replyId: sendAsReply ? referenceMessage?.stanzaId : undefined,
 				area
 			},
 			signal
@@ -233,7 +240,7 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 		sendThrottleIsWriting.cancel();
 		sendDebouncedPause.cancel();
 		xmppClient.sendPaused(roomId);
-	}, [sendThrottleIsWriting, sendDebouncedPause, roomId]);
+	}, [sendThrottleIsWriting, sendDebouncedPause, xmppClient, roomId]);
 
 	const actionToPerformBasedOnType = useCallback(
 		(
@@ -275,21 +282,28 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 				}
 			}
 		},
-		[roomId, unsetReferenceMessage]
+		[roomId, unsetReferenceMessage, xmppClient]
 	);
 
 	const sendMessage = useCallback((): void => {
 		sendStopWriting();
 		const message = textMessage.trim();
-		if (filesToUploadArray && filesToUploadArray.length > 0) {
-			const abortControllerList: AbortController[] = filesToUploadArray.map(
-				() => new AbortController()
-			);
+		if (filesToUploadArray) {
+			const abortControllerList: AbortController[] = [];
+			const copyOfFilesToUploadArray = map(filesToUploadArray, (file) => {
+				const copyOfFile = { ...file };
+				if (copyOfFile.hasFocus) {
+					copyOfFile.description = message;
+				}
+				const controller = new AbortController();
+				abortControllerList.push(controller);
+				return copyOfFile;
+			});
 
 			setIsUploading(true);
 			setListAbortController(abortControllerList);
-			const uploadFilesInOrder = filesToUploadArray.reduce(
-				(acc: Promise<{ id: string } | void>, file, i) =>
+			const uploadFilesInOrder = copyOfFilesToUploadArray.reduce(
+				(acc: Promise<AddRoomAttachmentResponse | void>, file, i) =>
 					acc.then(() => uploadAttachmentPromise(file, abortControllerList[i])),
 				Promise.resolve()
 			);
@@ -320,6 +334,7 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
+		xmppClient,
 		roomId,
 		textMessage,
 		sendStopWriting,
@@ -338,8 +353,12 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 	const handleTypingMessage = useCallback(
 		(e: BaseSyntheticEvent): void => {
 			setTextMessage(e.target.value);
+			const focusedFile = filesToUploadArray?.find((file) => file.hasFocus);
+			if (focusedFile) {
+				setFileDescription(roomId, focusedFile.fileId, e.target.value);
+			}
 		},
-		[setTextMessage]
+		[setTextMessage, filesToUploadArray, roomId, setFileDescription]
 	);
 
 	const handleKeyUp = useCallback(
@@ -471,11 +490,18 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 		};
 	}, [roomId, setTextMessage]);
 
+	const isDisabledWhileAttachingFile = useMemo(() => {
+		if (filesToUploadArray) {
+			return !find(filesToUploadArray, (file) => file.hasFocus);
+		}
+		return false;
+	}, [filesToUploadArray]);
+
 	const showAttachFileButton = useMemo(
 		() =>
 			!isUserGuest &&
 			!isUploading &&
-			(!filesToUploadArray || filesToUploadArray.length === 0) &&
+			!filesToUploadArray &&
 			(!referenceMessage || referenceMessage.actionType === messageActionType.REPLY),
 		[filesToUploadArray, isUploading, isUserGuest, referenceMessage]
 	);
@@ -498,6 +524,7 @@ const MessageComposer: React.FC<ConversationMessageComposerProps> = ({
 				handleKeyDownTextarea={handleKeyDown}
 				handleKeyUpTextarea={handleKeyUp}
 				handleOnPaste={handlePaste}
+				isDisabled={isDisabledWhileAttachingFile}
 			/>
 			{showAttachFileButton && <AttachmentSelector roomId={roomId} />}
 			{isUploading && (

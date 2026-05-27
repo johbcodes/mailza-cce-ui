@@ -13,7 +13,6 @@ import {
 	ActiveConversation,
 	ActiveConversationsSlice,
 	FileToUpload,
-	InfoPanelTab,
 	messageActionType
 } from '../../types/store/ActiveConversationTypes';
 import {
@@ -28,8 +27,7 @@ const initActiveConversation = (draft: RootStore, roomId: string): ActiveConvers
 		draft.activeConversations[roomId] = {
 			infoPanelStatus: {
 				actionsAccordionIsOpened: true,
-				participantsAccordionIsOpened: true,
-				selectedInfoTab: InfoPanelTab.ACTIONS
+				participantsAccordionIsOpened: true
 			}
 		};
 	}
@@ -198,10 +196,57 @@ export const useActiveConversationsSlice: StateCreator<
 					delete conversation.filesToAttach;
 					return;
 				}
+
+				const indexFileToRemove = findIndex(
+					conversation.filesToAttach,
+					(file) => file.fileId === fileId
+				);
+				if (indexFileToRemove !== -1) {
+					// Determine next file to focus
+					const nextFile =
+						conversation.filesToAttach[indexFileToRemove + 1] ||
+						conversation.filesToAttach[indexFileToRemove - 1];
+					if (nextFile) {
+						nextFile.hasFocus = true;
+					}
+				}
 				remove(conversation.filesToAttach, (file) => file.fileId === fileId);
 			}),
 			false,
 			'AC/REMOVE_FILE_TO_ATTACH'
+		);
+	},
+	setFileFocus: (roomId: string, fileId: string, active: boolean): void => {
+		set(
+			produce((draft: RootStore) => {
+				const { filesToAttach } = initActiveConversation(draft, roomId);
+				if (filesToAttach) {
+					filesToAttach.forEach((file) => {
+						file.hasFocus = file.fileId === fileId ? active : false;
+					});
+				}
+			}),
+			false,
+			'AC/SET_FILE_FOCUS'
+		);
+	},
+	setFileDescription: (roomId: string, fileId: string | undefined, description?: string): void => {
+		set(
+			produce((draft: RootStore) => {
+				const { filesToAttach } = initActiveConversation(draft, roomId);
+				if (filesToAttach) {
+					if (!fileId && filesToAttach.length > 0 && filesToAttach[0].hasFocus) {
+						filesToAttach[0].description = description ?? '';
+						return;
+					}
+					const fileToAttach = find(filesToAttach, (file) => file.fileId === fileId);
+					if (fileToAttach) {
+						fileToAttach.description = description ?? '';
+					}
+				}
+			}),
+			false,
+			'AC/SET_FILE_DESCRIPTION'
 		);
 	},
 	setForwardMessageList: (roomId: string, message: TextMessage): void => {
@@ -338,16 +383,6 @@ export const useActiveConversationsSlice: StateCreator<
 			}),
 			false,
 			'AC/SET_SELECTED_PINNED_MESSAGE'
-		);
-	},
-	setSelectedInfoTab: (roomId: string, tab: InfoPanelTab): void => {
-		set(
-			produce((draft: RootStore) => {
-				const conversation = initActiveConversation(draft, roomId);
-				conversation.infoPanelStatus.selectedInfoTab = tab;
-			}),
-			false,
-			'AC/SET_SELECTED_INFO_TAB'
 		);
 	}
 });

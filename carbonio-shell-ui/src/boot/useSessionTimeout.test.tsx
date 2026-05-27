@@ -4,36 +4,35 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import { renderHook } from '@testing-library/react';
-import type { Mock, MockInstance } from 'vitest';
 
 import { useSessionTimeout } from './useSessionTimeout';
 
-vi.mock('../network/logout');
-vi.mock('@zextras/carbonio-design-system', () => ({
-	useSnackbar: (): Mock => vi.fn()
+jest.mock('../network/logout');
+jest.mock('@zextras/carbonio-design-system', () => ({
+	useSnackbar: (): jest.Mock => jest.fn()
 }));
-vi.mock('react-i18next', () => ({
-	useTranslation: (): [Mock] => [vi.fn((key, defaultValue) => defaultValue)]
+jest.mock('react-i18next', () => ({
+	useTranslation: (): [jest.Mock] => [jest.fn((key, defaultValue) => defaultValue)]
 }));
 
 describe('useSessionTimeout - handleVisibilityChange', () => {
-	let mockDateNow: MockInstance;
-	let mockSetTimeout: MockInstance;
-	let mockClearTimeout: MockInstance;
+	let mockDateNow: jest.SpyInstance;
+	let mockSetTimeout: jest.SpyInstance;
+	let mockClearTimeout: jest.SpyInstance;
 
 	beforeAll(() => {
-		vi.useFakeTimers();
+		jest.useFakeTimers();
 	});
 
 	afterAll(() => {
-		vi.useRealTimers();
+		jest.useRealTimers();
 	});
 
 	beforeEach(() => {
-		vi.clearAllTimers();
-		mockDateNow = vi.spyOn(Date, 'now');
-		mockSetTimeout = vi.spyOn(global, 'setTimeout');
-		mockClearTimeout = vi.spyOn(global, 'clearTimeout');
+		jest.clearAllTimers();
+		mockDateNow = jest.spyOn(Date, 'now');
+		mockSetTimeout = jest.spyOn(global, 'setTimeout');
+		mockClearTimeout = jest.spyOn(global, 'clearTimeout');
 	});
 
 	afterEach(() => {

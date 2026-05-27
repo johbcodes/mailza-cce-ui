@@ -6,7 +6,7 @@
  */
 
 import { produce } from 'immer';
-import { filter, find, findLast, forEach, isEqual, size, some } from 'lodash';
+import { filter, find, findLast, forEach, size, some } from 'lodash';
 import { StateCreator } from 'zustand';
 
 import { MemberBe, RoomBe } from '../../types/network/models/roomBeTypes';
@@ -27,27 +27,11 @@ export const useRoomsStoreSlice: StateCreator<
 	RoomsStoreSlice
 > = (set) => ({
 	rooms: {},
-	addRooms: (roomsBe: RoomBe[], fullSync = false): void => {
+	addRooms: (roomsBe: RoomBe[]): void => {
 		set(
 			produce((draft: RootStore) => {
-				// Remove rooms that no longer exist on the server only during a full sync
-				if (fullSync) {
-					const incomingIds = new Set(roomsBe.map((r) => r.id));
-					forEach(Object.keys(draft.rooms), (roomId) => {
-						if (!incomingIds.has(roomId) && !draft.rooms[roomId]?.placeholder) {
-							const meetingId = getMeetingIdFromRoom(draft, roomId);
-							if (meetingId) delete draft.meetings[meetingId];
-
-							delete draft.rooms[roomId];
-							delete draft.activeConversations[roomId];
-							delete draft.chatsRegistry[roomId];
-						}
-					});
-				}
-
-				// Add or update only changed rooms
 				forEach(roomsBe, (roomBe) => {
-					const newRoom: Room = {
+					draft.rooms[roomBe.id] = {
 						id: roomBe.id,
 						name: roomBe.name,
 						description: roomBe.description,
@@ -59,11 +43,6 @@ export const useRoomsStoreSlice: StateCreator<
 						userSettings: roomBe.userSettings,
 						meetingId: roomBe.meetingId ?? draft.rooms[roomBe.id]?.meetingId
 					};
-
-					const existingRoom = draft.rooms[roomBe.id];
-					if (!existingRoom || !isEqual(existingRoom, newRoom)) {
-						draft.rooms[roomBe.id] = newRoom;
-					}
 
 					// Remove messages sent before the clearedAt timestamp
 					const clearedAt = roomBe.userSettings?.clearedAt;
@@ -77,7 +56,7 @@ export const useRoomsStoreSlice: StateCreator<
 				});
 			}),
 			false,
-			'ROOMS/SYNC_ROOMS'
+			'ROOMS/ADD_ROOMS'
 		);
 	},
 	removeRoom: (roomId: string): void => {

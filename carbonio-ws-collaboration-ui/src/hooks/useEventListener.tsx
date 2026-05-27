@@ -12,7 +12,6 @@ import {
 } from '../types/network/websocket/wsConversationEvents';
 import {
 	MeetingAudioStreamChangedEvent,
-	MeetingDeclinedEvent,
 	MeetingJoinedEvent,
 	MeetingParticipantClashedEvent,
 	MeetingParticipantHandRaisedEvent,
@@ -43,8 +42,7 @@ export enum EventName {
 	MEMBER_PROMOTED = 'memberPromoted',
 	MEMBER_DEMOTED = 'memberDemoted',
 	ROUTE_REDIRECT = 'routeRedirect',
-	MEETING_PARTICIPANT_RAISE_HAND = 'meetingParticipantRaiseHand',
-	MEETING_DECLINED = 'meetingDeclined'
+	MEETING_PARTICIPANT_RAISE_HAND = 'meetingParticipantRaiseHand'
 }
 
 export type NewMessageEvent = {
@@ -59,7 +57,7 @@ export type IncomingMeetingEvent = {
 
 export type RemovedMeetingNotificationEvent = {
 	name: EventName.REMOVED_MEETING_NOTIFICATION;
-	data: MeetingJoinedEvent | MeetingStoppedEvent | MeetingDeclinedEvent;
+	data: MeetingJoinedEvent | MeetingStoppedEvent;
 };
 
 export type ParticipantClashedEvent = {
@@ -127,11 +125,6 @@ export type MeetingParticipantRaiseHandEvent = {
 	data: MeetingParticipantHandRaisedEvent;
 };
 
-export type MeetingDeclinedUseEvent = {
-	name: EventName.MEETING_DECLINED;
-	data: MeetingDeclinedEvent;
-};
-
 type AppCustomEvent =
 	| NewMessageEvent
 	| IncomingMeetingEvent
@@ -148,8 +141,7 @@ type AppCustomEvent =
 	| MemberPromotedEvent
 	| MemberDemotedEvent
 	| RouteRedirectEvent
-	| MeetingParticipantRaiseHandEvent
-	| MeetingDeclinedUseEvent;
+	| MeetingParticipantRaiseHandEvent;
 
 export const sendCustomEvent = (event: AppCustomEvent): void => {
 	window.dispatchEvent(new CustomEvent(event.name, { detail: event.data }));

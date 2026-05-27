@@ -15,7 +15,7 @@ import {
 import useStore from '../Store';
 
 describe('Connections slice', () => {
-	test('XmppClient status', () => {
+	test('XmppClient', () => {
 		const { result } = renderHook(() => useStore());
 
 		act(() => result.current.setXmppStatus(true));
@@ -25,34 +25,23 @@ describe('Connections slice', () => {
 		expect(result.current.connections.status.xmpp).toBe(false);
 	});
 
-	test('WebSocketClient status', () => {
+	test('WobSocketClient', () => {
 		const { result } = renderHook(() => useStore());
 
 		act(() => result.current.setWebsocketStatus(true));
 		expect(result.current.connections.status.websocket).toBe(true);
-		expect(result.current.connections.status.messageBroker).toBe(true);
 
 		act(() => result.current.setWebsocketStatus(false));
 		expect(result.current.connections.status.websocket).toBe(false);
-		expect(result.current.connections.status.messageBroker).toBe(false);
 	});
 
-	test('ChatsBe status', () => {
+	test('ChatsBe', () => {
 		const { result } = renderHook(() => useStore());
 		act(() => result.current.setChatsBeStatus(true));
 		expect(result.current.connections.status.chats_be).toBe(true);
 
 		act(() => result.current.setChatsBeStatus(false));
 		expect(result.current.connections.status.chats_be).toBe(false);
-	});
-
-	test('MessageBroker status', () => {
-		const { result } = renderHook(() => useStore());
-		act(() => result.current.setMessageBrokerStatus(true));
-		expect(result.current.connections.status.messageBroker).toBe(true);
-
-		act(() => result.current.setMessageBrokerStatus(false));
-		expect(result.current.connections.status.messageBroker).toBe(false);
 	});
 
 	test('Reset XMPP data', () => {
@@ -68,7 +57,7 @@ describe('Connections slice', () => {
 
 		// API effects to store
 		act(() => {
-			result.current.setLoginInfo({ id: 'userId', name: 'User' });
+			result.current.setLoginInfo('userId', 'User');
 			result.current.setUserInfo([user]);
 			result.current.addRooms([room1, room2]);
 		});
@@ -77,9 +66,9 @@ describe('Connections slice', () => {
 
 		// XMPP effects to store
 		act(() => {
-			result.current.setLoginInfo({ id: 'userId', name: 'User' });
+			result.current.setLoginInfo('userId', 'User');
 			result.current.setUserInfo([user]);
-			result.current.setInboxMessages([message1]);
+			result.current.newInboxMessages([message1]);
 			result.current.updateHistory(room1.id, [message1]);
 			result.current.updateHistory(room2.id, [message2]);
 			result.current.updateReadStatus(room1.id, [marker1]);

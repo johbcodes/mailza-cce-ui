@@ -9,7 +9,6 @@ import { StateCreator, StoreApi, UseBoundStore, create as actualCreate } from 'z
 
 import useStore from '../src/store/Store';
 import { RootStore } from '../src/types/store/StoreTypes';
-import { xmppClient } from "../src/network/xmpp/XMPPClient";
 
 // a variable to hold reset functions for all stores declared in the app
 const storeResetFns = new Set<() => void>();
@@ -30,7 +29,7 @@ beforeEach(() => {
 	act(() => {
 		storeResetFns.forEach((resetFn) => resetFn());
 	});
-	xmppClient.features = ['zextras:iq:pin'];
+	useStore.getState().connections.xmppClient.features = ['zextras:iq:pin'];
 });
 
 afterEach(() => {

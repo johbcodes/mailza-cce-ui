@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import RecordingTimer from './RecordingTimer';
 import StartRecordingUser from './StartRecordingUser';
 import StopRecordingModal from './StopRecordingModal';
-import { startRecording } from '../../../../network';
+import { MeetingsApi } from '../../../../network';
 import { getRecordingAccordionStatus } from '../../../../store/selectors/ActiveMeetingSelectors';
 import { getMeetingRecordingTimestamp } from '../../../../store/selectors/MeetingSelectors';
 import useStore from '../../../../store/Store';
@@ -92,8 +92,8 @@ const RecordingAccordion: FC<RecordingAccordionProps> = ({ meetingId }) => {
 		[accordionStatus, setMeetingSidebarStatus]
 	);
 
-	const startRecordingAction = useCallback(() => {
-		startRecording(meetingId, folder.id)
+	const startRecording = useCallback(() => {
+		MeetingsApi.startRecording(meetingId, folder.id)
 			.then(() => {
 				createSnackbar({
 					key: new Date().toLocaleString(),
@@ -127,7 +127,7 @@ const RecordingAccordion: FC<RecordingAccordionProps> = ({ meetingId }) => {
 							width="fill"
 							color="success"
 							label={startButtonLabel}
-							onClick={startRecordingAction}
+							onClick={startRecording}
 						/>
 					)}
 					{!!recordingTimestamp && (
@@ -163,7 +163,7 @@ const RecordingAccordion: FC<RecordingAccordionProps> = ({ meetingId }) => {
 			recordingTimestamp,
 			recordingTooltipLabel,
 			startButtonLabel,
-			startRecordingAction,
+			startRecording,
 			stopButtonLabel
 		]
 	);

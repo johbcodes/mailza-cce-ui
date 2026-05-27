@@ -9,7 +9,6 @@ import useStore from '../../../store/Store';
 import { BackfillRequest, MessageRange } from '../../../types/store/ChatsRegistryTypes';
 import { getId } from '../utility/decodeJid';
 import { getRequiredAttribute } from '../utility/decodeStanza';
-import { xmppClient } from '../XMPPClient';
 
 function detectGaps(messageRanges: MessageRange[]): BackfillRequest[] {
 	if (messageRanges.length < 2) return [];
@@ -48,6 +47,7 @@ export function requestHistoryWithBackfillCallback(stanza: Element, queryId: str
 	const from = getRequiredAttribute(stanza, 'from');
 	const roomId = getId(from);
 	const store = useStore.getState();
+	const { xmppClient } = store.connections;
 
 	handleHistory(queryId, roomId);
 

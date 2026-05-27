@@ -6,10 +6,10 @@
 import React from 'react';
 
 export const previewContextMock = {
-	createPreview: vi.fn(),
-	initPreview: vi.fn(),
-	openPreview: vi.fn(),
-	emptyPreview: vi.fn()
+	createPreview: jest.fn(),
+	initPreview: jest.fn(),
+	openPreview: jest.fn(),
+	emptyPreview: jest.fn()
 };
 
 export const PreviewsManagerContext = React.createContext(previewContextMock);

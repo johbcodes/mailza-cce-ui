@@ -16,7 +16,6 @@ import MessageHistoryLoader from './MessageHistoryLoader';
 import ScrollButton from './ScrollButton';
 import useFirstUnreadMessage from './useFirstUnreadMessage';
 import useEventListener, { EventName, NewMessageEvent } from '../../../hooks/useEventListener';
-import { xmppClient } from '../../../network/xmpp/XMPPClient';
 import {
 	getHistoryIsFullyLoaded,
 	getIdMessageWhereScrollIsStopped,
@@ -27,6 +26,7 @@ import {
 	getMessagesSelector,
 	getMyLastMarkerOfRoom
 } from '../../../store/selectors/ChatsRegistrySelectors';
+import { getXmppClient } from '../../../store/selectors/ConnectionSelector';
 import { getUserId } from '../../../store/selectors/SessionSelectors';
 import useStore from '../../../store/Store';
 import { Message, MessageType } from '../../../types/store/ChatsRegistryTypes';
@@ -52,6 +52,7 @@ type ConversationProps = {
 };
 
 const MessagesList = ({ roomId }: ConversationProps): ReactElement => {
+	const xmppClient = useStore(getXmppClient);
 	const inputHasFocus = useStore((store) => getInputHasFocus(store, roomId));
 	const messages = useStore((store) => getMessagesSelector(store, roomId));
 	const roomMessages = useMemo(() => enhanceWithDateMessages(messages), [messages]);
@@ -92,7 +93,7 @@ const MessagesList = ({ roomId }: ConversationProps): ReactElement => {
 				}
 			}
 		},
-		[roomMessages, myLastMarker, inputHasFocus, myUserId]
+		[roomMessages, myLastMarker, inputHasFocus, myUserId, xmppClient]
 	);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

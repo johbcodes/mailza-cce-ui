@@ -3,58 +3,9 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import {
-	getImagePreviewURL,
-	getImageThumbnailURL,
-	getPdfPreviewURL,
-	getPdfThumbnailURL,
-	getURLAttachment
-} from '../network';
+import { AttachmentsApi } from '../network';
+import { AttachmentType, ImageQuality, ImageShape } from '../types/network/apis/IAttachmentsApi';
 import { AttachmentMessageType } from '../types/store/ChatsRegistryTypes';
-
-const PDF_MIME_TYPE = 'application/pdf';
-
-export enum AttachmentType {
-	JPEG = 'jpeg',
-	PNG = 'png',
-	GIF = 'gif',
-	SVG = 'svg',
-	WEBP = 'webp',
-	PDF = 'pdf',
-	DOCX = 'docx',
-	PPTX = 'pptx',
-	XLSX = 'xlsx',
-	MPKG = 'mpkg',
-	ODP = 'odp',
-	ODS = 'ods',
-	ODT = 'odt',
-	PPT = 'ppt',
-	XLS = 'xls',
-	MP4 = 'mp4',
-	WEBM = 'webm',
-	OGV = 'ogv',
-	MOV = 'mov'
-}
-
-export const VIDEO_MIME_TYPES = [
-	'video/mp4',
-	'video/webm',
-	'video/ogg',
-	'video/quicktime'
-] as const;
-
-export enum ImageQuality {
-	LOWEST = 'Lowest',
-	LOW = 'Low',
-	MEDIUM = 'Medium',
-	HIGH = 'High',
-	HIGHEST = 'Highest'
-}
-
-export enum ImageShape {
-	ROUNDED = 'Rounded',
-	RECTANGULAR = 'Rectangular'
-}
 
 export const extensionsSupported = [
 	{
@@ -84,7 +35,7 @@ export const extensionsSupported = [
 	},
 	{
 		extension: AttachmentType.PDF,
-		mimeType: PDF_MIME_TYPE,
+		mimeType: 'application/pdf',
 		preview: AttachmentType.JPEG
 	},
 	{
@@ -114,26 +65,6 @@ export const extensionsSupported = [
 	{
 		extension: AttachmentType.MPKG,
 		mimeType: 'application/vnd.apple.installer+xml'
-	},
-	{
-		extension: AttachmentType.MP4,
-		mimeType: 'video/mp4',
-		preview: AttachmentType.MP4
-	},
-	{
-		extension: AttachmentType.WEBM,
-		mimeType: 'video/webm',
-		preview: AttachmentType.WEBM
-	},
-	{
-		extension: AttachmentType.OGV,
-		mimeType: 'video/ogg',
-		preview: AttachmentType.OGV
-	},
-	{
-		extension: AttachmentType.MOV,
-		mimeType: 'video/quicktime',
-		preview: AttachmentType.MOV
 	}
 ];
 
@@ -184,10 +115,14 @@ export const getAttachmentDimensions = (
 
 export const getAttachmentURL = (attachmentId: string, mimeType: string): string | undefined => {
 	if (!isPreviewSupported(mimeType)) return undefined;
-	if (mimeType.startsWith('video/')) return getURLAttachment(attachmentId);
 	if (getAttachmentExtension(mimeType) === AttachmentType.PDF)
-		return getPdfPreviewURL(attachmentId);
-	return getImagePreviewURL(attachmentId, '0x0', ImageQuality.HIGH, getPreviewType(mimeType));
+		return AttachmentsApi.getPdfPreviewURL(attachmentId);
+	return AttachmentsApi.getImagePreviewURL(
+		attachmentId,
+		'0x0',
+		ImageQuality.HIGH,
+		getPreviewType(mimeType)
+	);
 };
 
 export const getAttachmentThumbnailURL = (
@@ -195,10 +130,9 @@ export const getAttachmentThumbnailURL = (
 	mimeType: string
 ): string | undefined => {
 	if (!isPreviewSupported(mimeType)) return undefined;
-	if (mimeType.startsWith('video/')) return undefined;
 	if (getAttachmentExtension(mimeType) === AttachmentType.PDF)
-		return getPdfThumbnailURL(attachmentId, '0x0', ImageQuality.LOW);
-	return getImageThumbnailURL(
+		return AttachmentsApi.getPdfThumbnailURL(attachmentId, '0x0', ImageQuality.LOW);
+	return AttachmentsApi.getImageThumbnailURL(
 		attachmentId,
 		'0x0',
 		ImageQuality.LOW,
@@ -206,34 +140,6 @@ export const getAttachmentThumbnailURL = (
 		ImageShape.RECTANGULAR
 	);
 };
-
-export const downloadAttachment = (attachmentId: string, fileName: string): void => {
-	const downloadUrl = getURLAttachment(attachmentId);
-	const linkTag: HTMLAnchorElement = document.createElement('a');
-	document.body.appendChild(linkTag);
-	linkTag.href = downloadUrl;
-	linkTag.download = fileName;
-	linkTag.target = '_blank';
-	linkTag.click();
-	linkTag.remove();
-};
-
-export const getImageSize = (url: string): Promise<{ width: number; height: number }> =>
-	new Promise((resolve, reject) => {
-		try {
-			const img = new Image();
-			img.addEventListener(
-				'load',
-				() => {
-					resolve({ width: img.naturalWidth, height: img.naturalHeight });
-				},
-				{ once: true }
-			);
-			img.src = url;
-		} catch {
-			reject(new Error(`Could not get image size for`));
-		}
-	});
 
 export const canDisplayPreviewOnLoad = (attachmentType: string): boolean => {
 	const type = attachmentType.split('/');
@@ -246,13 +152,11 @@ export const isAttachmentImage = (attachmentType: string): boolean => {
 	return false;
 };
 
-export const isAttachmentVideo = (attachmentType: string): boolean =>
-	attachmentType.split('/')[0] === 'video';
-
-export const getAttachmentType = (attachmentType: string): 'pdf' | 'image' | 'video' => {
-	if (isAttachmentImage(attachmentType)) return 'image';
-	if (isAttachmentVideo(attachmentType)) return 'video';
-	return 'pdf';
+export const getAttachmentType = (attachmentType: string): 'pdf' | 'image' => {
+	if (!isAttachmentImage(attachmentType)) {
+		return 'pdf';
+	}
+	return 'image';
 };
 
 export const getApplicationIcon = (mimeType: string): string => {
@@ -340,7 +244,7 @@ export const getPinAttachmentIcon = (fileType: string): string => {
 export const getPinAttachmentColor = (fileType: string): string => {
 	const mainType = fileType.split('/')[0];
 
-	if (fileType === PDF_MIME_TYPE || mainType === 'image' || mainType === 'video') {
+	if (fileType === 'application/pdf' || mainType === 'image' || mainType === 'video') {
 		return 'error';
 	}
 	if (spreadsheetMimeTypes.has(fileType)) {

@@ -11,8 +11,6 @@ import MicrophoneButton from './MicrophoneButton';
 import useStore from '../../../store/Store';
 import { setup } from '../../../tests/test-utils';
 
-const buttonDataTestId = 'microphone-button';
-
 describe('Microphone button', () => {
 	test('Should render the component', async () => {
 		setup(
@@ -22,7 +20,7 @@ describe('Microphone button', () => {
 				setIsAudioListOpen={vi.fn()}
 			/>
 		);
-		expect(await screen.findByTestId(buttonDataTestId)).toBeVisible();
+		expect(await screen.findByTestId('microphone-button')).toBeVisible();
 	});
 
 	test('Toggle list of audio inputs', async () => {
@@ -49,18 +47,6 @@ describe('Microphone button', () => {
 				setIsAudioListOpen={vi.fn()}
 			/>
 		);
-		expect(await screen.findByTestId(buttonDataTestId)).toBeDisabled();
-	});
-
-	test('Microphone button is disabled when message broker is down', async () => {
-		useStore.getState().setMessageBrokerStatus(false);
-		setup(
-			<MicrophoneButton
-				audioDropdownRef={React.createRef<HTMLDivElement>()}
-				isAudioListOpen={false}
-				setIsAudioListOpen={vi.fn()}
-			/>
-		);
-		expect(await screen.findByTestId(buttonDataTestId)).toBeDisabled();
+		expect(await screen.findByTestId('microphone-button')).toBeDisabled();
 	});
 });

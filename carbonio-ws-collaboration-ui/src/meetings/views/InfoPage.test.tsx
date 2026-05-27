@@ -66,8 +66,7 @@ const pagesToCheckGuest = [
 		'Ouch! You left the meeting.',
 		'PLEASE, TRY TO JOIN AGAIN',
 		'Something went wrong.'
-	],
-	[PAGE_INFO_TYPE.MEETING_DECLINED, 'Call Declined', 'Call ended', 'declined the call']
+	]
 ];
 
 describe('Info page', () => {
@@ -86,7 +85,7 @@ describe('Info page', () => {
 		document.cookie = `ZX_AUTH_TOKEN=123456789; path=/`;
 		const guestUser = createMockUser({ type: UserType.GUEST });
 		const store = useStore.getState();
-		store.setLoginInfo({ id: guestUser.id, userType: guestUser.type });
+		store.setLoginInfo(guestUser.id, guestUser.name, guestUser.name, guestUser.type);
 		routerContextSetup(<InfoPage />, { infoType: type as PAGE_INFO_TYPE });
 
 		expect(document.cookie).toBe('');

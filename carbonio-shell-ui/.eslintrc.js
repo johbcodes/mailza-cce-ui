@@ -38,7 +38,6 @@ module.exports = {
 				ignorePropertyModificationsFor: ['accumulator', 'state', 'event', 'prevState']
 			}
 		],
-		'react/react-in-jsx-scope': 'off',
 		'sonarjs/cognitive-complexity': 'warn',
 		// TODO: enable when this will be released https://github.com/SonarSource/eslint-plugin-sonarjs/pull/405
 		'sonarjs/no-duplicate-string': 'off',
@@ -48,7 +47,7 @@ module.exports = {
 	overrides: [
 		{
 			// enable eslint-plugin-testing-library rules or preset only for test files
-			files: ['**/tests/**/*.[jt]s?(x)', '**/mocks/**/*.[jt]s?(x)', '**/vitest-*.ts?(x)'],
+			files: ['**/tests/**/*.[jt]s?(x)', '**/mocks/**/*.[jt]s?(x)', '**/jest-*.ts?(x)'],
 			extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/react'],
 			rules: {
 				'testing-library/no-unnecessary-act': 'warn',

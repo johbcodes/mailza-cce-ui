@@ -9,29 +9,20 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 
 import AttachmentSmallView from './AttachmentSmallView';
-import * as api from '../../../../network/apis/AttachmentsApi';
+import attachmentsApi from '../../../../network/apis/AttachmentsApi';
 import { setup } from '../../../../tests/test-utils';
 import { AttachmentMessageType } from '../../../../types/store/ChatsRegistryTypes';
 
-vi.mock('../../../../hooks/usePreviewNavigation', () => ({
-	default: (): { openFromGallery: () => void; openFromChat: () => void } => ({
-		openFromGallery: vi.fn(),
-		openFromChat: vi.fn()
-	})
-}));
-
 describe('Attachment Small view', () => {
 	test('Download generic file', async () => {
-		const spyOnGetURLAttachment = vi.spyOn(api, 'getURLAttachment');
+		const spyOnGetURLAttachment = vi.spyOn(attachmentsApi, 'getURLAttachment');
 		const genericAttachment: AttachmentMessageType = {
 			id: 'genericAttachmentId',
 			name: 'generic.zip',
 			mimeType: 'application/zip',
 			size: 21412
 		};
-		const { user } = setup(
-			<AttachmentSmallView attachment={genericAttachment} roomId="roomId" messageDate={0} />
-		);
+		const { user } = setup(<AttachmentSmallView attachment={genericAttachment} />);
 		const genericIcon = await screen.findByTestId('icon: FileTextOutline');
 		expect(genericIcon).toBeVisible();
 
@@ -46,16 +37,14 @@ describe('Attachment Small view', () => {
 	});
 
 	test('Preview image file', async () => {
-		const spyOnGetImageThumbnailURL = vi.spyOn(api, 'getImageThumbnailURL');
+		const spyOnGetImageThumbnailURL = vi.spyOn(attachmentsApi, 'getImageThumbnailURL');
 		const imageAttachment: AttachmentMessageType = {
 			id: 'pngAttachmentId',
 			name: 'image.png',
 			mimeType: 'image/png',
 			size: 21412
 		};
-		const { user } = setup(
-			<AttachmentSmallView attachment={imageAttachment} roomId="roomId" messageDate={0} />
-		);
+		const { user } = setup(<AttachmentSmallView attachment={imageAttachment} />);
 
 		// Hover action is shown
 		await user.hover(screen.getByTestId('hover-container'));
@@ -74,7 +63,7 @@ describe('Attachment Small view', () => {
 			mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 			size: 21412
 		};
-		setup(<AttachmentSmallView attachment={docxAttachment} roomId="roomId" messageDate={0} />);
+		setup(<AttachmentSmallView attachment={docxAttachment} />);
 		const docIcon = screen.getByTestId('icon: FileTextOutline');
 		expect(docIcon).toBeVisible();
 	});
@@ -86,7 +75,7 @@ describe('Attachment Small view', () => {
 			mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 			size: 21412
 		};
-		setup(<AttachmentSmallView attachment={xlsxAttachment} roomId="roomId" messageDate={0} />);
+		setup(<AttachmentSmallView attachment={xlsxAttachment} />);
 		const xlsIcon = screen.getByTestId('icon: FileCalcOutline');
 		expect(xlsIcon).toBeVisible();
 	});
@@ -98,20 +87,20 @@ describe('Attachment Small view', () => {
 			mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 			size: 21412
 		};
-		setup(<AttachmentSmallView attachment={pptxAttachment} roomId="roomId" messageDate={0} />);
+		setup(<AttachmentSmallView attachment={pptxAttachment} />);
 		const pptIcon = screen.getByTestId('icon: FilePresentationOutline');
 		expect(pptIcon).toBeVisible();
 	});
 
 	test('Avatar shows thumbnail for image attachments', () => {
-		const spyOnGetImageThumbnailURL = vi.spyOn(api, 'getImageThumbnailURL');
+		const spyOnGetImageThumbnailURL = vi.spyOn(attachmentsApi, 'getImageThumbnailURL');
 		const imageAttachment: AttachmentMessageType = {
 			id: 'thumbnailImageId',
 			name: 'photo.png',
 			mimeType: 'image/png',
 			size: 21412
 		};
-		setup(<AttachmentSmallView attachment={imageAttachment} roomId="roomId" messageDate={0} />);
+		setup(<AttachmentSmallView attachment={imageAttachment} />);
 		expect(spyOnGetImageThumbnailURL).toHaveBeenCalledWith(
 			imageAttachment.id,
 			'0x0',

@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { MEETINGS_PATH } from '../../constants/appConstants';
 import useDarkReader from '../../hooks/useDarkReader';
 import useRouting from '../../hooks/useRouting';
-import { getMeetingByMeetingId, getScheduledMeetingName } from '../../network';
+import { MeetingsApi } from '../../network';
 import { getRoomIdByMeetingId } from '../../store/selectors/MeetingSelectors';
 import { getRoomNameSelector, getRoomTypeSelector } from '../../store/selectors/RoomsSelectors';
 import useStore from '../../store/Store';
@@ -88,7 +88,7 @@ const MeetingAccessPage = (): ReactElement => {
 
 	useEffect(() => {
 		if (chatsBeNetworkStatus) {
-			getMeetingByMeetingId(meetingId)
+			MeetingsApi.getMeetingByMeetingId(meetingId)
 				.then((meeting) => {
 					const room = find(useStore.getState().rooms, (room) => room.meetingId === meetingId);
 					const iAmOwner = find(
@@ -106,7 +106,7 @@ const MeetingAccessPage = (): ReactElement => {
 				})
 				.catch(() => {
 					// Waiting room access for external
-					getScheduledMeetingName(meetingId)
+					MeetingsApi.getScheduledMeetingName(meetingId)
 						.then((resp) => {
 							setHasUserDirectAccess(false);
 							setMeetingName(resp.name);

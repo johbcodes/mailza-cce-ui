@@ -11,9 +11,8 @@ import { IChatExporter } from '../../settings/components/chatExporter/ChatExport
 
 export type SessionStoreSlice = {
 	session: Session;
-	setLoginInfo: (session: Session) => void;
+	setLoginInfo: (id: string, name: string, displayName?: string, userType?: UserType) => void;
 	setAttributes: (attrs: AccountSettings['attrs']) => void;
-	setCapabilities: (capabilities: AttributesList) => void;
 	setQueueId: (queueId: string) => void;
 	setSelectedRoom: (roomId?: string) => void;
 	setCustomLogo: (logo: string) => void;
@@ -21,7 +20,6 @@ export type SessionStoreSlice = {
 	setChatExportStatus: (status: ExportStatus) => void;
 	setApiVersion: (apiVersion: Version) => void;
 	setSupportedVersions: (versions: Version[]) => void;
-	reset: () => void;
 };
 
 export type Session = {
@@ -41,22 +39,19 @@ export type Session = {
 		exporter: IChatExporter;
 		status: ExportStatus;
 	};
-	zmAuthToken?: string; // Mobile field
-	zxAuthToken?: string; // Mobile field
-	server?: string; // Mobile field
 	_persistedAt?: number;
 };
 
 export type Version = `${number}.${number}.${number}`;
 
 export type AttributesList = {
-	privateChatCreationEnabled: boolean;
-	groupChatCreationEnabled: boolean;
+	privateChatCreation: boolean;
+	groupChatCreation: boolean;
 	maxGroupMembers: number;
 	messageDeleteTimeLimit: number;
 	messageEditTimeLimit: number;
 	maxRoomPictureSize: number;
-	attachmentUploadEnabled: boolean;
+	attachmentUpload: boolean;
 	maxAttachmentSize: number;
 	showMessageReads: boolean;
 	showUsersPresence: boolean;

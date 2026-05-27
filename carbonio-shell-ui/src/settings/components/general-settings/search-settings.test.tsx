@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import React from 'react';
+
 import { act, screen } from '@testing-library/react';
 import type { AccountSettingsPrefs } from '@zextras/carbonio-ui-soap-lib';
 
@@ -19,7 +21,7 @@ describe('Search settings', () => {
 			props: [],
 			attrs: {}
 		};
-		const addModFn = vi.fn();
+		const addModFn = jest.fn();
 		setup(<SearchSettings settings={settings} addMod={addModFn} />);
 		expect(screen.getByText('Search')).toBeVisible();
 		expect(screen.getByText(/include spam folder in searches/i)).toBeVisible();
@@ -50,7 +52,7 @@ describe('Search settings', () => {
 			props: [],
 			attrs: {}
 		};
-		const addModFn = vi.fn();
+		const addModFn = jest.fn();
 		setup(<SearchSettings settings={settings} addMod={addModFn} />);
 		expect(screen.getByText(/include spam folder in searches/i)).toBeVisible();
 		expect(screen.getByText(/include trash folder in searches/i)).toBeVisible();
@@ -68,7 +70,7 @@ describe('Search settings', () => {
 			props: [],
 			attrs: {}
 		};
-		const addModFn = vi.fn();
+		const addModFn = jest.fn();
 		const { user } = setup(<SearchSettings settings={settings} addMod={addModFn} />);
 		await act(async () => {
 			await user.click(screen.getByText(RegExp(`include ${folderType} folder in searches`, 'i')));

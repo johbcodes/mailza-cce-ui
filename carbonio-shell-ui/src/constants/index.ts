@@ -23,8 +23,7 @@ export const darkReaderDynamicThemeFixes: DynamicThemeFix = {
 		}
 	`,
 	ignoreInlineStyle: ['.tox-menu *'],
-	disableStyleSheetsProxy: false,
-	ignoreCSSUrl: []
+	disableStyleSheetsProxy: false
 };
 
 const base = '/carbonio';

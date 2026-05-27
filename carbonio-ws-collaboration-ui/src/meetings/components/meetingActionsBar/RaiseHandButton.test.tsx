@@ -10,7 +10,7 @@ import { UserEvent } from '@testing-library/user-event';
 import * as ReactRouter from 'react-router-dom';
 
 import RaiseHandButton from './RaiseHandButton';
-import * as api from '../../../network/apis/MeetingsApi';
+import meetingsApi from '../../../network/apis/MeetingsApi';
 import useStore from '../../../store/Store';
 import {
 	createMockMeeting,
@@ -18,7 +18,7 @@ import {
 	createMockRoom,
 	createMockUser
 } from '../../../tests/createMock';
-import { routerContextSetup, setup } from '../../../tests/test-utils';
+import { routerContextSetup } from '../../../tests/test-utils';
 import { MeetingBe } from '../../../types/network/models/meetingBeTypes';
 import { MemberBe, RoomBe } from '../../../types/network/models/roomBeTypes';
 import { UserBe } from '../../../types/network/models/userBeTypes';
@@ -58,11 +58,10 @@ const meeting: MeetingBe = createMockMeeting({
 const storeSetupGroupMeeting = (): { user: UserEvent; store: RootStore } => {
 	const store = useStore.getState();
 	store.setUserInfo([user1, user2, user3]);
-	store.setLoginInfo({ id: user1.id, name: user1.name });
+	store.setLoginInfo(user1.id, user1.name);
 	store.addRooms([room]);
 	store.addMeetings([meeting]);
 	store.meetingConnection(meeting.id);
-	store.setWebsocketStatus(true);
 	const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
 	spyUseParams.mockReturnValue({ meetingId: meeting.id });
 	const { user } = routerContextSetup(<RaiseHandButton />, { meetingId: meeting.id });
@@ -72,7 +71,7 @@ const storeSetupGroupMeeting = (): { user: UserEvent; store: RootStore } => {
 
 describe('Raise hand button', () => {
 	test('User Raise Hand', async () => {
-		const spyOnRaiseHand = vi.spyOn(api, 'raiseHand');
+		const spyOnRaiseHand = vi.spyOn(meetingsApi, 'raiseHand');
 
 		const { user } = storeSetupGroupMeeting();
 
@@ -97,17 +96,5 @@ describe('Raise hand button', () => {
 		expect(useStore.getState().activeMeeting?.usersWithHandRaised).toStrictEqual([user1.id]);
 
 		expect(screen.getByTestId('icon: Hand')).toBeInTheDocument();
-	});
-
-	test('RaiseHand button is disabled when websocket is down', async () => {
-		useStore.getState().setWebsocketStatus(false);
-		setup(<RaiseHandButton />);
-		expect(await screen.findByRole('button')).toBeDisabled();
-	});
-
-	test('RaiseHand button is disabled when message broker is down', async () => {
-		useStore.getState().setMessageBrokerStatus(false);
-		setup(<RaiseHandButton />);
-		expect(await screen.findByRole('button')).toBeDisabled();
 	});
 });

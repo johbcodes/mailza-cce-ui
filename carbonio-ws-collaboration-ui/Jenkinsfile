@@ -3,12 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 library(
-    identifier: 'jenkins-lib-common@v2.8.5',
+    identifier: 'jenkins-lib-ui@1.0.9',
     retriever: modernSCM([
         $class: 'GitSCMSource',
-        remote: 'git@github.com:zextras/jenkins-lib-common.git',
-        credentialsId: 'jenkins-integration-with-github-account'
+        credentialsId: 'jenkins-integration-with-github-account',
+        remote: 'git@github.com:zextras/jenkins-lib-ui.git',
     ])
 )
 
-uiPipeline()
+zappPipeline(
+    disableAutoTranslationsSync: true
+)

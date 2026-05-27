@@ -5,10 +5,6 @@
  */
 module.exports = {
 	extends: ['./node_modules/@zextras/carbonio-ui-configs/rules/eslint.js'],
-	ignorePatterns: ['src/tests/jsdom-extended.ts'],
-	globals: {
-		vi: 'readonly'
-	},
 	settings: {
 		'import/resolver': {
 			node: {

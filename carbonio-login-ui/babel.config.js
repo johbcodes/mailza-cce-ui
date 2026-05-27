@@ -8,6 +8,7 @@ module.exports = {
 	plugins: [
 		'@emotion',
 		'@babel/plugin-transform-runtime',
+		'@babel/plugin-proposal-class-properties',
 		[
 			'i18next-extract',
 			{

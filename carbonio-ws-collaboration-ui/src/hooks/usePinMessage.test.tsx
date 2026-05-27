@@ -7,7 +7,6 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { usePinMessage } from './usePinMessage';
-import { xmppClient } from '../network/xmpp/XMPPClient';
 import useStore from '../store/Store';
 import {
 	createMockMember,
@@ -23,7 +22,7 @@ const user2 = createMockUser({ id: 'user2', name: 'user2' });
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: user1.id, name: 'user1' });
+	store.setLoginInfo(user1.id, 'user1');
 	store.setUserInfo([user1, user2]);
 });
 
@@ -274,7 +273,7 @@ describe('usePinMessage', () => {
 			store.addRooms([room]);
 			store.newMessage(message);
 
-			const pinMessageSpy = vi.spyOn(xmppClient, 'pinMessage');
+			const pinMessageSpy = vi.spyOn(store.connections.xmppClient, 'pinMessage');
 
 			const { result } = renderHook(() => usePinMessage(message), {
 				wrapper: ProvidersWrapper
@@ -304,7 +303,7 @@ describe('usePinMessage', () => {
 			store.newMessage(message);
 			store.setPinnedMessage(room.id, message);
 
-			const unpinMessageSpy = vi.spyOn(xmppClient, 'unpinMessage');
+			const unpinMessageSpy = vi.spyOn(store.connections.xmppClient, 'unpinMessage');
 
 			const { result } = renderHook(() => usePinMessage(message), {
 				wrapper: ProvidersWrapper
@@ -335,7 +334,7 @@ describe('usePinMessage', () => {
 			store.addRooms([room]);
 			store.newMessage(editedMessage);
 
-			const pinMessageSpy = vi.spyOn(xmppClient, 'pinMessage');
+			const pinMessageSpy = vi.spyOn(store.connections.xmppClient, 'pinMessage');
 
 			const { result } = renderHook(() => usePinMessage(editedMessage), {
 				wrapper: ProvidersWrapper
@@ -365,7 +364,7 @@ describe('usePinMessage', () => {
 			store.addRooms([room]);
 			store.newMessage(editedMessage);
 
-			const pinMessageSpy = vi.spyOn(xmppClient, 'pinMessage');
+			const pinMessageSpy = vi.spyOn(store.connections.xmppClient, 'pinMessage');
 
 			const { result } = renderHook(() => usePinMessage(editedMessage), {
 				wrapper: ProvidersWrapper
@@ -405,7 +404,7 @@ describe('usePinMessage', () => {
 				wrapper: ProvidersWrapper
 			});
 
-			const pinMessageSpy = vi.spyOn(xmppClient, 'pinMessage');
+			const pinMessageSpy = vi.spyOn(store.connections.xmppClient, 'pinMessage');
 
 			act(() => {
 				result.current.pinAction();

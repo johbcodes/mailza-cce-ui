@@ -9,11 +9,10 @@ import { screen, within, waitFor } from '@testing-library/react';
 
 import ChangePasswordForm from './change-password-form';
 import { setup } from '../tests/testUtils';
-import { saveCredentials, setCookie } from '../utils';
 
-vi.mock('../utils', () => ({
-	saveCredentials: vi.fn(),
-	setCookie: vi.fn()
+jest.mock('../utils', () => ({
+	saveCredentials: jest.fn(),
+	setCookie: jest.fn()
 }));
 
 describe('ChangePasswordForm', () => {
@@ -21,7 +20,7 @@ describe('ChangePasswordForm', () => {
 		setup(
 			<ChangePasswordForm
 				isLoading={false}
-				setIsLoading={vi.fn()}
+				setIsLoading={jest.fn()}
 				username="testuser"
 				configuration={{ destinationUrl: '/home' }}
 			/>
@@ -38,7 +37,7 @@ describe('ChangePasswordForm', () => {
 		const { user } = setup(
 			<ChangePasswordForm
 				isLoading={false}
-				setIsLoading={vi.fn()}
+				setIsLoading={jest.fn()}
 				username="testuser"
 				configuration={{ destinationUrl: '/home' }}
 			/>
@@ -67,7 +66,7 @@ describe('ChangePasswordForm', () => {
 		const { user } = setup(
 			<ChangePasswordForm
 				isLoading={false}
-				setIsLoading={vi.fn()}
+				setIsLoading={jest.fn()}
 				username="testuser"
 				configuration={{ destinationUrl: '/home' }}
 			/>
@@ -91,19 +90,19 @@ describe('ChangePasswordForm', () => {
 		const mockAuthToken = 'mockAuthToken';
 		const mockResponse = {
 			status: 200,
-			json: vi.fn().mockResolvedValue({
+			json: jest.fn().mockResolvedValue({
 				Body: { ChangePasswordResponse: { authToken: [{ _content: mockAuthToken }] } }
 			})
 		};
-		vi.spyOn(window, 'fetch').mockResolvedValue(mockResponse);
+		jest.spyOn(window, 'fetch').mockResolvedValue(mockResponse);
 
-		const saveCredentialsMock = saveCredentials;
-		const setCookieMock = setCookie;
+		const saveCredentialsMock = jest.requireMock('../utils').saveCredentials;
+		const setCookieMock = jest.requireMock('../utils').setCookie;
 
 		const { user } = setup(
 			<ChangePasswordForm
 				isLoading={false}
-				setIsLoading={vi.fn()}
+				setIsLoading={jest.fn()}
 				username="testuser"
 				configuration={{ destinationUrl: '' }}
 			/>

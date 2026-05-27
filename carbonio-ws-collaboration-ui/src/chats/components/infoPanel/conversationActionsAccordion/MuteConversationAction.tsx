@@ -10,7 +10,7 @@ import { CreateSnackbarFn, useSnackbar } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
 import ActionComponent from './ActionComponent';
-import { muteRoomNotification, unmuteRoomNotification } from '../../../../network';
+import { RoomsApi } from '../../../../network';
 import { getRoomMutedSelector } from '../../../../store/selectors/RoomsSelectors';
 import useStore from '../../../../store/Store';
 import { RoomType } from '../../../../types/store/RoomTypes';
@@ -48,30 +48,26 @@ const MuteConversationAction: FC<MuteProps> = ({ roomId, roomType, emptyRoom }) 
 
 	const muteConversation = useCallback(() => {
 		if (isMuted) {
-			unmuteRoomNotification(roomId)
+			RoomsApi.unmuteRoomNotification(roomId)
 				.then(() => {
 					createSnackbar({
 						key: new Date().toLocaleString(),
 						severity: 'info',
 						label: notificationsActivatedForThisChatLabel,
 						actionLabel: undoLabel,
-						onActionClick: () => {
-							muteRoomNotification(roomId);
-						}
+						onActionClick: () => RoomsApi.muteRoomNotification(roomId)
 					});
 				})
 				.catch(() => null);
 		} else {
-			muteRoomNotification(roomId)
+			RoomsApi.muteRoomNotification(roomId)
 				.then(() => {
 					createSnackbar({
 						key: new Date().toLocaleString(),
 						severity: 'info',
 						label: notificationsMutedForThisChatLabel,
 						actionLabel: undoLabel,
-						onActionClick: () => {
-							unmuteRoomNotification(roomId);
-						}
+						onActionClick: () => RoomsApi.unmuteRoomNotification(roomId)
 					});
 				})
 				.catch(() => null);

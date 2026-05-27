@@ -32,7 +32,7 @@ const event: MeetingMediaStreamChangedEvent = {
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: 'myUserId', name: 'User' });
+	store.setLoginInfo('myUserId', 'User');
 	store.addRooms([room]);
 	store.addMeetings([meeting]);
 	store.meetingConnection(meeting.id);

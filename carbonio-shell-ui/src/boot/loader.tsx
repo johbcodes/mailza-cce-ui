@@ -22,6 +22,7 @@ import { goToLogin } from '../network/utils';
 import { useAccountStore } from '../store/account';
 import { normalizeAccount } from '../store/account/normalization';
 import { useAppStore } from '../store/app';
+import { useTracker } from '../tracker/tracker';
 
 export function isPromiseRejectedResult<T>(
 	promiseSettledResult: PromiseSettledResult<T>
@@ -71,9 +72,15 @@ export const Loader = (): React.JSX.Element => {
 	const closeHandler = useCallback(() => setOpen(false), []);
 	const [sessionLifetime, setSessionLifetime] = useState<number>();
 
+	const carbonioPrefSendAnalytics = useAccountStore(
+		(state) => state.settings.prefs.carbonioPrefSendAnalytics
+	);
+
 	const zimbraMailIdleSessionTimeout = useAccountStore(
 		(state) => state.settings.attrs.zimbraMailIdleSessionTimeout
 	);
+
+	const { enableTracker } = useTracker();
 
 	const getSessionInfo = useCallback(() => {
 		const rights = [
@@ -85,10 +92,9 @@ export const Loader = (): React.JSX.Element => {
 		];
 
 		return api.getInfo({ rights }).then((res) => {
-			const { account, settings, changePasswordURL } = normalizeAccount(res);
+			const { account, settings } = normalizeAccount(res);
 			useAccountStore.setState({
 				authenticated: true,
-				changePasswordURL,
 				account,
 				settings
 			});
@@ -126,6 +132,10 @@ export const Loader = (): React.JSX.Element => {
 			window.removeEventListener(ApiEvents.UserQuotaChange, userQuotaEventLister);
 		};
 	}, [userQuotaEventLister]);
+
+	useEffect(() => {
+		enableTracker(carbonioPrefSendAnalytics === 'TRUE');
+	}, [carbonioPrefSendAnalytics, enableTracker]);
 
 	useEffect(() => {
 		Promise.allSettled([loginConfig(), getComponents(), getSessionInfo()]).then(

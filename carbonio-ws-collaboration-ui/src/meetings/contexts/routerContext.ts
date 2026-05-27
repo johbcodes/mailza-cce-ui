@@ -22,8 +22,7 @@ export enum PAGE_INFO_TYPE {
 	MEETING_NOT_FOUND = 'meeting_not_found',
 	UNAUTHENTICATED = 'unauthenticated',
 	INVALID_WAITING_ROOM = 'invalid_waiting_room',
-	GENERAL_ERROR = 'general_error',
-	MEETING_DECLINED = 'meeting_declined'
+	GENERAL_ERROR = 'general_error'
 }
 
 export type RouterContextType = {
@@ -47,7 +46,7 @@ export const useRouterContextSetup = (): RouterContextType => {
 		setRoute(route);
 		if (infoType) {
 			setInfoType(infoType);
-			setMeetingId(meetingId);
+			setMeetingId(undefined);
 		} else if (meetingId) {
 			setMeetingId(meetingId);
 			setInfoType(undefined);

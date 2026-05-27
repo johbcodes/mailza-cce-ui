@@ -49,7 +49,13 @@ const ConversationFooter: React.FC<ConversationFooterProps> = ({ roomId, isInsid
 			borderRadius="none"
 		>
 			<ReferenceMessageView roomId={roomId} />
-			{filesToUpload && filesToUpload.length > 0 && <UploadAttachmentManagerView roomId={roomId} />}
+			{filesToUpload && filesToUpload.length > 0 && (
+				<UploadAttachmentManagerView
+					roomId={roomId}
+					textMessage={textMessage}
+					setTextMessage={setTextMessage}
+				/>
+			)}
 			<MessageComposer
 				roomId={roomId}
 				textMessage={textMessage}

@@ -130,10 +130,6 @@ export function decodeXMPPMessageStanza(
 					value = Strophe.getText(getRequiredTagElement(x, 'body'));
 					break;
 				}
-				case OperationType.MEETING_ENDED: {
-					value = Strophe.getText(getTagElement(x, 'duration')) || 0;
-					break;
-				}
 				default:
 					break;
 			}

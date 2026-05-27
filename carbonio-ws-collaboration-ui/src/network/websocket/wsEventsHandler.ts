@@ -3,18 +3,22 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+/* eslint-disable sonarjs/max-switch-cases */
 
 import { EventArea, getEventArea } from './eventHandlersUtilities';
 import { wsConversationEventsHandler } from './wsConversationEventsHandler';
-import { wsGeneralEventsHandler } from './wsGeneralEventsHandler';
 import { wsMeetingEventsHandler } from './wsMeetingEventHandlers/wsMeetingEventsHandler';
-import { WsEvent } from '../../types/network/websocket/wsEvents';
+import useStore from '../../store/Store';
+import { WsEvent, WsEventType } from '../../types/network/websocket/wsEvents';
 import { wsDebug } from '../../utils/debug';
 
 export function wsEventsHandler(event: WsEvent): void {
+	const state = useStore.getState();
 	switch (getEventArea(event.type)) {
 		case EventArea.GENERAL: {
-			wsGeneralEventsHandler(event);
+			if (event.type === WsEventType.INITIALIZATION) {
+				state.setQueueId(event.queueId);
+			}
 			break;
 		}
 		case EventArea.CONVERSATION: {
@@ -26,7 +30,7 @@ export function wsEventsHandler(event: WsEvent): void {
 			break;
 		}
 		default:
-			wsDebug('Unhandled event:', event);
+			wsDebug('Unhandled event', event);
 			break;
 	}
 }

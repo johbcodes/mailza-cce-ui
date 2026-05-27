@@ -22,7 +22,7 @@ const WithUseModalHookView = (): null => {
 };
 
 test('Using useModal hook without a ModalManager, log a Modal manager context not initialized console error', async () => {
-	const mockedError = vi.fn();
+	const mockedError = jest.fn();
 	console.error = mockedError;
 
 	setup(<AppViewContainer />, { withoutModalManager: true });

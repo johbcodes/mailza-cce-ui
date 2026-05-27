@@ -11,8 +11,8 @@ import { act, createEvent, fireEvent, screen, waitFor } from '@testing-library/r
 import { UserEvent } from '@testing-library/user-event';
 
 import ConversationFooter from './ConversationFooter';
-import * as api from '../../../../network/apis/RoomsApi';
-import { xmppClient } from '../../../../network/xmpp/XMPPClient';
+import attachmentsApi from '../../../../network/apis/AttachmentsApi';
+import roomsApi from '../../../../network/apis/RoomsApi';
 import useStore from '../../../../store/Store';
 import {
 	createMockAttributesList,
@@ -29,10 +29,10 @@ import { Message } from '../../../../types/store/ChatsRegistryTypes';
 import { RoomType } from '../../../../types/store/RoomTypes';
 import { RootStore } from '../../../../types/store/StoreTypes';
 import { User, UserType } from '../../../../types/store/UserTypes';
-import * as attachmentUtils from '../../../../utils/attachmentUtils';
 import { now } from '../../../../utils/dateUtils';
 
 const iconNavigator2 = 'icon: Navigation2';
+const borderColor = 'border-color: #8bc34a';
 const initText = 'we are gonna se';
 const iconAttach = 'icon: Attach';
 
@@ -78,7 +78,6 @@ const storeSetupAdvanced = (): { user: UserEvent; store: RootStore } => {
 const storeSetupGroup = (): { user: UserEvent; store: RootStore } => {
 	const store = useStore.getState();
 	store.setAttributes(createMockAttributesList({ carbonioWscMessageEditTimeLimit: '5m' }));
-	store.setInboxMessages([mockedMessage]);
 	store.newMessage(mockedMessage);
 	const { user } = setup(<ConversationFooter roomId={mockedRoom.id} />);
 	return { user, store };
@@ -92,7 +91,7 @@ const draftMessage = 'I am a draft message';
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: 'idPaolo', name: 'Paolo' });
+	store.setLoginInfo('idPaolo', 'Paolo');
 	store.addRooms([mockedRoom]);
 });
 
@@ -208,6 +207,7 @@ describe('ConversationFooter', () => {
 		const uploadManager = screen.queryByTestId('upload_attachment_manager');
 		expect(uploadManager).toBeInTheDocument();
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('User copy/paste multiple images in the text input', async () => {
@@ -236,6 +236,7 @@ describe('ConversationFooter', () => {
 		const uploadManager = screen.queryByTestId('upload_attachment_manager');
 		expect(uploadManager).toBeInTheDocument();
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('input has text and user paste an image => upload manger will display the image selected with the input focused with the text', async () => {
@@ -264,6 +265,7 @@ describe('ConversationFooter', () => {
 		const composer = await screen.findByTestId('textAreaComposer');
 		expect((composer as HTMLTextAreaElement).value).toBe(initialText);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('input has text and user paste more images => upload manger will display the first image selected with the input focused with the text', async () => {
@@ -292,6 +294,7 @@ describe('ConversationFooter', () => {
 		const composer = await screen.findByTestId('textAreaComposer');
 		expect((composer as HTMLTextAreaElement).value).toBe(initialText);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('User can reply to a message attaching a file', async () => {
@@ -321,7 +324,7 @@ describe('ConversationFooter', () => {
 
 	test('User can reply to a message with a message and send it', async () => {
 		const store = useStore.getState();
-		const spySendChatMessageReply = vi.spyOn(xmppClient, 'sendChatMessageReply');
+		const spySendChatMessageReply = vi.spyOn(store.connections.xmppClient, 'sendChatMessageReply');
 		const textToSend = 'hi!';
 		store.updateHistory(mockedRoom.id, [mockedMessage]);
 
@@ -342,7 +345,10 @@ describe('ConversationFooter', () => {
 	});
 
 	test('User can edit a message and send it', async () => {
-		const spySendChatMessageEdit = vi.spyOn(xmppClient, 'sendChatMessageEdit');
+		const spySendChatMessageEdit = vi.spyOn(
+			useStore.getState().connections.xmppClient,
+			'sendChatMessageEdit'
+		);
 		const store = useStore.getState();
 		store.updateHistory(mockedRoom.id, [mockedMessage]);
 
@@ -400,8 +406,8 @@ describe('Send message', () => {
 	});
 
 	test('Send a message with attachment - image', async () => {
-		const spyOnAddRoomAttachment = vi.spyOn(api, 'addRoomAttachment');
-		const spyOnGetImageSize = vi.spyOn(attachmentUtils, 'getImageSize');
+		const spyOnAddRoomAttachment = vi.spyOn(roomsApi, 'addRoomAttachment');
+		const spyOnGetImageSize = vi.spyOn(attachmentsApi, 'getImageSize');
 		spyOnGetImageSize.mockImplementation(() => Promise.resolve({ width: 10, height: 10 }));
 
 		const testImageFile = new File(['hello'], 'hello.png', { type: 'image/png' });
@@ -424,7 +430,7 @@ describe('Send message', () => {
 	});
 
 	test('Send a message with attachment - pdf', async () => {
-		const spyOnAddRoomAttachment = vi.spyOn(api, 'addRoomAttachment');
+		const spyOnAddRoomAttachment = vi.spyOn(roomsApi, 'addRoomAttachment');
 		const testPdfFile = new File(['hello'], 'hello.pdf', { type: 'application/pdf' });
 		const { user } = storeSetupAdvanced();
 
@@ -444,7 +450,7 @@ describe('Send message', () => {
 	});
 
 	test('Send a message with attachment - other extension', async () => {
-		const spyOnAddRoomAttachment = vi.spyOn(api, 'addRoomAttachment');
+		const spyOnAddRoomAttachment = vi.spyOn(roomsApi, 'addRoomAttachment');
 		const testFile = new File(['hello'], 'hello.xls', { type: 'application/ms-excel' });
 		const { user } = storeSetupAdvanced();
 
@@ -466,7 +472,7 @@ describe('Send message', () => {
 	test("attachment selector shouldn't be present if the user is a guest", () => {
 		const store = useStore.getState();
 		store.addRooms([mockedRoomTemporary]);
-		store.setLoginInfo({ id: guestUser.id, name: guestUser.name, userType: guestUser.type });
+		store.setLoginInfo(guestUser.id, guestUser.name, guestUser.type);
 		store.setUserInfo([guestUser]);
 		setup(<ConversationFooter roomId={mockedRoom.id} />);
 
@@ -495,6 +501,8 @@ describe('Send message', () => {
 			`previewFileUpload-${file.name}-${filesToAttach?.[0].fileId}`
 		);
 		await user.click(filePreview);
+		const storedFile = useStore.getState().activeConversations[mockedRoom.id].filesToAttach?.[0];
+		expect(storedFile?.description).toBe('text');
 
 		const sendButton = screen.getByTestId(iconNavigator2);
 		await user.click(sendButton);
@@ -575,6 +583,7 @@ describe('Paste on textbox', () => {
 			}`
 		);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('Paste single attachment at the end of the text present in the composer', async () => {
@@ -603,6 +612,7 @@ describe('Paste on textbox', () => {
 			}`
 		);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('Paste single attachment in the middle of the text present in the composer', async () => {
@@ -632,6 +642,7 @@ describe('Paste on textbox', () => {
 			}`
 		);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('Paste more attachments at the beginning of the text present in the composer', async () => {
@@ -661,6 +672,7 @@ describe('Paste on textbox', () => {
 			}`
 		);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('Paste more attachments at the end of the text present in the composer', async () => {
@@ -689,6 +701,7 @@ describe('Paste on textbox', () => {
 			}`
 		);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 
 	test('Paste more attachments in the middle of the text present in the composer', async () => {
@@ -718,12 +731,13 @@ describe('Paste on textbox', () => {
 			}`
 		);
 		expect(imageCopied).toBeInTheDocument();
+		expect(imageCopied).toHaveStyle(borderColor);
 	});
 });
 
 describe('MessageComposer - isWriting events', () => {
 	test('sendIsWriting is called immediately when user start writing', async () => {
-		const spySendIsWriting = vi.spyOn(xmppClient, 'sendIsWriting');
+		const spySendIsWriting = vi.spyOn(useStore.getState().connections.xmppClient, 'sendIsWriting');
 		const { user } = setup(<ConversationFooter roomId={mockedRoom.id} />);
 		const composerTextArea = screen.getByRole('textbox');
 		await user.type(composerTextArea, 'Hi');
@@ -731,7 +745,7 @@ describe('MessageComposer - isWriting events', () => {
 	});
 
 	test('sendIsWriting is called every 3 seconds', async () => {
-		const spySendIsWriting = vi.spyOn(xmppClient, 'sendIsWriting');
+		const spySendIsWriting = vi.spyOn(useStore.getState().connections.xmppClient, 'sendIsWriting');
 		const { user } = setup(<ConversationFooter roomId={mockedRoom.id} />);
 		const composerTextArea = screen.getByRole('textbox');
 
@@ -751,7 +765,7 @@ describe('MessageComposer - isWriting events', () => {
 	});
 
 	test('sendStopWriting is called after 3.5 seconds after user stops writing', async () => {
-		const spySendPaused = vi.spyOn(xmppClient, 'sendPaused');
+		const spySendPaused = vi.spyOn(useStore.getState().connections.xmppClient, 'sendPaused');
 
 		const { user } = setup(<ConversationFooter roomId={mockedRoom.id} />);
 		const composerTextArea = screen.getByRole('textbox');
@@ -762,7 +776,7 @@ describe('MessageComposer - isWriting events', () => {
 	});
 
 	test('sendStopWriting is called immediately when user sends the message', async () => {
-		const spySendPaused = vi.spyOn(xmppClient, 'sendPaused');
+		const spySendPaused = vi.spyOn(useStore.getState().connections.xmppClient, 'sendPaused');
 		const { user } = setup(<ConversationFooter roomId={mockedRoom.id} />);
 		const composerTextArea = screen.getByRole('textbox');
 
@@ -816,7 +830,7 @@ describe('Draft message', () => {
 			roomId: mockedRoom.id,
 			date: Date.now()
 		});
-		act(() => store.setInboxMessages([messageByRoberto]));
+		act(() => store.newMessage(messageByRoberto));
 
 		await user.keyboard('{ArrowUp}');
 

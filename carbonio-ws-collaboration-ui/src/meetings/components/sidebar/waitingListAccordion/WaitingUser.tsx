@@ -19,7 +19,7 @@ import {
 import { useTranslation } from 'react-i18next';
 
 import useAvatarUtilities from '../../../../hooks/useAvatarUtilities';
-import { acceptWaitingUser } from '../../../../network';
+import { MeetingsApi } from '../../../../network';
 import { getIsUserGuest, getUserName } from '../../../../store/selectors/UsersSelectors';
 import useStore from '../../../../store/Store';
 import GuestUserLabel from '../../GuestUserLabel';
@@ -49,13 +49,13 @@ const WaitingUser: FC<WaitingUserProps> = ({ meetingId, userId }) => {
 
 	const { avatarPicture, avatarIcon, avatarColor, isLoading } = useAvatarUtilities(userId);
 
-	const acceptWaitingUserAction = useCallback(
-		() => acceptWaitingUser(meetingId, userId, true),
+	const acceptWaitingUser = useCallback(
+		() => MeetingsApi.acceptWaitingUser(meetingId, userId, true),
 		[meetingId, userId]
 	);
 
-	const rejectWaitingUserAction = useCallback(
-		() => acceptWaitingUser(meetingId, userId, false),
+	const rejectWaitingUser = useCallback(
+		() => MeetingsApi.acceptWaitingUser(meetingId, userId, false),
 		[meetingId, userId]
 	);
 
@@ -92,7 +92,7 @@ const WaitingUser: FC<WaitingUserProps> = ({ meetingId, userId }) => {
 						size="large"
 						backgroundColor="success"
 						labelColor="gray6"
-						onClick={acceptWaitingUserAction}
+						onClick={acceptWaitingUser}
 					/>
 				</Tooltip>
 				<Tooltip label={rejectButtonTooltip} placement="top">
@@ -101,7 +101,7 @@ const WaitingUser: FC<WaitingUserProps> = ({ meetingId, userId }) => {
 						size="large"
 						backgroundColor="error"
 						labelColor="gray6"
-						onClick={rejectWaitingUserAction}
+						onClick={rejectWaitingUser}
 					/>
 				</Tooltip>
 			</Container>

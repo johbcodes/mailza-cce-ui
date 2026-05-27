@@ -156,6 +156,8 @@ export const createMockFileToUpload = (fields?: Partial<FileToUpload>): FileToUp
 	fileId: 'genericImageId',
 	file: imageFile,
 	localUrl: 'localhost/generic/url',
+	description: '',
+	hasFocus: false,
 	...fields
 });
 

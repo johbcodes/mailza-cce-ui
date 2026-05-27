@@ -5,9 +5,8 @@
 		"jsx": "react",
 		"allowJs": true,
 		"checkJs": false,
-		"resolveJsonModule": true,
-		"types": ["vitest/globals"]
+		"resolveJsonModule": true
 	},
 	"include": ["types/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.jsx", "./global.d.ts"],
-	"exclude": ["./node_modules/*", "./src/tests/jsdom-extended.ts"]
+	"exclude": ["./node_modules/*"]
 }

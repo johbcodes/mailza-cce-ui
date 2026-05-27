@@ -18,20 +18,20 @@ import { size } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import { usePinMessage } from '../../../../../hooks/usePinMessage';
-import usePreviewNavigation from '../../../../../hooks/usePreviewNavigation';
-import { deleteAttachment } from '../../../../../network';
-import { xmppClient } from '../../../../../network/xmpp/XMPPClient';
+import usePreview from '../../../../../hooks/usePreview';
+import { AttachmentsApi } from '../../../../../network';
 import {
 	getFilesToUploadArray,
 	getForwardList,
 	getReferenceMessage
 } from '../../../../../store/selectors/ActiveConversationsSelectors';
+import { getXmppClient } from '../../../../../store/selectors/ConnectionSelector';
 import { getAttribute, getUserId } from '../../../../../store/selectors/SessionSelectors';
 import { getIsUserGuest } from '../../../../../store/selectors/UsersSelectors';
 import useStore from '../../../../../store/Store';
 import { messageActionType } from '../../../../../types/store/ActiveConversationTypes';
 import { TextMessage } from '../../../../../types/store/ChatsRegistryTypes';
-import { downloadAttachment, isPreviewSupported } from '../../../../../utils/attachmentUtils';
+import { isPreviewSupported } from '../../../../../utils/attachmentUtils';
 import { canPerformAction } from '../../../../../utils/MessageActionsUtils';
 
 const useBubbleContextualMenuDropDown = (
@@ -42,6 +42,8 @@ const useBubbleContextualMenuDropDown = (
 	menuDropdownActive: boolean;
 	menuDropdownRef: React.RefObject<HTMLDivElement>;
 } => {
+	const xmppClient = useStore(getXmppClient);
+
 	const [t] = useTranslation();
 	const { canMessageBePinned, pinActionLabel, pinAction } = usePinMessage(message);
 	const copyActionLabel = t('action.copy', 'Copy');
@@ -75,12 +77,9 @@ const useBubbleContextualMenuDropDown = (
 
 	const dropDownRef = useRef<HTMLDivElement>(null);
 
-	const { openFromChat } = usePreviewNavigation();
-	const onPreviewClick = useCallback(() => {
-		if (message.attachment) {
-			openFromChat(message.roomId, message.attachment, message.date);
-		}
-	}, [message.attachment, message.date, message.roomId, openFromChat]);
+	const { onPreviewClick } = usePreview(
+		message.attachment || { id: '', name: '', mimeType: '', size: 0 }
+	);
 
 	const onDropdownOpen = useCallback(() => setDropdownActive(true), [setDropdownActive]);
 	const onDropdownClose = useCallback(() => setDropdownActive(false), [setDropdownActive]);
@@ -115,17 +114,24 @@ const useBubbleContextualMenuDropDown = (
 
 	const deleteMessageAction = useCallback(() => {
 		if (message.attachment) {
-			deleteAttachment(message.attachment.id).then(() =>
+			AttachmentsApi.deleteAttachment(message.attachment.id).then(() =>
 				xmppClient.sendChatMessageDeletion(message.roomId, message.stanzaId)
 			);
 		} else {
 			xmppClient.sendChatMessageDeletion(message.roomId, message.stanzaId);
 		}
-	}, [message.stanzaId, message.attachment, message.roomId]);
+	}, [message.stanzaId, message.attachment, message.roomId, xmppClient]);
 
 	const downloadAction = useCallback(() => {
 		if (message.attachment) {
-			downloadAttachment(message.attachment.id, message.attachment.name);
+			const downloadUrl = AttachmentsApi.getURLAttachment(message.attachment.id);
+			const linkTag: HTMLAnchorElement = document.createElement('a');
+			document.body.appendChild(linkTag);
+			linkTag.href = downloadUrl;
+			linkTag.download = message.attachment.name;
+			linkTag.target = '_blank';
+			linkTag.click();
+			linkTag.remove();
 		}
 	}, [message.attachment]);
 

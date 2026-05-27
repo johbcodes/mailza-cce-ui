@@ -22,7 +22,8 @@ export const useOrderedRoomsInfoByLastMessage = (): FilteredConversation[] => {
 			);
 
 			return filteredRooms.map((room) => {
-				const lastMessageDate = state.chatsRegistry[room.id]?.lastMessage?.date ?? 0;
+				const messages = state.chatsRegistry[room.id]?.messages;
+				const lastMessageDate = messages?.[messages.length - 1]?.date ?? 0;
 				const draftMessageDate = state.activeConversations[room.id]?.draftMessage?.date ?? 0;
 
 				return {

@@ -33,7 +33,7 @@ const myMarker = createMockMarker({
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: sessionUser.id, name: sessionUser.name });
+	store.setLoginInfo(sessionUser.id, sessionUser.name);
 	store.addRooms([room]);
 });
 describe('getLastUnreadMessage', () => {
@@ -51,6 +51,22 @@ describe('getLastUnreadMessage', () => {
 			});
 			const store = useStore.getState();
 			store.newMessage(message);
+
+			expect(getLastUnreadMessage(room.id)).toBe(message.id);
+		});
+
+		test('Conversation has only the inbox message sent by me', () => {
+			const message = createMockTextMessage({ roomId: room.id, from: sessionUser.id });
+			const store = useStore.getState();
+			store.newInboxMessages([message]);
+
+			expect(getLastUnreadMessage(room.id)).toBe(undefined);
+		});
+
+		test('Conversation has only the inbox message sent by another user', () => {
+			const message = createMockTextMessage({ roomId: room.id, from: user1.id });
+			const store = useStore.getState();
+			store.newInboxMessages([message]);
 
 			expect(getLastUnreadMessage(room.id)).toBe(message.id);
 		});

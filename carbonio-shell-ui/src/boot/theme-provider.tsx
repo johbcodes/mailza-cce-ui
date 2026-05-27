@@ -63,6 +63,15 @@ const paletteExtension =
 		palette: {
 			...theme.palette,
 			...customTheme.palette,
+			primary: {
+				regular: '#3b82f6',
+				hover: '#2563eb',
+				active: '#1d4ed8',
+				focus: '#2563eb',
+				disabled: '#93c5fd'
+			},
+			gray6: { ...theme.palette.gray6, regular: '#f8fafc' },
+			gray1: { ...theme.palette.gray1, regular: '#ffffff' },
 			shared: {
 				regular: '#FFB74D',
 				hover: '#FFA21A',

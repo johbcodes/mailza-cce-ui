@@ -5,29 +5,23 @@
  */
 import '@testing-library/jest-dom';
 
-vi.mock('react-dom/client', () => ({
-	default: {
-		createRoot: vi.fn().mockImplementation(() => ({
-			render: vi.fn(),
-			unmount: vi.fn()
-		}))
-	},
-	createRoot: vi.fn().mockImplementation(() => ({
-		render: vi.fn(),
-		unmount: vi.fn()
+jest.mock('react-dom/client', () => ({
+	createRoot: jest.fn().mockImplementation(() => ({
+		render: jest.fn(),
+		unmount: jest.fn()
 	}))
 }));
 
 describe('index.tsx - Context Menu Behavior', () => {
 	let originalGetSelection: typeof window.getSelection;
 
-	beforeAll(async () => {
+	beforeAll(() => {
 		originalGetSelection = window.getSelection;
-		await import('./index');
+		import('./index');
 	});
 
 	beforeEach(() => {
-		vi.clearAllMocks();
+		jest.clearAllMocks();
 		window.getSelection = originalGetSelection;
 		document.body.innerHTML = '';
 	});
@@ -39,7 +33,7 @@ describe('index.tsx - Context Menu Behavior', () => {
 			cancelable: true,
 			composed: true
 		});
-		const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+		const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
 
 		target.dispatchEvent(event);
 
@@ -54,7 +48,7 @@ describe('index.tsx - Context Menu Behavior', () => {
 			cancelable: true,
 			composed: true
 		});
-		const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+		const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
 
 		link.dispatchEvent(event);
 
@@ -69,7 +63,7 @@ describe('index.tsx - Context Menu Behavior', () => {
 			cancelable: true,
 			composed: true
 		});
-		const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+		const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
 
 		img.dispatchEvent(event);
 
@@ -85,7 +79,7 @@ describe('index.tsx - Context Menu Behavior', () => {
 			cancelable: true,
 			composed: true
 		});
-		const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+		const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
 
 		div.dispatchEvent(event);
 
@@ -98,12 +92,12 @@ describe('index.tsx - Context Menu Behavior', () => {
 		document.body.appendChild(textNode);
 		range.selectNode(textNode);
 
-		window.getSelection = vi.fn(
+		window.getSelection = jest.fn(
 			() =>
 				({
 					type: 'Range',
 					rangeCount: 1,
-					getRangeAt: vi.fn(() => range)
+					getRangeAt: jest.fn(() => range)
 				}) as never
 		);
 
@@ -112,7 +106,7 @@ describe('index.tsx - Context Menu Behavior', () => {
 			cancelable: true,
 			composed: true
 		});
-		const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
+		const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
 
 		textNode.dispatchEvent(event);
 

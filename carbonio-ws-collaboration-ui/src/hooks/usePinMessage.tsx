@@ -9,8 +9,8 @@ import { useCallback, useMemo } from 'react';
 import { useModal } from '@zextras/carbonio-design-system';
 import { useTranslation } from 'react-i18next';
 
-import { xmppClient } from '../network/xmpp/XMPPClient';
 import { getPinnedMessage } from '../store/selectors/ActiveConversationsSelectors';
+import { getXmppClient } from '../store/selectors/ConnectionSelector';
 import { getOwnershipOfTheRoom, getRoomTypeSelector } from '../store/selectors/RoomsSelectors';
 import useStore from '../store/Store';
 import { TextMessage } from '../types/store/ChatsRegistryTypes';
@@ -26,6 +26,7 @@ interface UsePinMessageReturnType {
 export const usePinMessage = (message: TextMessage): UsePinMessageReturnType => {
 	const [t] = useTranslation();
 	const { createModal, closeModal } = useModal();
+	const xmppClient = useStore(getXmppClient);
 	const roomType = useStore<RoomType>((store) => getRoomTypeSelector(store, message.roomId));
 	const amIModerator = useStore((store) => getOwnershipOfTheRoom(store, message.roomId));
 	const pinnedMessage = useStore((store) => getPinnedMessage(store, message.roomId));
@@ -47,7 +48,7 @@ export const usePinMessage = (message: TextMessage): UsePinMessageReturnType => 
 		() =>
 			xmppClient.features.includes('zextras:iq:pin') &&
 			(roomType === RoomType.ONE_TO_ONE || amIModerator),
-		[amIModerator, roomType]
+		[amIModerator, roomType, xmppClient.features]
 	);
 
 	const pinActionLabel = useMemo(() => {
@@ -93,7 +94,16 @@ export const usePinMessage = (message: TextMessage): UsePinMessageReturnType => 
 			xmppClient.pinMessage(message.roomId, stanzaIdToPin);
 			useStore.getState().setSelectedPinnedMessage(message.roomId, undefined);
 		}
-	}, [pinnedMessage, isMessagePinned, createModal, t, message.roomId, stanzaIdToPin, closeModal]);
+	}, [
+		pinnedMessage,
+		isMessagePinned,
+		createModal,
+		t,
+		xmppClient,
+		message.roomId,
+		stanzaIdToPin,
+		closeModal
+	]);
 
 	return {
 		canMessageBePinned,

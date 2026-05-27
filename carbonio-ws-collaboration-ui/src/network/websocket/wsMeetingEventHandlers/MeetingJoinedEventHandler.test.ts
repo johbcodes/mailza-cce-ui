@@ -58,7 +58,7 @@ const event2: MeetingJoinedEvent = {
 
 beforeEach(() => {
 	const store = useStore.getState();
-	store.setLoginInfo({ id: 'sessionUserId' });
+	store.setLoginInfo('sessionUserId', 'User');
 	store.addRooms([room, room2, groupRoom]);
 	store.addMeetings([meeting, groupMeeting, meetingWith10Participants]);
 });

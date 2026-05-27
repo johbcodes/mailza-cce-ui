@@ -10,7 +10,7 @@ import { IS_FOCUS_MODE, useIsCarbonioCE } from '@zextras/carbonio-shell-ui';
 
 import { MEETINGS_PATH } from './constants/appConstants';
 import MainApp from './MainApp';
-import { getLicense } from './network';
+import { InfoApi } from './network';
 
 const UnlicensedApp = (): null => {
 	useEffect(() => {
@@ -28,7 +28,7 @@ export default function App(): React.JSX.Element | null {
 
 	useEffect(() => {
 		if (!isCarbonioCE) {
-			getLicense()
+			InfoApi.getLicense()
 				.then((response) => {
 					setIsLicensed(response.licensed);
 				})

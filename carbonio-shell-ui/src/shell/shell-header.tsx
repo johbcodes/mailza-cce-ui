@@ -4,8 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import React from 'react';
+
 import styled from '@emotion/styled';
 import { Catcher, Container, Padding } from '@zextras/carbonio-design-system';
+import type { SearchBar as SearchUISearchBar } from '@zextras/carbonio-search-ui';
 
 import { CreationButton } from './creation-button';
 import { Logo } from './logo';
@@ -19,10 +22,6 @@ const StyledLogo = styled(Logo)`
 
 const ShellHeaderContainer = styled(Container)`
 	z-index: ${BOARD_CONTAINER_ZINDEX + 1};
-	backdrop-filter: blur(12px);
-	background: rgba(255, 255, 255, 0.85) !important;
-	border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-	box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
 `;
 
 interface ShellHeaderProps {
@@ -32,14 +31,15 @@ interface ShellHeaderProps {
 const ShellHeader = ({ children }: ShellHeaderProps): React.JSX.Element => {
 	const { darkReaderStatus } = useDarkMode();
 
-	const [SearchBar, isSearchBarAvailable] = useIntegratedComponent('search-bar');
+	const [SearchBar, isSearchBarAvailable] =
+		useIntegratedComponent<typeof SearchUISearchBar>('search-bar');
 
 	const [TotalQuotaUsage, isTotalQuotaUsageAvailable] = useIntegratedComponent('total-quota-usage');
 	return (
 		<ShellHeaderContainer
 			data-testid="MainHeaderContainer"
 			orientation="horizontal"
-			background={'gray3'}
+			background={'gray1'}
 			width="fill"
 			height={HEADER_BAR_HEIGHT}
 			minHeight={HEADER_BAR_HEIGHT}
@@ -78,6 +78,7 @@ const ShellHeader = ({ children }: ShellHeaderProps): React.JSX.Element => {
 					{isTotalQuotaUsageAvailable && (
 						<Container
 							data-testid="TotalQuotaUsageContainer"
+							maxWidth="13.8125rem"
 							height={'3.125rem'}
 							borderColor={{ left: 'gray2' }}
 							padding={{ horizontal: 'large', vertical: 'small' }}

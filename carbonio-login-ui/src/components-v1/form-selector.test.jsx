@@ -11,11 +11,11 @@ import FormSelector from './form-selector';
 import { getAuthSupported } from '../services/auth-configuration-service';
 import { setup } from '../tests/testUtils';
 
-vi.mock('../services/auth-configuration-service');
+jest.mock('../services/auth-configuration-service');
 
 describe('FormSelector', () => {
 	afterEach(() => {
-		vi.clearAllMocks();
+		jest.clearAllMocks();
 	});
 
 	test('should render ServerNotResponding component on error', async () => {

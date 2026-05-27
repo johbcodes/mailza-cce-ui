@@ -20,7 +20,7 @@ import { find, map } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 import CreateVirtualRoomModal from '../../chats/components/secondaryBar/virtualRoomWidget/CreateVirtualRoomModal';
-import { getMeetingByMeetingId } from '../../network';
+import { MeetingsApi } from '../../network';
 import { useVirtualRoomsList } from '../../store/selectors/RoomsSelectors';
 import { Room } from '../../types/store/RoomTypes';
 import { createMeetingLinkFromOutside, getMeetingIdFromLink } from '../../utils/MeetingsUtils';
@@ -206,7 +206,7 @@ const SelectVirtualRoomWidget: FC<SelectVirtualRoomWidgetProps> = ({ onChange, d
 	useEffect(() => {
 		setDefaultRoom(defaultValue);
 		if (defaultValue !== undefined) {
-			getMeetingByMeetingId(getMeetingIdFromLink(defaultValue.link))
+			MeetingsApi.getMeetingByMeetingId(getMeetingIdFromLink(defaultValue.link))
 				.then(() => {
 					setDefaultIsMyRoom(true);
 				})

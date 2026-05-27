@@ -7,7 +7,7 @@
 import React, { lazy, ReactElement, Suspense, useContext, useEffect } from 'react';
 
 import ShimmerEntryMeetingView from './shimmers/ShimmerEntryMeetingView';
-import { getLoginConfig } from '../../network';
+import { MeetingsApi } from '../../network';
 import useStore from '../../store/Store';
 import { BrowserUtils } from '../../utils/BrowserUtils';
 import { PiPProvider } from '../components/pictureInPicture/PictureInPictureProvider';
@@ -63,7 +63,7 @@ const MeetingMainView = (): ReactElement => {
 	const setCustomLogo = useStore((store) => store.setCustomLogo);
 
 	useEffect(() => {
-		getLoginConfig().then((data) => {
+		MeetingsApi.getLoginConfig().then((data) => {
 			const clientLogo = data.carbonioWebUiAppLogo || undefined;
 			if (clientLogo) {
 				setCustomLogo(clientLogo);
