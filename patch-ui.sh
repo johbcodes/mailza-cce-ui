@@ -13,7 +13,6 @@ IRIS_BASE="/opt/zextras/web/iris"
 declare -A MODULES=(
   ["carbonio-login-ui"]="login"
   ["carbonio-shell-ui"]="carbonio-shell-ui"
-  ["carbonio-ws-collaboration-ui"]="carbonio-ws-collaboration-ui"
 )
 
 # ──────────────────────────────────────────────────────────────────
