@@ -1,57 +1,135 @@
 #!/bin/bash
 # ====================================================================
-# Mailza -> Carbonio CE Recursive Build & Patch Script
-# Run this on your live server inside the cloned repository directory
+# Mailza -> Carbonio CE Production Patch Script
+# Builds each UI module and deploys it into the Carbonio iris directory
+# using hash-versioned folders, index.html asset injection, and symlinks.
 # ====================================================================
 
-# Stop execution if any command fails
 set -e
 
-echo "🚀 Starting Mailza UI Build and Patch Process..."
+IRIS_BASE="/opt/zextras/web/iris"
 
-# List of standalone UI modules to build and deploy
-# (carbonio-ui-commons is intentionally excluded as it's a shared library)
-UI_MODULES=(
-  "carbonio-login-ui"
-  "carbonio-shell-ui"
-  "carbonio-mails-ui"
-  "carbonio-calendars-ui"
-  "carbonio-files-ui"
-  "carbonio-ws-collaboration-ui"
+# Map: local repo dir -> carbonio module name in iris
+declare -A MODULES=(
+  ["carbonio-login-ui"]="login"
+  ["carbonio-shell-ui"]="carbonio-shell-ui"
+  ["carbonio-mails-ui"]="carbonio-mails-ui"
+  ["carbonio-calendars-ui"]="carbonio-calendars-ui"
+  ["carbonio-files-ui"]="carbonio-files-ui"
+  ["carbonio-ws-collaboration-ui"]="carbonio-ws-collaboration-ui"
 )
 
-for MODULE in "${UI_MODULES[@]}"; do
-  if [ -d "$MODULE" ]; then
-    echo ""
-    echo "============================================================"
-    echo "📦 Processing $MODULE..."
-    echo "============================================================"
-    
-    cd "$MODULE"
-    
-    echo "⚙️ Running pnpm build..."
-    pnpm build
-    
-    # Calculate target directory (e.g., carbonio-login-ui -> login)
-    TARGET_DIR=$(echo "$MODULE" | sed 's/^carbonio-//' | sed 's/-ui$//')
-    LIVE_PATH="/opt/zextras/web/$TARGET_DIR"
-    
-    echo "🌐 Patching live server directory: $LIVE_PATH/"
-    
-    # Optional: Backup
-    cp -r "$LIVE_PATH" "${LIVE_PATH}.bak" || true
-    
-    # Sync the new build directly into the live Nginx path
-    rsync -avz --delete dist/ "$LIVE_PATH/"
-    
-    cd ..
+# ──────────────────────────────────────────────────────────────────
+# Helper: deploy one module
+# ──────────────────────────────────────────────────────────────────
+deploy_module() {
+  local REPO="$1"           # e.g. carbonio-shell-ui
+  local CARBONIO_MOD="$2"   # e.g. carbonio-shell-ui  (iris folder name)
+
+  echo ""
+  echo "============================================================"
+  echo "📦  $REPO"
+  echo "============================================================"
+
+  cd "$REPO"
+
+  # ── 1. Build ──────────────────────────────────────────────────
+  echo "⚙️  Building…"
+  pnpm build
+
+  # ── 2. Collect artefact names & hashes ───────────────────────
+  COMMIT=$(git rev-parse --short HEAD)
+  FULL_HASH=$(git rev-parse HEAD)
+
+  # Grab hashed JS bundle (may be index.*.js or chunk-*.js – we want the entry)
+  NEW_JS=$(ls dist/index.*.js 2>/dev/null | head -1 | xargs basename 2>/dev/null || true)
+  NEW_CSS=$(ls dist/style.*.css 2>/dev/null | head -1 | xargs basename 2>/dev/null || true)
+
+  echo "   Commit : $COMMIT"
+  echo "   JS     : ${NEW_JS:-<none>}"
+  echo "   CSS    : ${NEW_CSS:-<none>}"
+
+  # ── 3. Stage build into a Mailza-namespaced versioned folder ──
+  MAILZA_DIR="$IRIS_BASE/mailza-${REPO}/${COMMIT}"
+  echo "📂  Staging → $MAILZA_DIR"
+  sudo mkdir -p "$MAILZA_DIR"
+  sudo cp -rf dist/* "$MAILZA_DIR/"
+
+  # ── 4. Patch the Carbonio module's index.html ─────────────────
+  INDEX_HTML="$IRIS_BASE/$CARBONIO_MOD/current/index.html"
+
+  if [ -f "$INDEX_HTML" ]; then
+    echo "🔧  Patching $INDEX_HTML"
+
+    sudo python3 - << PYEOF
+import re, sys
+
+index_path = "$INDEX_HTML"
+mailza_dir = "mailza-${REPO}/${COMMIT}"
+
+try:
+    content = open(index_path).read()
+    patched = content
+
+    if "$NEW_JS":
+        patched = re.sub(
+            r'src="/static/iris/[^"]+/index\.[^"]+\.js"',
+            f'src="/static/iris/{mailza_dir}/$NEW_JS"',
+            patched
+        )
+
+    if "$NEW_CSS":
+        patched = re.sub(
+            r'href="/static/iris/[^"]+/style\.[^"]+\.css"',
+            f'href="/static/iris/{mailza_dir}/$NEW_CSS"',
+            patched
+        )
+
+    if patched == content:
+        print("   ⚠️  No asset references matched in index.html – check the regex patterns.")
+    else:
+        open(index_path, 'w').write(patched)
+        print("   ✅  index.html updated.")
+except Exception as e:
+    print(f"   ❌  Failed to patch index.html: {e}", file=sys.stderr)
+    sys.exit(1)
+PYEOF
+
   else
-    echo "⚠️ Warning: Directory $MODULE not found, skipping."
+    echo "   ⚠️  $INDEX_HTML not found – skipping index.html patch."
+    echo "       (This is normal for the login module; it manages its own root.)"
+  fi
+
+  # ── 5. Create / replace the Carbonio versioned symlink ────────
+  CARBONIO_VERSION_DIR="$IRIS_BASE/$CARBONIO_MOD/$FULL_HASH"
+  echo "🔗  Symlinking $CARBONIO_VERSION_DIR → $MAILZA_DIR"
+  sudo rm -f "$CARBONIO_VERSION_DIR"
+  sudo ln -sf "$MAILZA_DIR" "$CARBONIO_VERSION_DIR"
+
+  cd ..
+  echo "✅  $REPO deployed."
+}
+
+# ──────────────────────────────────────────────────────────────────
+# Main loop
+# ──────────────────────────────────────────────────────────────────
+echo "🚀  Starting Mailza full-stack patch…"
+
+for REPO in "${!MODULES[@]}"; do
+  if [ -d "$REPO" ]; then
+    deploy_module "$REPO" "${MODULES[$REPO]}"
+  else
+    echo "⚠️  Directory '$REPO' not found – skipping."
   fi
 done
 
+# ──────────────────────────────────────────────────────────────────
+# Reload Carbonio Nginx
+# ──────────────────────────────────────────────────────────────────
 echo ""
-echo "🔄 Restarting Zextras service / Nginx..."
-systemctl restart nginx || echo "Note: If nginx restart fails, the web server might be integrated into a different service (e.g. mailboxd)."
+echo "🔄  Reloading carbonio-nginx…"
+sudo systemctl reload carbonio-nginx.service && echo "✅  carbonio-nginx reloaded." \
+  || echo "⚠️  Reload failed – try: sudo systemctl restart carbonio-nginx.service"
 
-echo "✅ All UI modules successfully built and patched!"
+echo ""
+echo "🎉  All Mailza modules deployed to Carbonio!"
