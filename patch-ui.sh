@@ -34,6 +34,9 @@ deploy_module() {
   cd "$REPO"
 
   # ── 1. Build ──────────────────────────────────────────────────
+  echo "⚙️  Installing dependencies…"
+  pnpm install
+
   echo "⚙️  Building…"
   pnpm build
 
