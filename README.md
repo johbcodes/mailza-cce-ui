@@ -1,6 +1,6 @@
 # Mailza Carbonio CE UI Customization
 
-This repository contains the physical Mailza UI redesign for Carbonio CE. It is designed to be cloned and built **directly on your live Carbonio CE server** to seamlessly override the default frontend interfaces.
+This repository contains the physical Mailza UI redesign for Carbonio CE. It is designed to be cloned and built **directly on your live Carbonio CE server** to seamlessly override the default frontend interfaces in `/opt/zextras/web/`.
 
 ## 🚀 Live Server Patching Guide
 
@@ -46,9 +46,9 @@ This script will automatically restart `nginx` at the end to serve the new Mailz
 ---
 
 ## ⚠️ Upgrade Resilience Notice
-When you perform future system updates (e.g., `apt-get upgrade carbonio-login-ui`), the `apt` package manager may overwrite the `/usr/share/zextras/.../html/` directories with the default Zextras files. 
+When you perform future system updates (e.g., `apt-get upgrade carbonio-login-ui`), the `apt` package manager may overwrite the `/opt/zextras/web/` directories with the default Zextras files. 
 
-Keep this `/opt/mailza-ui` folder on your server. After any core system upgrades, you can instantly restore your customization by simply re-running the `rsync` commands:
+Keep this `/opt/mailza-ui` folder on your server. After any core system upgrades, you can instantly restore your customization by simply re-running the patch script:
 
 ```bash
 cd /opt/mailza-ui

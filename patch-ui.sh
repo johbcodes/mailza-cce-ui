@@ -32,13 +32,17 @@ for MODULE in "${UI_MODULES[@]}"; do
     echo "⚙️ Running pnpm build..."
     pnpm build
     
-    echo "🌐 Patching live server directory: /usr/share/zextras/$MODULE/html/"
+    # Calculate target directory (e.g., carbonio-login-ui -> login)
+    TARGET_DIR=$(echo "$MODULE" | sed 's/^carbonio-//' | sed 's/-ui$//')
+    LIVE_PATH="/opt/zextras/web/$TARGET_DIR"
     
-    # Optional: You can uncomment the line below to create backups
-    cp -r "/usr/share/zextras/$MODULE/html" "/usr/share/zextras/$MODULE/html.bak"
+    echo "🌐 Patching live server directory: $LIVE_PATH/"
+    
+    # Optional: Backup
+    cp -r "$LIVE_PATH" "${LIVE_PATH}.bak" || true
     
     # Sync the new build directly into the live Nginx path
-    rsync -avz --delete dist/ "/usr/share/zextras/$MODULE/html/"
+    rsync -avz --delete dist/ "$LIVE_PATH/"
     
     cd ..
   else
@@ -47,7 +51,7 @@ for MODULE in "${UI_MODULES[@]}"; do
 done
 
 echo ""
-echo "🔄 Restarting Nginx to flush cache..."
-systemctl restart nginx
+echo "🔄 Restarting Zextras service / Nginx..."
+systemctl restart nginx || echo "Note: If nginx restart fails, the web server might be integrated into a different service (e.g. mailboxd)."
 
 echo "✅ All UI modules successfully built and patched!"
