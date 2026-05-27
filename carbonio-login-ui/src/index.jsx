@@ -10,8 +10,8 @@ import { render } from 'react-dom';
 
 import './i18n/i18n.config';
 import './index.css';
-import '@zextras/carbonio-ui-commons/src/theme/mailza-theme.css';
-import '@zextras/carbonio-ui-commons/src/theme/mailza-style.css';
+import '../../carbonio-ui-commons/src/theme/mailza-theme.css';
+import '../../carbonio-ui-commons/src/theme/mailza-style.css';
 import { App } from './app';
 
 render(<App />, document.getElementById('app'));

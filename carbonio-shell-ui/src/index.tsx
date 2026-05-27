@@ -6,8 +6,8 @@
 /* eslint-disable import/no-import-module-exports */
 
 import './index.css';
-import '@zextras/carbonio-ui-commons/src/theme/mailza-theme.css';
-import '@zextras/carbonio-ui-commons/src/theme/mailza-style.css';
+import '../../carbonio-ui-commons/src/theme/mailza-theme.css';
+import '../../carbonio-ui-commons/src/theme/mailza-style.css';
 import React, { lazy, Suspense } from 'react';
 
 import ReactDOM from 'react-dom/client';
