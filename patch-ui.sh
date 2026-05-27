@@ -44,9 +44,9 @@ deploy_module() {
   COMMIT=$(git rev-parse --short HEAD)
   FULL_HASH=$(git rev-parse HEAD)
 
-  # Grab hashed JS bundle (may be index.*.js or chunk-*.js – we want the entry)
-  NEW_JS=$(ls dist/index.*.js 2>/dev/null | head -1 | xargs basename 2>/dev/null || true)
-  NEW_CSS=$(ls dist/style.*.css 2>/dev/null | head -1 | xargs basename 2>/dev/null || true)
+  # Grab hashed JS bundle — handles index.hash.js, index.js, app.hash.js
+  NEW_JS=$(ls dist/index.*.js dist/index.js dist/app.*.js 2>/dev/null | grep -v chunk | head -1 | xargs -r basename 2>/dev/null || true)
+  NEW_CSS=$(ls dist/style.*.css dist/index.*.css dist/*.css 2>/dev/null | head -1 | xargs -r basename 2>/dev/null || true)
 
   echo "   Commit : $COMMIT"
   echo "   JS     : ${NEW_JS:-<none>}"
@@ -106,6 +106,7 @@ PYEOF
   # ── 5. Create / replace the Carbonio versioned symlink ────────
   CARBONIO_VERSION_DIR="$IRIS_BASE/$CARBONIO_MOD/$FULL_HASH"
   echo "🔗  Symlinking $CARBONIO_VERSION_DIR → $MAILZA_DIR"
+  sudo mkdir -p "$(dirname "$CARBONIO_VERSION_DIR")"
   sudo rm -f "$CARBONIO_VERSION_DIR"
   sudo ln -sf "$MAILZA_DIR" "$CARBONIO_VERSION_DIR"
 
