@@ -25,20 +25,20 @@ export const theme: CustomTheme = createTheme(<CustomPaletteOptions>{
 			disabled: 'rgba(0, 0, 0, 0)'
 		},
 		primary: {
-			regular: '#2b73d2',
-			hover: '#225ca8',
-			active: '#1e5092',
-			focus: '#225ca8',
-			disabled: '#aac8ee',
-			main: '#2b73d2'
+			regular: '#4f46e5',
+			hover: '#4338ca',
+			active: '#4338ca',
+			focus: '#4338ca',
+			disabled: '#e0e7ff',
+			main: '#4f46e5'
 		},
 		secondary: {
-			regular: '#828282',
-			hover: '#696969',
-			active: '#5c5c5c',
-			focus: '#696969',
-			disabled: '#cccccc',
-			main: '#828282'
+			regular: '#0d9488',
+			hover: '#0f766e',
+			active: '#0f766e',
+			focus: '#0f766e',
+			disabled: '#ccfbf1',
+			main: '#0d9488'
 		},
 		header: {
 			regular: '#cfd5dc',
@@ -136,12 +136,12 @@ export const theme: CustomTheme = createTheme(<CustomPaletteOptions>{
 			main: '#2196d3'
 		},
 		text: {
-			regular: '#333333',
-			hover: '#1a1a1a',
-			active: '#0d0d0d',
-			focus: '#1a1a1a',
-			disabled: '#cccccc',
-			main: '#333333'
+			regular: '#0f172a',
+			hover: '#0f172a',
+			active: '#0f172a',
+			focus: '#0f172a',
+			disabled: '#94a3b8',
+			main: '#0f172a'
 		}
 	},
 	avatarColors: {
