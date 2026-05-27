@@ -27,46 +27,21 @@ git clone https://github.com/johbcodes/mailza-cce-ui.git mailza-ui
 cd mailza-ui
 ```
 
-### 3. Build & Patch the Login Gateway
-Compile the Login UI and copy the compiled static assets into the Nginx document root.
-
+### 3. Install Dependencies
+You only need to install dependencies once after cloning or pulling new changes.
 ```bash
-cd carbonio-login-ui
-pnpm install
-pnpm build
-
-# Optional: Backup the original Zextras login files
-cp -r /usr/share/zextras/carbonio-login-ui/html /usr/share/zextras/carbonio-login-ui/html.bak
-
-# Patch the live directory
-rsync -avz --delete dist/ /usr/share/zextras/carbonio-login-ui/html/
-cd ..
+pnpm install -r
 ```
 
-### 4. Build & Patch the Core Shell
-Compile the main Shell UI (which powers the global Sidebar and Top Navigation bar) and deploy it.
+### 4. Run the Patch Script
+I have included a `patch-ui.sh` script that recursively iterates through all the micro-frontends (Login, Shell, Mails, Calendars, Files, Chat), builds them, and patches the live Nginx directories automatically.
 
 ```bash
-cd carbonio-shell-ui
-pnpm install
-pnpm build
-
-# Optional: Backup the original Zextras shell files
-cp -r /usr/share/zextras/carbonio-shell-ui/html /usr/share/zextras/carbonio-shell-ui/html.bak
-
-# Patch the live directory
-rsync -avz --delete dist/ /usr/share/zextras/carbonio-shell-ui/html/
-cd ..
+chmod +x patch-ui.sh
+./patch-ui.sh
 ```
 
-*(Note: You can follow the exact same pattern for `carbonio-mails-ui`, `carbonio-calendars-ui`, and `carbonio-ws-collaboration-ui` when needed).*
-
-### 5. Clear Cache & Restart
-Restart Nginx to flush out the old cached assets and serve the new Mailza interface immediately to your users.
-
-```bash
-systemctl restart nginx
-```
+This script will automatically restart `nginx` at the end to serve the new Mailza interface!
 
 ---
 
@@ -77,7 +52,5 @@ Keep this `/opt/mailza-ui` folder on your server. After any core system upgrades
 
 ```bash
 cd /opt/mailza-ui
-rsync -avz --delete carbonio-login-ui/dist/ /usr/share/zextras/carbonio-login-ui/html/
-rsync -avz --delete carbonio-shell-ui/dist/ /usr/share/zextras/carbonio-shell-ui/html/
-systemctl restart nginx
+./patch-ui.sh
 ```
