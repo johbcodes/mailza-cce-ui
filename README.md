@@ -10,8 +10,8 @@ To apply these UI customizations, SSH into your live Carbonio CE server as `root
 You will need `Node.js` and `pnpm` installed on your server to compile the React micro-frontends.
 
 ```bash
-# Install Node.js (if not already installed)
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+# Install Node.js v22 (Required by Carbonio CE micro-frontends)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Install pnpm globally
