@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+"""
+Define an upload item, with its status and all the required info
+"""
+scalar UploadItem
+
+extend type Query {
+	getUploadItem(id: ID!): UploadItem
+}

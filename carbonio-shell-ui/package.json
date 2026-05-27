@@ -1,0 +1,221 @@
+{
+	"name": "@zextras/carbonio-shell-ui",
+	"version": "15.1.0",
+	"description": "The Zextras Carbonio web client",
+	"main": "./lib/lib.js",
+	"types": "./lib/lib.d.ts",
+	"typesVersions": {
+		"*": {
+			"testing": [
+				"./lib/testing.d.ts"
+			]
+		}
+	},
+	"exports": {
+		".": {
+			"types": "./lib/lib.d.ts",
+			"import": "./lib/lib.js",
+			"require": "./lib/lib.js"
+		},
+		"./testing": {
+			"types": "./lib/testing.d.ts",
+			"import": "./lib/testing.js",
+			"require": "./lib/testing.js"
+		},
+		"./*": null
+	},
+	"packageManager": "pnpm@10.32.1",
+	"engines": {
+		"node": "v22",
+		"pnpm": ">=10"
+	},
+	"scripts": {
+		"bump-version": "semantic-release",
+		"test:ci": "vitest run --reporter=default --reporter=junit --coverage --maxWorkers=50%",
+		"test:dev": "vitest run --no-coverage --reporter=default --retry=0",
+		"test": "is-ci && pnpm run test:ci || pnpm run test:dev",
+		"test:watch": "vitest --changed",
+		"prepare": "is-ci || husky",
+		"prepack": "pnpm run build:lib",
+		"type-check": "tsc --noEmit",
+		"type-check:watch": "pnpm run type-check --watch",
+		"lint": "eslint --ext .js,.jsx,.ts,.tsx --resolve-plugins-relative-to node_modules/@zextras/carbonio-ui-configs src",
+		"build": "pnpm run build:pkg && pnpm run build:lib",
+		"build:dev": "pnpm run build:pkg --dev --pkgRel $(date +%s) && pnpm run build:lib",
+		"prebuild:pkg": "rm -rf dist pkg; tsc --project tsconfig.build.json",
+		"build:pkg": "sdk build",
+		"postbuild:pkg": "rm carbonio.webpack.js",
+		"prebuild:lib": "rm -rf lib",
+		"build:lib": "tsc -p tsconfig.lib.json && pnpm exec api-extractor run --verbose",
+		"build:lib:local": "tsc -p tsconfig.lib.json && pnpm exec api-extractor run --verbose --local",
+		"deploy": "pnpm run build:pkg && sdk deploy",
+		"deploy:dev": "pnpm run build:pkg -d && sdk deploy",
+		"deploy:local": "sdk deploy --container ${CONTAINER:-carbonio-advanced-carbonio-composed-ui-1}",
+		"prestart": "pnpm run prebuild:pkg",
+		"start": "sdk watch -h ${HOST:-localhost}",
+		"poststart": "pnpm run postbuild:pkg",
+		"packTo": "pnpm pack --pack-destination $PKG_PATH && cd $PKG_PATH && pnpm add ./zextras-carbonio-shell-ui-$npm_package_version.tgz",
+		"deploy-on-module": "pnpm pack && rm -rf $PKG_PATH/node_modules/@zextras/carbonio-shell-ui/* && tar -xf zextras-carbonio-shell-ui-$npm_package_version.tgz -C $PKG_PATH/node_modules/@zextras/carbonio-shell-ui/ --strip-components 1"
+	},
+	"files": [
+		"lib/",
+		"assets/",
+		"THIRDPARTIES"
+	],
+	"keywords": [
+		"zextras"
+	],
+	"author": "Zextras Dev Team <https://www.zextras.com/carbonio/>",
+	"license": "AGPL-3.0-only",
+	"devDependencies": {
+		"@babel/core": "7.29.0",
+		"@babel/preset-env": "7.29.5",
+		"@babel/preset-react": "7.28.5",
+		"@babel/preset-typescript": "7.28.5",
+		"@commitlint/cli": "20.5.3",
+		"@commitlint/config-conventional": "20.5.3",
+		"@commitlint/types": "20.5.0",
+		"@emotion/babel-plugin": "11.13.5",
+		"@emotion/jest": "11.14.2",
+		"@faker-js/faker": "10.4.0",
+		"@microsoft/api-extractor": "7.58.2",
+		"@semantic-release/changelog": "6.0.3",
+		"@semantic-release/commit-analyzer": "13.0.1",
+		"@semantic-release/git": "10.0.1",
+		"@semantic-release/github": "12.0.8",
+		"@semantic-release/npm": "13.1.5",
+		"@semantic-release/release-notes-generator": "14.1.1",
+		"@svgr/webpack": "8.1.0",
+		"@testing-library/dom": "10.4.1",
+		"@testing-library/jest-dom": "6.9.1",
+		"@testing-library/react": "16.3.2",
+		"@testing-library/user-event": "14.6.1",
+		"@tsconfig/node22": "22.0.5",
+		"@types/lodash": "4.17.24",
+		"@types/node": "22.19.17",
+		"@types/react": "18.3.28",
+		"@types/react-dom": "18.3.7",
+		"@types/webpack": "5.28.5",
+		"@types/webpack-env": "1.18.8",
+		"@vitest/coverage-istanbul": "4.1.4",
+		"@zextras/carbonio-ui-configs": "2.1.0",
+		"@zextras/carbonio-ui-sdk": "2.3.6",
+		"autoprefixer": "10.5.0",
+		"copy-webpack-plugin": "13.0.1",
+		"core-js": "3.49.0",
+		"css-loader": "6.11.0",
+		"dotenv": "17.4.2",
+		"eslint": "8.57.1",
+		"eslint-plugin-notice": "0.9.10",
+		"html-webpack-plugin": "5.6.7",
+		"husky": "9.1.7",
+		"identity-obj-proxy": "3.0.0",
+		"is-ci": "3.0.1",
+		"jsdom": "29.0.2",
+		"mini-css-extract-plugin": "2.10.2",
+		"msw": "2.14.3",
+		"postcss-loader": "8.2.1",
+		"semantic-release": "25.0.3",
+		"sonarqube-scanner": "4.3.6",
+		"typescript": "5.9.3",
+		"vitest": "4.1.4",
+		"vitest-fail-on-console": "0.10.1",
+		"webpack": "5.106.2",
+		"webpack-cli": "6.0.1",
+		"webpack-dev-server": "5.2.4"
+	},
+	"dependencies": {
+		"@emotion/react": "11.14.0",
+		"@emotion/styled": "11.14.1",
+		"@fontsource/roboto": "5.2.10",
+		"@zextras/carbonio-design-system": "12.0.2",
+		"@zextras/carbonio-ui-preview": "5.0.0",
+		"@zextras/carbonio-ui-soap-lib": "1.2.0",
+		"darkreader": "4.9.120",
+		"date-fns": "4.1.0",
+		"i18next": "22.5.1",
+		"i18next-chained-backend": "4.6.3",
+		"i18next-http-backend": "3.0.5",
+		"immer": "10.2.0",
+		"lodash": "4.18.1",
+		"posthog-js": "1.369.2",
+		"react": "18.3.1",
+		"react-dom": "18.3.1",
+		"react-i18next": "12.3.1",
+		"react-router-dom": "6.30.3",
+		"zustand": "5.0.12"
+	},
+	"pnpm": {
+		"overrides": {
+			"vite": "7.3.2"
+		},
+		"onlyBuiltDependencies": [
+			"core-js",
+			"esbuild",
+			"msw",
+			"protobufjs",
+			"unrs-resolver"
+		]
+	},
+	"peerDependencies": {
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.1",
+		"@zextras/carbonio-design-system": "^12.0.0",
+		"@zextras/carbonio-ui-preview": "^5.0.0",
+		"core-js": "^3.39.0",
+		"lodash": "^4.17.23",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-i18next": "^12.3.1",
+		"react-router-dom": "^6.30.0"
+	},
+	"peerDependenciesMeta": {
+		"@zextras/carbonio-design-system": {
+			"optional": true
+		},
+		"@zextras/carbonio-ui-preview": {
+			"optional": true
+		},
+		"lodash": {
+			"optional": true
+		},
+		"react": {
+			"optional": true
+		},
+		"react-dom": {
+			"optional": true
+		},
+		"react-i18next": {
+			"optional": true
+		},
+		"react-router-dom": {
+			"optional": true
+		},
+		"@emotion/react": {
+			"optional": true
+		},
+		"@emotion/styled": {
+			"optional": true
+		}
+	},
+	"sdk": {
+		"svgr": true
+	},
+	"browserslist": [
+		">1%",
+		"last 3 version",
+		"Firefox ESR",
+		"not dead"
+	],
+	"carbonio": {
+		"name": "carbonio-shell-ui",
+		"translations_repository": "git@github.com:Zextras/carbonio-shell-ui-i18n.git",
+		"type": "shell",
+		"priority": -1,
+		"display": "Shell",
+		"icon": "CubeOutline"
+	},
+	"config": {
+		"translations_repository": "git@github.com:Zextras/carbonio-shell-ui-i18n.git"
+	}
+}

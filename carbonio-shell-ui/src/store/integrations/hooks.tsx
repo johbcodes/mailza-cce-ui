@@ -1,0 +1,52 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import type React from 'react';
+import { useMemo } from 'react';
+
+import { useIntegrationsStore } from './store';
+import {
+	buildIntegrationAction,
+	buildIntegrationActions,
+	buildIntegrationComponent,
+	buildIntegrationFunction
+} from './utils';
+import type { Action } from '../../types/integrations';
+import type { AnyFunction } from '../../utils/typeUtils';
+
+export const useIntegratedFunction = <TFunction extends AnyFunction = AnyFunction>(
+	id: string
+): [TFunction, boolean] => {
+	const integration = useIntegrationsStore((s) => s.functions?.[id]);
+	return buildIntegrationFunction(integration);
+};
+
+export const useIntegratedComponent = <
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	TComponent extends React.ComponentType<any> = React.ComponentType<Record<string, unknown>>
+>(
+	id: string
+): [TComponent, boolean] => {
+	const integration = useIntegrationsStore((s) => s.components?.[id]);
+	return useMemo(() => buildIntegrationComponent<TComponent>(integration), [integration]);
+};
+
+export const useActions = <TContext, TAction extends Action = Action>(
+	context: TContext,
+	type: string
+): Array<TAction> => {
+	const factories = useIntegrationsStore((s) => s.actions[type]);
+	return useMemo(() => buildIntegrationActions(factories, context), [factories, context]);
+};
+
+export const useAction = <T,>(
+	type: string,
+	id: string,
+	target?: T
+): [Action | undefined, boolean] => {
+	const factory = useIntegrationsStore((s) => s.actions[type][id]);
+	return useMemo(() => buildIntegrationAction(factory, target), [factory, target]);
+};

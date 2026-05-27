@@ -1,0 +1,107 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import React, { ReactElement, useContext, useMemo, useRef } from 'react';
+
+import styled from '@emotion/styled';
+import { Container } from '@zextras/carbonio-design-system';
+
+import useGeneralMeetingControls from '../../hooks/useGeneralMeetingControls';
+import usePiPWindow from '../../hooks/usePipWindow';
+import { getMeetingViewSelected } from '../../store/selectors/ActiveMeetingSelectors';
+import { getNumberOfTiles } from '../../store/selectors/MeetingSelectors';
+import { getAttribute, getUserId } from '../../store/selectors/SessionSelectors';
+import { getIsUserGuest } from '../../store/selectors/UsersSelectors';
+import useStore from '../../store/Store';
+import { MeetingViewType } from '../../types/store/ActiveMeetingTypes';
+import CinemaMode from '../components/cinemaMode/CinemaMode';
+import FaceToFaceMode from '../components/faceToFaceMode/FaceToFaceMode';
+import GridMode from '../components/gridMode/GridMode';
+import Logo from '../components/Logo';
+import MeetingActionsBar from '../components/meetingActionsBar/MeetingActionsBar';
+import { PiPWindow } from '../components/pictureInPicture/PictureInPictureProvider';
+import PictureInPictureView from '../components/pictureInPicture/PictureInPictureView';
+import RecordingInfo from '../components/RecordingInfo';
+import MeetingSidebar from '../components/sidebar/MeetingSidebar';
+import VirtualBackground from '../components/virtualBackground/VirtualBackground';
+import { RouterContext } from '../contexts/routerContext';
+
+const SkeletonContainer = styled(Container)`
+	overflow: hidden;
+	height: 100vh;
+`;
+
+const ViewContainer = styled(Container)`
+	position: relative;
+	overflow-y: hidden;
+	padding: 1rem;
+	flex-grow: 1;
+`;
+
+export type MeetingViewProps = {
+	children?: ReactElement;
+};
+
+const MeetingSkeleton = (): ReactElement => {
+	const { meetingId } = useContext(RouterContext);
+	const myUserId = useStore(getUserId);
+
+	const meetingViewSelected = useStore(getMeetingViewSelected);
+	const numberOfTiles = useStore((store) => getNumberOfTiles(store, meetingId!));
+	const virtualBackgroundEnabled = useStore((store) =>
+		getAttribute(store, 'virtualBackgroundEnabled')
+	);
+	const isUserGuest = useStore((store) => getIsUserGuest(store, myUserId ?? ''));
+
+	const streamsWrapperRef = useRef<HTMLDivElement>(null);
+
+	useGeneralMeetingControls(meetingId!);
+
+	const ViewToDisplay = useMemo(() => {
+		if (numberOfTiles <= 2) {
+			return FaceToFaceMode;
+		}
+		return meetingViewSelected === MeetingViewType.CINEMA ? CinemaMode : GridMode;
+	}, [meetingViewSelected, numberOfTiles]);
+
+	const isVirtualBackgroundVisible = useMemo(
+		() => virtualBackgroundEnabled ?? isUserGuest,
+		[virtualBackgroundEnabled, isUserGuest]
+	);
+
+	const { pipWindow } = usePiPWindow();
+
+	return (
+		<>
+			{pipWindow && (
+				<PiPWindow pipWindow={pipWindow}>
+					<PictureInPictureView />
+				</PiPWindow>
+			)}
+			{
+				<SkeletonContainer orientation="horizontal" borderRadius="none">
+					<MeetingSidebar />
+					<ViewContainer
+						ref={streamsWrapperRef}
+						background={'gray0'}
+						crossAlignment="center"
+						orientation="horizontal"
+						data-testid="meeting_view_container"
+					>
+						<RecordingInfo meetingId={meetingId!} />
+						<Logo />
+						<ViewToDisplay>
+							<MeetingActionsBar streamsWrapperRef={streamsWrapperRef} />
+						</ViewToDisplay>
+					</ViewContainer>
+					{isVirtualBackgroundVisible && <VirtualBackground meetingId={meetingId} />}
+				</SkeletonContainer>
+			}
+		</>
+	);
+};
+
+export default MeetingSkeleton;

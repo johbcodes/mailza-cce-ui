@@ -1,0 +1,41 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import React from 'react';
+
+import styled from '@emotion/styled';
+import { Container } from '@zextras/carbonio-design-system';
+
+const StyledFirstComponent = styled(Container)``;
+const StyledSecondComponent = styled(Container)`
+	display: none;
+`;
+
+const DivContainer = styled.div`
+	&:hover {
+		& ${StyledFirstComponent} {
+			display: none;
+		}
+		& ${StyledSecondComponent} {
+			display: block;
+		}
+	}
+`;
+
+interface HoverSwitchComponentProps {
+	visibleToHiddenComponent: React.ReactNode;
+	hiddenToVisibleComponent: React.ReactNode;
+}
+
+export const HoverSwitchComponent = ({
+	visibleToHiddenComponent,
+	hiddenToVisibleComponent
+}: HoverSwitchComponentProps): React.JSX.Element => (
+	<DivContainer>
+		<StyledFirstComponent>{visibleToHiddenComponent}</StyledFirstComponent>
+		<StyledSecondComponent>{hiddenToVisibleComponent}</StyledSecondComponent>
+	</DivContainer>
+);

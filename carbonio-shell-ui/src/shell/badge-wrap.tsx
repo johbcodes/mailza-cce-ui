@@ -1,0 +1,63 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+import styled from '@emotion/styled';
+import { Container, Badge, Icon, Tooltip } from '@zextras/carbonio-design-system';
+
+import type { BadgeInfo } from '../types/apps';
+
+const MiniBadge = styled(Badge)`
+	position: absolute;
+	bottom: 25%;
+	right: 25%;
+	transform: translate(30%, 30%);
+	min-width: 1rem;
+	min-height: 1rem;
+	pointer-events: none;
+	z-index: 99;
+	padding: 0.125rem;
+
+	& > div {
+		font-size: 0.625rem;
+		line-height: normal;
+	}
+`;
+
+const MiniIcon = styled(Icon)`
+	position: absolute;
+	bottom: 25%;
+	right: 25%;
+	transform: translate(30%, 30%);
+	user-select: none;
+	cursor: pointer;
+	pointer-events: none;
+	z-index: 99;
+`;
+
+const BadgeWrap = ({
+	badge,
+	label,
+	children
+}: React.PropsWithChildren<{
+	badge: BadgeInfo;
+	label: string;
+}>): React.JSX.Element => (
+	<Tooltip label={label} placement="right">
+		<Container width={'3rem'} height={'3rem'} style={{ position: 'relative' }}>
+			{(badge.show && badge.icon && <MiniIcon icon={badge.icon} color={badge.color} />) ||
+				(badge.show && (
+					<MiniBadge
+						color={'gray6'}
+						backgroundColor={badge.color ?? 'primary'}
+						data-testid={'badge-counter'}
+						value={badge.showCount ? (badge.count ?? 0) : ''}
+					/>
+				))}
+			{children}
+		</Container>
+	</Tooltip>
+);
+
+export default BadgeWrap;

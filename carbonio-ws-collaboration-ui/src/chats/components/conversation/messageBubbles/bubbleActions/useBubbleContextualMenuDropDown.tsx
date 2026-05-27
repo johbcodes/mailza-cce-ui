@@ -1,0 +1,304 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import React, { ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+
+import {
+	Button,
+	CreateSnackbarFn,
+	Dropdown,
+	DropdownItem,
+	Tooltip,
+	useSnackbar
+} from '@zextras/carbonio-design-system';
+import { size } from 'lodash';
+import { useTranslation } from 'react-i18next';
+
+import { usePinMessage } from '../../../../../hooks/usePinMessage';
+import usePreviewNavigation from '../../../../../hooks/usePreviewNavigation';
+import { deleteAttachment } from '../../../../../network';
+import { xmppClient } from '../../../../../network/xmpp/XMPPClient';
+import {
+	getFilesToUploadArray,
+	getForwardList,
+	getReferenceMessage
+} from '../../../../../store/selectors/ActiveConversationsSelectors';
+import { getAttribute, getUserId } from '../../../../../store/selectors/SessionSelectors';
+import { getIsUserGuest } from '../../../../../store/selectors/UsersSelectors';
+import useStore from '../../../../../store/Store';
+import { messageActionType } from '../../../../../types/store/ActiveConversationTypes';
+import { TextMessage } from '../../../../../types/store/ChatsRegistryTypes';
+import { downloadAttachment, isPreviewSupported } from '../../../../../utils/attachmentUtils';
+import { canPerformAction } from '../../../../../utils/MessageActionsUtils';
+
+const useBubbleContextualMenuDropDown = (
+	message: TextMessage,
+	isMyMessage: boolean
+): {
+	MenuDropdown: ReactElement;
+	menuDropdownActive: boolean;
+	menuDropdownRef: React.RefObject<HTMLDivElement>;
+} => {
+	const [t] = useTranslation();
+	const { canMessageBePinned, pinActionLabel, pinAction } = usePinMessage(message);
+	const copyActionLabel = t('action.copy', 'Copy');
+	const deleteActionLabel = t('action.deleteForAll', 'Delete for all');
+	const editActionLabel = t('action.edit', 'Edit');
+	const replyActionLabel = t('action.reply', 'Reply');
+	const forwardActionLabel = t('action.forward', 'Forward');
+	const downloadActionLabel = t('action.download', 'Download');
+	const previewActionLabel = t('action.preview', 'Preview');
+	const successfulCopySnackbar = t('feedback.messageCopied', 'Message copied');
+	const messageActionsTooltip = t('tooltip.messageActions', 'Message actions');
+
+	const sessionId: string | undefined = useStore((store) => getUserId(store));
+	const isUserGuest = useStore((store) => getIsUserGuest(store, sessionId ?? ''));
+	const messageDeleteTimeLimit = useStore((store) =>
+		getAttribute(store, 'messageDeleteTimeLimit')
+	) as number;
+	const messageEditTimeLimit = useStore((store) =>
+		getAttribute(store, 'messageEditTimeLimit')
+	) as number;
+	const referenceMessage = useStore((store) => getReferenceMessage(store, message.roomId));
+	const setReferenceMessage = useStore((store) => store.setReferenceMessage);
+	const unsetReferenceMessage = useStore((store) => store.unsetReferenceMessage);
+	const setDraftMessage = useStore((store) => store.setDraftMessage);
+	const forwardList = useStore((store) => getForwardList(store, message.roomId));
+	const setForwardList = useStore((store) => store.setForwardMessageList);
+
+	const filesToUploadArray = useStore((store) => getFilesToUploadArray(store, message.roomId));
+	const [dropdownActive, setDropdownActive] = useState(false);
+	const createSnackbar: CreateSnackbarFn = useSnackbar();
+
+	const dropDownRef = useRef<HTMLDivElement>(null);
+
+	const { openFromChat } = usePreviewNavigation();
+	const onPreviewClick = useCallback(() => {
+		if (message.attachment) {
+			openFromChat(message.roomId, message.attachment, message.date);
+		}
+	}, [message.attachment, message.date, message.roomId, openFromChat]);
+
+	const onDropdownOpen = useCallback(() => setDropdownActive(true), [setDropdownActive]);
+	const onDropdownClose = useCallback(() => setDropdownActive(false), [setDropdownActive]);
+
+	const setForwardModeOn = useCallback(() => {
+		setDraftMessage(message.roomId);
+		unsetReferenceMessage(message.roomId);
+		setForwardList(message.roomId, message);
+	}, [message, setDraftMessage, setForwardList, unsetReferenceMessage]);
+
+	const copyMessageAction = useCallback(() => {
+		window.parent.navigator.clipboard.writeText(message.text).then();
+
+		createSnackbar({
+			key: new Date().toLocaleString(),
+			severity: 'info',
+			label: successfulCopySnackbar,
+			hideButton: true
+		});
+	}, [createSnackbar, message.text, successfulCopySnackbar]);
+
+	const editMessageAction = useCallback(() => {
+		setDraftMessage(message.roomId, message.text);
+		setReferenceMessage(message.roomId, {
+			messageId: message.id,
+			senderId: message.from,
+			stanzaId: message.stanzaId,
+			actionType: messageActionType.EDIT,
+			attachment: message.attachment
+		});
+	}, [message, setDraftMessage, setReferenceMessage]);
+
+	const deleteMessageAction = useCallback(() => {
+		if (message.attachment) {
+			deleteAttachment(message.attachment.id).then(() =>
+				xmppClient.sendChatMessageDeletion(message.roomId, message.stanzaId)
+			);
+		} else {
+			xmppClient.sendChatMessageDeletion(message.roomId, message.stanzaId);
+		}
+	}, [message.stanzaId, message.attachment, message.roomId]);
+
+	const downloadAction = useCallback(() => {
+		if (message.attachment) {
+			downloadAttachment(message.attachment.id, message.attachment.name);
+		}
+	}, [message.attachment]);
+
+	const replyMessageAction = useCallback(() => {
+		if (referenceMessage?.actionType === messageActionType.EDIT) {
+			setDraftMessage(message.roomId);
+		}
+		setReferenceMessage(message.roomId, {
+			messageId: message.id,
+			senderId: message.from,
+			stanzaId: message.stanzaId,
+			actionType: messageActionType.REPLY,
+			attachment: message.attachment
+		});
+	}, [message, referenceMessage?.actionType, setDraftMessage, setReferenceMessage]);
+
+	const forwardHasToAppear = useMemo(
+		() => !isUserGuest && forwardList === undefined,
+		[forwardList, isUserGuest]
+	);
+
+	const canBeEdited = useMemo(
+		() => canPerformAction(message, isMyMessage, messageEditTimeLimit, messageActionType.EDIT),
+		[messageEditTimeLimit, isMyMessage, message]
+	);
+
+	const canBeDeleted = useMemo(
+		() =>
+			canPerformAction(message, isMyMessage, messageDeleteTimeLimit) &&
+			referenceMessage?.messageId !== message.id,
+		[messageDeleteTimeLimit, isMyMessage, message, referenceMessage]
+	);
+
+	const canBePreviewed = useMemo(
+		() => message.attachment && isPreviewSupported(message.attachment.mimeType),
+		[message.attachment]
+	);
+
+	const canBeDownloaded = useMemo(() => message.attachment, [message.attachment]);
+
+	const contextualMenuActions = useMemo(() => {
+		const actions: DropdownItem[] = [];
+
+		// Edit functionality
+		if (canBeEdited) {
+			actions.push({
+				id: 'Edit',
+				label: editActionLabel,
+				onClick: editMessageAction,
+				disabled: size(filesToUploadArray) > 0
+			});
+		}
+
+		// Reply functionality
+		actions.push({
+			id: 'Reply',
+			label: replyActionLabel,
+			onClick: replyMessageAction
+		});
+
+		// Forward message in another chat
+		if (forwardHasToAppear) {
+			actions.push({
+				id: 'forward',
+				label: forwardActionLabel,
+				onClick: setForwardModeOn
+			});
+		}
+
+		// Copy the text of a text message to the clipboard
+		actions.push({
+			id: 'Copy',
+			label: copyActionLabel,
+			onClick: copyMessageAction
+		});
+
+		// Delete functionality
+		if (canBeDeleted) {
+			actions.push({
+				id: 'Delete',
+				label: deleteActionLabel,
+				onClick: deleteMessageAction
+			});
+		}
+
+		// Preview Functionality
+		if (canBePreviewed) {
+			actions.push({
+				id: 'Preview',
+				label: previewActionLabel,
+				onClick: onPreviewClick
+			});
+		}
+
+		// Download functionality
+		if (canBeDownloaded) {
+			actions.push({
+				id: 'Download',
+				label: downloadActionLabel,
+				onClick: downloadAction
+			});
+		}
+
+		// Pin functionality
+		if (canMessageBePinned) {
+			actions.push({
+				id: 'Pin',
+				label: pinActionLabel,
+				onClick: pinAction
+			});
+		}
+
+		return actions;
+	}, [
+		canBeEdited,
+		replyActionLabel,
+		replyMessageAction,
+		forwardHasToAppear,
+		copyActionLabel,
+		copyMessageAction,
+		canBeDeleted,
+		canBePreviewed,
+		canBeDownloaded,
+		canMessageBePinned,
+		editActionLabel,
+		editMessageAction,
+		filesToUploadArray,
+		forwardActionLabel,
+		setForwardModeOn,
+		deleteActionLabel,
+		deleteMessageAction,
+		previewActionLabel,
+		onPreviewClick,
+		downloadActionLabel,
+		downloadAction,
+		pinActionLabel,
+		pinAction
+	]);
+
+	const MenuDropdown = useMemo(
+		() => (
+			<Tooltip label={messageActionsTooltip} placement="top">
+				<Dropdown
+					data-testid={`cxtMenuDropdown-${message.id}`}
+					items={contextualMenuActions}
+					onOpen={onDropdownOpen}
+					onClose={onDropdownClose}
+					disableRestoreFocus
+					disablePortal
+					placement="right-start"
+					ref={dropDownRef}
+				>
+					<Button
+						size="small"
+						icon="ArrowIosDownward"
+						type="ghost"
+						color="text"
+						onClick={(): null => null}
+					/>
+				</Dropdown>
+			</Tooltip>
+		),
+		[
+			contextualMenuActions,
+			dropDownRef,
+			message.id,
+			messageActionsTooltip,
+			onDropdownClose,
+			onDropdownOpen
+		]
+	);
+
+	return { MenuDropdown, menuDropdownActive: dropdownActive, menuDropdownRef: dropDownRef };
+};
+
+export default useBubbleContextualMenuDropDown;

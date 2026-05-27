@@ -1,0 +1,53 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import React, { useCallback, useEffect, useRef } from 'react';
+
+import styled from '@emotion/styled';
+import { Container, Switch, Text } from '@zextras/carbonio-design-system';
+
+interface AdvancedSwitchProps {
+	label: string;
+	description: string;
+	onChange: (value: boolean) => void;
+	initialValue?: boolean;
+}
+
+const DescriptionText = styled(Text)`
+	line-height: 1.5;
+`;
+
+export const AdvancedSwitch = ({
+	label,
+	description,
+	onChange,
+	initialValue: value = false
+}: AdvancedSwitchProps): React.JSX.Element => {
+	const valueRef = useRef(value);
+
+	useEffect(() => {
+		valueRef.current = value;
+	}, [value]);
+
+	const onClick = useCallback((): void => {
+		onChange(!valueRef.current);
+	}, [onChange]);
+
+	return (
+		<Container padding={{ all: 'extrasmall' }} height="fit" crossAlignment="flex-start">
+			<Switch
+				onClick={onClick}
+				value={value}
+				// onChange={onChange}
+				label={label}
+				padding={{ bottom: 'small' }}
+			/>
+			<DescriptionText color="secondary" size="extrasmall" overflow="break-word">
+				{description}
+			</DescriptionText>
+		</Container>
+	);
+};

@@ -1,0 +1,624 @@
+## 2.17.0 (2026-05-14)
+
+* feat: add auto focus on inputs ([0225ce5](https://github.com/zextras/carbonio-files-ui/commit/0225ce5)), closes [#608](https://github.com/zextras/carbonio-files-ui/issues/608)
+
+## <small>2.16.4 (2026-05-14)</small>
+
+* fix(ci): migrate Jenkinsfile to jenkins-lib-common (#612) ([39c127f](https://github.com/zextras/carbonio-files-ui/commit/39c127f)), closes [#612](https://github.com/zextras/carbonio-files-ui/issues/612)
+
+## <small>2.16.3 (2026-05-12)</small>
+
+* Merge pull request #611 from zextras/IN-1095-jfrog-cost-optimization-usage-analysis-and-mitigation-s ([64da1d6](https://github.com/zextras/carbonio-files-ui/commit/64da1d6)), closes [#611](https://github.com/zextras/carbonio-files-ui/issues/611)
+* build(release): update jenkins-lib-ui to 1.0.13 ([5ca1052](https://github.com/zextras/carbonio-files-ui/commit/5ca1052))
+
+## <small>2.16.2 (2026-05-06)</small>
+
+* fix(deps): update dependency uuid to v11.1.1 [security] (#606) ([4071f2a](https://github.com/zextras/carbonio-files-ui/commit/4071f2a)), closes [#606](https://github.com/zextras/carbonio-files-ui/issues/606)
+
+## <small>2.16.1 (2026-04-30)</small>
+
+* fix(deps): update dependency lodash to v4.18.1 [security] (#594) ([9140b84](https://github.com/zextras/carbonio-files-ui/commit/9140b84)), closes [#594](https://github.com/zextras/carbonio-files-ui/issues/594)
+* chore(deps): update dependency sonarqube-scanner to v4.3.6 (#602) ([4fa3e74](https://github.com/zextras/carbonio-files-ui/commit/4fa3e74)), closes [#602](https://github.com/zextras/carbonio-files-ui/issues/602)
+
+## 2.16.0 (2026-04-27)
+
+* build(release): migrate to semantic-release (#601) ([676e914](https://github.com/zextras/carbonio-files-ui/commit/676e914)), closes [#601](https://github.com/zextras/carbonio-files-ui/issues/601)
+* chore: migrate to pnpm and pin all dependency versions (#599) ([d6b360e](https://github.com/zextras/carbonio-files-ui/commit/d6b360e)), closes [#599](https://github.com/zextras/carbonio-files-ui/issues/599)
+* chore(deps): update carbonio-ui-sdk to 2.2.2 (#590) ([b638ce7](https://github.com/zextras/carbonio-files-ui/commit/b638ce7)), closes [#590](https://github.com/zextras/carbonio-files-ui/issues/590)
+* chore(deps): update dependency @babel/preset-env to ^7.29.2 (#585) ([c555889](https://github.com/zextras/carbonio-files-ui/commit/c555889)), closes [#585](https://github.com/zextras/carbonio-files-ui/issues/585)
+* chore(deps): update dependency @types/lodash to ^4.17.24 (#578) ([22c4042](https://github.com/zextras/carbonio-files-ui/commit/22c4042)), closes [#578](https://github.com/zextras/carbonio-files-ui/issues/578)
+* chore(deps): update dependency @types/node to ^20.19.37 (#579) ([3b421fd](https://github.com/zextras/carbonio-files-ui/commit/3b421fd)), closes [#579](https://github.com/zextras/carbonio-files-ui/issues/579)
+* chore(deps): update dependency @types/node to v20.19.39 (#597) ([db1abe3](https://github.com/zextras/carbonio-files-ui/commit/db1abe3)), closes [#597](https://github.com/zextras/carbonio-files-ui/issues/597)
+* chore(deps): update dependency sonarqube-scanner to ^4.3.5 (#586) ([dd13f1b](https://github.com/zextras/carbonio-files-ui/commit/dd13f1b)), closes [#586](https://github.com/zextras/carbonio-files-ui/issues/586)
+* chore(deps): update dependency zextras/jenkins-lib-ui to v1.0.10 (#587) ([1804430](https://github.com/zextras/carbonio-files-ui/commit/1804430)), closes [#587](https://github.com/zextras/carbonio-files-ui/issues/587)
+* feat: add succeeded recording notification ([24b8bdc](https://github.com/zextras/carbonio-files-ui/commit/24b8bdc)), closes [#592](https://github.com/zextras/carbonio-files-ui/issues/592)
+* feat: hide FilesQuota when totalQuota feature flag is enabled ([de25894](https://github.com/zextras/carbonio-files-ui/commit/de25894)), closes [#593](https://github.com/zextras/carbonio-files-ui/issues/593)
+* feat: improve description editing panel ([0b4dc88](https://github.com/zextras/carbonio-files-ui/commit/0b4dc88)), closes [#596](https://github.com/zextras/carbonio-files-ui/issues/596)
+* feat: refresh quota after storage-consuming operations ([c34e1fa](https://github.com/zextras/carbonio-files-ui/commit/c34e1fa)), closes [#591](https://github.com/zextras/carbonio-files-ui/issues/591)
+* fix(deps): update dependency @zextras/carbonio-shell-ui to v14.0.1 (#588) ([aa2a8d5](https://github.com/zextras/carbonio-files-ui/commit/aa2a8d5)), closes [#588](https://github.com/zextras/carbonio-files-ui/issues/588)
+* Merge pull request #577 from zextras/version-bumper/v2.15.0-1 ([f27c3f6](https://github.com/zextras/carbonio-files-ui/commit/f27c3f6)), closes [#577](https://github.com/zextras/carbonio-files-ui/issues/577)
+* Merge pull request #581 from zextras/version-bumper/v2.15.1-1 ([755cb48](https://github.com/zextras/carbonio-files-ui/commit/755cb48)), closes [#581](https://github.com/zextras/carbonio-files-ui/issues/581)
+* Merge pull request #584 from zextras/version-bumper/v2.15.2-1 ([407ff0b](https://github.com/zextras/carbonio-files-ui/commit/407ff0b)), closes [#584](https://github.com/zextras/carbonio-files-ui/issues/584)
+
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [2.15.2](https://github.com/zextras/carbonio-files-ui/compare/v2.15.1...v2.15.2) (2026-03-05)
+
+
+### Bug Fixes
+
+* lint ([ff87edf](https://github.com/zextras/carbonio-files-ui/commit/ff87edf297f2c67c2ca796014459faf574ba4b6d))
+* sendViaEmails improvement for unsaved editor ([3900af6](https://github.com/zextras/carbonio-files-ui/commit/3900af62e569baffb6729a6b1300a0e8a7e84c5c))
+* tipization changes ([b634437](https://github.com/zextras/carbonio-files-ui/commit/b63443773e34acd727b9e7394a97fda572445f2c))
+* type ([2b033e4](https://github.com/zextras/carbonio-files-ui/commit/2b033e4a5926a8ff2ceffa6236d6fc4547377975))
+
+### [2.15.1](https://github.com/zextras/carbonio-files-ui/compare/v2.15.0...v2.15.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* update jenkins-lib-ui to versione 1.0.9 ([1b88325](https://github.com/zextras/carbonio-files-ui/commit/1b883253e60c9897abd0321d8a045b7b7fd2f10f))
+
+## [2.15.0](https://github.com/zextras/carbonio-files-ui/compare/v2.14.0...v2.15.0) (2026-02-23)
+
+
+### Features
+
+* add bulk edit and delete shares operation ([e820880](https://github.com/zextras/carbonio-files-ui/commit/e8208801c2ca679659d7639a0afa58f0da57a8da)), closes [#573](https://github.com/zextras/carbonio-files-ui/issues/573)
+* improve folder navigation on select-node integration ([64f0a1e](https://github.com/zextras/carbonio-files-ui/commit/64f0a1eed5fdbefb85bc5ad003a19b57f019bdd5)), closes [#568](https://github.com/zextras/carbonio-files-ui/issues/568)
+* improve hover action button size and blur effect ([97caf74](https://github.com/zextras/carbonio-files-ui/commit/97caf746ffee52934c5f41c804e29ce2a5fff8cf)), closes [#560](https://github.com/zextras/carbonio-files-ui/issues/560)
+* improve hovering of the lists ([b7dc9df](https://github.com/zextras/carbonio-files-ui/commit/b7dc9dfdd2de61ded93e6d4dcc5bb5803be8ff6f)), closes [#547](https://github.com/zextras/carbonio-files-ui/issues/547)
+* make files notifications clickable [CO-2810] ([#554](https://github.com/zextras/carbonio-files-ui/issues/554)) ([edb340d](https://github.com/zextras/carbonio-files-ui/commit/edb340d6809461d9007384ba41fbc72bfaaf795a))
+
+
+### Bug Fixes
+
+* add sonarqube-scanner dependency to resolve CI permission issue ([686a944](https://github.com/zextras/carbonio-files-ui/commit/686a944b68c29387dc717c134d6d1bbc45befb0c)), closes [#565](https://github.com/zextras/carbonio-files-ui/issues/565)
+* call setDragImage after dragImage render to fix Safari ([0874708](https://github.com/zextras/carbonio-files-ui/commit/0874708eb3830140eb97df722cf843369c986349)), closes [#548](https://github.com/zextras/carbonio-files-ui/issues/548)
+* **deps:** upgrade node to v22 ([#562](https://github.com/zextras/carbonio-files-ui/issues/562)) ([c7e7204](https://github.com/zextras/carbonio-files-ui/commit/c7e720456fbb2c8519c46d9e4f531683911d43c2))
+* modify AnimatedUpload ([8f20147](https://github.com/zextras/carbonio-files-ui/commit/8f20147884d85436c7895b09d4ebbdce6f73919e)), closes [#549](https://github.com/zextras/carbonio-files-ui/issues/549)
+
+## [2.14.0](https://github.com/zextras/carbonio-files-ui/compare/v2.13.2...v2.14.0) (2025-11-19)
+
+
+### Features
+
+* add support for attaching files to email via drag-and-drop ([a872ee3](https://github.com/zextras/carbonio-files-ui/commit/a872ee3e1ee655feed54899691d09d36152c3e1f)), closes [#536](https://github.com/zextras/carbonio-files-ui/issues/536)
+
+
+### Bug Fixes
+
+* remove css template literal to render svg ([0e371b6](https://github.com/zextras/carbonio-files-ui/commit/0e371b66ed1f9ed49260f88d54d7b396b27e0739)), closes [#520](https://github.com/zextras/carbonio-files-ui/issues/520)
+
+### [2.13.2](https://github.com/zextras/carbonio-files-ui/compare/v2.13.1...v2.13.2) (2025-10-08)
+
+
+### Bug Fixes
+
+* change getNotificationQuery on CE env ([9aa8151](https://github.com/zextras/carbonio-files-ui/commit/9aa8151de2ae86fd619fc759116b1f431ab0c0cf))
+
+### [2.13.1](https://github.com/zextras/carbonio-files-ui/compare/v2.13.0...v2.13.1) (2025-09-05)
+
+
+### Bug Fixes
+
+* update key of Download translation ([cdc2351](https://github.com/zextras/carbonio-files-ui/commit/cdc235177fffb7a6172112d58780b727b0c6248d))
+
+## [2.13.0](https://github.com/zextras/carbonio-files-ui/compare/v2.12.0...v2.13.0) (2025-08-22)
+
+
+### Features
+
+* add download multiple feature ([11959b5](https://github.com/zextras/carbonio-files-ui/commit/11959b50cf0f1d7100cda5370b1f6d6b27c31f38)), closes [#501](https://github.com/zextras/carbonio-files-ui/issues/501)
+* change Collaboration link section to include all types ([43592aa](https://github.com/zextras/carbonio-files-ui/commit/43592aac87af42745a4467953ed47c3230cefed9)), closes [#493](https://github.com/zextras/carbonio-files-ui/issues/493)
+* dblClick set item as active too ([212c47d](https://github.com/zextras/carbonio-files-ui/commit/212c47db8fbe9c8c5dc2fb97bd853e0be260e4cc)), closes [#488](https://github.com/zextras/carbonio-files-ui/issues/488)
+* implement transfer ownership ([7e3e72a](https://github.com/zextras/carbonio-files-ui/commit/7e3e72a84182e81a640021a708e449eb809838bb)), closes [#495](https://github.com/zextras/carbonio-files-ui/issues/495)
+* improve usability of the collaboration section ([76faf00](https://github.com/zextras/carbonio-files-ui/commit/76faf00d01f106d2c3b487a256d9a4b1c5b97e46)), closes [#502](https://github.com/zextras/carbonio-files-ui/issues/502)
+
+
+### Bug Fixes
+
+* clean inputs on reset click ([d9ce016](https://github.com/zextras/carbonio-files-ui/commit/d9ce016aad5432098f5210c3aaf4d4af9101901d)), closes [#489](https://github.com/zextras/carbonio-files-ui/issues/489)
+
+## [2.12.0](https://github.com/zextras/carbonio-files-ui/compare/v2.11.1...v2.12.0) (2025-05-19)
+
+
+### Features
+
+* add missing preview key translations ([d4bf161](https://github.com/zextras/carbonio-files-ui/commit/d4bf1619cd8f3d42dbe38ee10cb4a7b59bdf3713)), closes [#471](https://github.com/zextras/carbonio-files-ui/issues/471)
+* enable access code on files public link ([891fcc1](https://github.com/zextras/carbonio-files-ui/commit/891fcc1e5a503eef58acfca94dc2e8ecebef0fe4)), closes [#460](https://github.com/zextras/carbonio-files-ui/issues/460)
+* handle upload error with Banner component ([fbb551e](https://github.com/zextras/carbonio-files-ui/commit/fbb551efdf787ad83e3ba126521e2e4dc474fcbd)), closes [#483](https://github.com/zextras/carbonio-files-ui/issues/483)
+* implement notification ui ([029eda6](https://github.com/zextras/carbonio-files-ui/commit/029eda67aa3acaf6584e4b40898fd7fe53b91384)), closes [#485](https://github.com/zextras/carbonio-files-ui/issues/485)
+* load and add new items to the preview without leaving the preview ([7f1970f](https://github.com/zextras/carbonio-files-ui/commit/7f1970ffd5d29ea9c93da5a7a3908a7630972c0e)), closes [#467](https://github.com/zextras/carbonio-files-ui/issues/467)
+
+
+### Bug Fixes
+
+* add offset_from_utc as query param in open file endpoint ([c723081](https://github.com/zextras/carbonio-files-ui/commit/c723081ffb57f9d2d97c1d8161f3d7fb4a26b1be)), closes [#468](https://github.com/zextras/carbonio-files-ui/issues/468)
+* disable reset button when there are no filters active ([23a4eb8](https://github.com/zextras/carbonio-files-ui/commit/23a4eb8b68f2cbe2ddd8cd6be9457c3997540995)), closes [#479](https://github.com/zextras/carbonio-files-ui/issues/479)
+* remove creation snackbar when inside any folder ([75d8bcb](https://github.com/zextras/carbonio-files-ui/commit/75d8bcb3d395a6dca945217a5570212576bce573)), closes [#469](https://github.com/zextras/carbonio-files-ui/issues/469)
+
+### [2.11.1](https://github.com/zextras/carbonio-files-ui/compare/v2.11.0...v2.11.1) (2025-02-18)
+
+
+### Bug Fixes
+
+* fix dragAndDrop on list folder item ([f94a1b0](https://github.com/zextras/carbonio-files-ui/commit/f94a1b0d3f57f6dde394687856ad4c40c1846663)), closes [#450](https://github.com/zextras/carbonio-files-ui/issues/450)
+
+## [2.11.0](https://github.com/zextras/carbonio-files-ui/compare/v2.10.0...v2.11.0) (2025-02-06)
+
+
+### Features
+
+* hide creation actions when they are not permitted ([fac3307](https://github.com/zextras/carbonio-files-ui/commit/fac33074558ddfb469f29d89e8dcc022795d9d55)), closes [#427](https://github.com/zextras/carbonio-files-ui/issues/427)
+* update preview and thumbnail api ([466e870](https://github.com/zextras/carbonio-files-ui/commit/466e87000e99a90381d0179f7aa3605672041c1b)), closes [#441](https://github.com/zextras/carbonio-files-ui/issues/441)
+
+## [2.10.0](https://github.com/zextras/carbonio-files-ui/compare/v2.9.0...v2.10.0) (2024-11-18)
+
+
+### Features
+
+* add support to video preview ([17e3661](https://github.com/zextras/carbonio-files-ui/commit/17e36613f4226cdf521d30bc64faac177a94fd1a)), closes [#403](https://github.com/zextras/carbonio-files-ui/issues/403)
+* handle open with docs over size failures ([3eab17f](https://github.com/zextras/carbonio-files-ui/commit/3eab17fda6b323acd0e568fce7400dd4050745c2)), closes [#404](https://github.com/zextras/carbonio-files-ui/issues/404)
+* implement access code for folders ([c5fbb51](https://github.com/zextras/carbonio-files-ui/commit/c5fbb513e76280a0174caa85694d5675bdb6a77c)), closes [#411](https://github.com/zextras/carbonio-files-ui/issues/411)
+* load module only if the user is authenticated ([8b0d722](https://github.com/zextras/carbonio-files-ui/commit/8b0d7228e3c7dc6a5b207c385a44b8dc5481020a)), closes [#413](https://github.com/zextras/carbonio-files-ui/issues/413)
+* update react to v18 ([198a699](https://github.com/zextras/carbonio-files-ui/commit/198a699d3eef3feae35bffe1687754daf8e015f4)), closes [#409](https://github.com/zextras/carbonio-files-ui/issues/409)
+* virtualize list items ([af7f99e](https://github.com/zextras/carbonio-files-ui/commit/af7f99e2ad58b9639b87d3481027f79bfde2fcfb)), closes [#394](https://github.com/zextras/carbonio-files-ui/issues/394)
+
+
+### Bug Fixes
+
+* make drag and drop move dropzone consistent over lists ([1abe377](https://github.com/zextras/carbonio-files-ui/commit/1abe377be048ab63cb4e436c2d6775e0011c02ab)), closes [#401](https://github.com/zextras/carbonio-files-ui/issues/401)
+
+## [2.9.0](https://github.com/zextras/carbonio-files-ui/compare/v2.8.0...v2.9.0) (2024-08-26)
+
+
+### Features
+
+* add svg preview support ([c4ea394](https://github.com/zextras/carbonio-files-ui/commit/c4ea39436e0387663ff4d0f7aca49069a257d6c1)), closes [#388](https://github.com/zextras/carbonio-files-ui/issues/388)
+* handle over quota error on clone version action ([295c30d](https://github.com/zextras/carbonio-files-ui/commit/295c30db4bd29c3bc7ad0eaadad6f55ea02db74a)), closes [#381](https://github.com/zextras/carbonio-files-ui/issues/381)
+* handle over quota error on copy operation ([93760de](https://github.com/zextras/carbonio-files-ui/commit/93760de22bab98eeb47324d14859663d4d49fd13)), closes [#361](https://github.com/zextras/carbonio-files-ui/issues/361)
+* handle over quota error on new document action ([10b88d5](https://github.com/zextras/carbonio-files-ui/commit/10b88d5ab050a4b02f1cebe9a4c7b22a04e202f5)), closes [#353](https://github.com/zextras/carbonio-files-ui/issues/353)
+* implement grid layout  ([abcd7f9](https://github.com/zextras/carbonio-files-ui/commit/abcd7f91cbf8163285af1bd4a5c11f0d71ec5e0b)), closes [#384](https://github.com/zextras/carbonio-files-ui/issues/384)
+* request png output for png images ([af6ccb1](https://github.com/zextras/carbonio-files-ui/commit/af6ccb1ba084cb819ee864ebfeddc5d57664a147)), closes [#382](https://github.com/zextras/carbonio-files-ui/issues/382)
+* update icon when click on chip input ([bce569d](https://github.com/zextras/carbonio-files-ui/commit/bce569d4e5d3495d4e81f756c92be763640bbf93)), closes [#365](https://github.com/zextras/carbonio-files-ui/issues/365)
+
+
+### Bug Fixes
+
+* expand width of dropdown for owner advanced filter ([743e3b8](https://github.com/zextras/carbonio-files-ui/commit/743e3b8cd2e7bca43f8400588c4d4a1938018632)), closes [#370](https://github.com/zextras/carbonio-files-ui/issues/370)
+* set content-type header on create docs request ([acefa11](https://github.com/zextras/carbonio-files-ui/commit/acefa11509a73d01a9a9bba78219df1de9fbbf5c)), closes [#373](https://github.com/zextras/carbonio-files-ui/issues/373)
+* translate unit measures for size ([1c0b74d](https://github.com/zextras/carbonio-files-ui/commit/1c0b74d6b04690b2b3f56f5f7dae67cc3a039c2e)), closes [#385](https://github.com/zextras/carbonio-files-ui/issues/385)
+
+## [2.8.0](https://github.com/zextras/carbonio-files-ui/compare/v2.7.1...v2.8.0) (2024-06-14)
+
+
+### Features
+
+* hide Docs and Preview features when not available ([7d64181](https://github.com/zextras/carbonio-files-ui/commit/7d64181c20ff3e2e2e7f7238bf40a594cddfedba)), closes [#335](https://github.com/zextras/carbonio-files-ui/issues/335)
+* refresh data on update view ([338b008](https://github.com/zextras/carbonio-files-ui/commit/338b00823df6f09e3fb03506bdb954497c2b961c)), closes [#343](https://github.com/zextras/carbonio-files-ui/issues/343)
+
+
+### Bug Fixes
+
+* add modal manager to integrations ([27d001e](https://github.com/zextras/carbonio-files-ui/commit/27d001ea8d262e21cff7782745e68cfcfbc8dd1c)), closes [#352](https://github.com/zextras/carbonio-files-ui/issues/352)
+* localize dates with user language and browser timezone ([a9dbf0c](https://github.com/zextras/carbonio-files-ui/commit/a9dbf0cb0c78457091f325cc5329a62a755fadf7)), closes [#351](https://github.com/zextras/carbonio-files-ui/issues/351)
+* update list item double click logic ([e51e4f9](https://github.com/zextras/carbonio-files-ui/commit/e51e4f9ed412756eb132e71e0b99f211bfc3658e)), closes [#358](https://github.com/zextras/carbonio-files-ui/issues/358)
+
+### [2.7.1](https://github.com/zextras/carbonio-files-ui/compare/v2.7.0...v2.7.1) (2024-05-06)
+
+
+### Bug Fixes
+
+* extend humanFileSize function support ([1df974e](https://github.com/zextras/carbonio-files-ui/commit/1df974e8387e8d648f7e9d531f2fd954f2d3d574)), closes [#347](https://github.com/zextras/carbonio-files-ui/issues/347)
+
+## [2.7.0](https://github.com/zextras/carbonio-files-ui/compare/v2.6.0...v2.7.0) (2024-04-15)
+
+
+### Features
+
+* handle over quota failure on upload operation ([d428da0](https://github.com/zextras/carbonio-files-ui/commit/d428da02564ec6a19e5abf108114c596f193a45a)), closes [#324](https://github.com/zextras/carbonio-files-ui/issues/324)
+
+## [2.6.0](https://github.com/zextras/carbonio-files-ui/compare/v2.5.1...v2.6.0) (2024-04-12)
+
+
+### Features
+
+* add button to update quota ([28e37b1](https://github.com/zextras/carbonio-files-ui/commit/28e37b13d851e07f560bf4d7d4e72a81494ee273)), closes [#316](https://github.com/zextras/carbonio-files-ui/issues/316)
+* show quota info ([3303040](https://github.com/zextras/carbonio-files-ui/commit/33030407d36430cd4b266900d8cfe3de898b36ea)), closes [#313](https://github.com/zextras/carbonio-files-ui/issues/313)
+
+
+### Bug Fixes
+
+* center dropzone overlay inside container ([4f53b77](https://github.com/zextras/carbonio-files-ui/commit/4f53b7722b77c51fc46cd2cd66bae9ccba916500)), closes [#315](https://github.com/zextras/carbonio-files-ui/issues/315)
+
+### [2.5.1](https://github.com/zextras/carbonio-files-ui/compare/v2.5.0...v2.5.1) (2024-02-15)
+
+## [2.5.0](https://github.com/zextras/carbonio-files-ui/compare/v2.4.1...v2.5.0) (2024-01-10)
+
+
+### Features
+
+* update position on primary bar ([805694e](https://github.com/zextras/carbonio-files-ui/commit/805694e02fe7d0e79156606e46f2a04798adc3b8)), closes [#303](https://github.com/zextras/carbonio-files-ui/issues/303)
+
+### [2.4.1](https://github.com/zextras/carbonio-files-ui/compare/v2.4.0...v2.4.1) (2023-12-11)
+
+## [2.4.0](https://github.com/zextras/carbonio-files-ui/compare/v2.3.6...v2.4.0) (2023-12-01)
+
+
+### Features
+
+* add the public link section also for folders ([fe84b7f](https://github.com/zextras/carbonio-files-ui/commit/fe84b7f5680a8897f3524feb7308c79ba614fc38)), closes [#280](https://github.com/zextras/carbonio-files-ui/issues/280)
+
+### [2.3.6](https://github.com/zextras/carbonio-files-ui/compare/v2.3.5...v2.3.6) (2023-11-23)
+
+### [2.3.5](https://github.com/zextras/carbonio-files-ui/compare/v2.3.4...v2.3.5) (2023-11-06)
+
+### [2.3.4](https://github.com/zextras/carbonio-files-ui/compare/v2.3.3...v2.3.4) (2023-10-24)
+
+### [2.3.3](https://github.com/zextras/carbonio-files-ui/compare/v2.3.2...v2.3.3) (2023-10-09)
+
+### [2.3.2](https://github.com/zextras/carbonio-files-ui/compare/v2.3.1...v2.3.2) (2023-09-29)
+
+
+### Bug Fixes
+
+* delete cached shares of children when changing shares of a folder ([c3c60b1](https://github.com/zextras/carbonio-files-ui/commit/c3c60b1d2baae8b2a93d1f55b10bc6a6ffff7433)), closes [#261](https://github.com/zextras/carbonio-files-ui/issues/261)
+
+### [2.3.1](https://github.com/zextras/carbonio-files-ui/compare/v2.3.0...v2.3.1) (2023-09-11)
+
+## [2.3.0](https://github.com/zextras/carbonio-files-ui/compare/v2.2.1...v2.3.0) (2023-08-31)
+
+
+### Features
+
+* add extension of new file inside input element ([73944c3](https://github.com/zextras/carbonio-files-ui/commit/73944c3656bc7d0dbef87ac09abd40b4970a2cfc)), closes [#255](https://github.com/zextras/carbonio-files-ui/issues/255)
+* add preview action on right click on docs ([0d37249](https://github.com/zextras/carbonio-files-ui/commit/0d37249722f00174dd774704daef276c48946697)), closes [#256](https://github.com/zextras/carbonio-files-ui/issues/256)
+
+
+### Bug Fixes
+
+* align icons and prepare update of configs ([2beebe3](https://github.com/zextras/carbonio-files-ui/commit/2beebe3bed2c2ee6508f36de32780450c0b18d38)), closes [#239](https://github.com/zextras/carbonio-files-ui/issues/239) [#240](https://github.com/zextras/carbonio-files-ui/issues/240) [#241](https://github.com/zextras/carbonio-files-ui/issues/241) [#242](https://github.com/zextras/carbonio-files-ui/issues/242) [#243](https://github.com/zextras/carbonio-files-ui/issues/243) [#246](https://github.com/zextras/carbonio-files-ui/issues/246)
+* avoid refetch after delete and update lint configs ([46ae623](https://github.com/zextras/carbonio-files-ui/commit/46ae62322837e103c3c4d0c30f1f8ee6739c8f4d)), closes [#247](https://github.com/zextras/carbonio-files-ui/issues/247)
+* check if child is null beforw writing data in cache ([b2e6374](https://github.com/zextras/carbonio-files-ui/commit/b2e637455e4d58d4d96c9d11f459ebfffe89906a)), closes [#244](https://github.com/zextras/carbonio-files-ui/issues/244)
+* fix animated upload icon not clickable during upload ([bcc7159](https://github.com/zextras/carbonio-files-ui/commit/bcc7159d4077d427f8ba7a5ef2000c5fa9332948)), closes [#250](https://github.com/zextras/carbonio-files-ui/issues/250)
+* remove getParent query in favor of getPath ([2591d5c](https://github.com/zextras/carbonio-files-ui/commit/2591d5cfb89c2e622d5563c0534f35a156737a8f)), closes [#236](https://github.com/zextras/carbonio-files-ui/issues/236)
+* update strings to improve coherence ([c5359c9](https://github.com/zextras/carbonio-files-ui/commit/c5359c96f7e7410cfa558cc59672e1aa5ebf05f0)), closes [#254](https://github.com/zextras/carbonio-files-ui/issues/254)
+* update tests to use resolvers and revert current folder logic on folder selection modal ([f5c435f](https://github.com/zextras/carbonio-files-ui/commit/f5c435fe427f9675e0c3e9482286e2a62b49f9c8)), closes [#245](https://github.com/zextras/carbonio-files-ui/issues/245)
+* upload from different module is not shown in list ([2f406de](https://github.com/zextras/carbonio-files-ui/commit/2f406de92da47e8a6d211d335c27d52d3a8f23bf))
+
+### [2.2.1](https://github.com/zextras/carbonio-files-ui/compare/v2.2.0...v2.2.1) (2023-07-17)
+
+## [2.2.0](https://github.com/zextras/carbonio-files-ui/compare/v2.1.1...v2.2.0) (2023-07-06)
+
+
+### Features
+
+* add alert icon when an upload fails ([5b22815](https://github.com/zextras/carbonio-files-ui/commit/5b22815df999f8d61528137e0dbd91d10e463606)), closes [#231](https://github.com/zextras/carbonio-files-ui/issues/231)
+* add badge with the number of selected items ([034b23b](https://github.com/zextras/carbonio-files-ui/commit/034b23b00a5b9d9b050ab62e48f27db883ee95f6)), closes [#226](https://github.com/zextras/carbonio-files-ui/issues/226)
+* add support for gif preview and thumbnail ([bbd6481](https://github.com/zextras/carbonio-files-ui/commit/bbd6481d7265ad979690924c369053c8d959cf71)), closes [#228](https://github.com/zextras/carbonio-files-ui/issues/228)
+* change the upload badge to be a complete/total fraction ([a969fbc](https://github.com/zextras/carbonio-files-ui/commit/a969fbc7087f111b619a0a182bbedc5189707c5a)), closes [#219](https://github.com/zextras/carbonio-files-ui/issues/219)
+* differentiate icons in the list with specific colors ([aa2ff95](https://github.com/zextras/carbonio-files-ui/commit/aa2ff9582114749924ef906e7773310837008f7c)), closes [#216](https://github.com/zextras/carbonio-files-ui/issues/216)
+
+
+### Bug Fixes
+
+* align home icons and root icons color inside modals ([19ce865](https://github.com/zextras/carbonio-files-ui/commit/19ce86543d187a0c50c660ba339f4c04e3e21fbd)), closes [#227](https://github.com/zextras/carbonio-files-ui/issues/227)
+* save parent in cache with writeFragment when reading children ([073e0d5](https://github.com/zextras/carbonio-files-ui/commit/073e0d5f9baaa5cda3065f047e65b5148dcc04f0)), closes [#230](https://github.com/zextras/carbonio-files-ui/issues/230)
+
+### [2.1.1](https://github.com/zextras/carbonio-files-ui/compare/v2.1.0...v2.1.1) (2023-06-05)
+
+## [2.1.0](https://github.com/zextras/carbonio-files-ui/compare/v2.0.3...v2.1.0) (2023-05-25)
+
+
+### Features
+
+* update secondary bar order ([88d6e6d](https://github.com/zextras/carbonio-files-ui/commit/88d6e6de84dd4f8a103d08e994dfc8da3502d2bc)), closes [#210](https://github.com/zextras/carbonio-files-ui/issues/210)
+
+
+### Bug Fixes
+
+* fix avatar bug in dark and selecting mode ([fe7bbbf](https://github.com/zextras/carbonio-files-ui/commit/fe7bbbf51711a8759832bca1efcd1bea85769755)), closes [#211](https://github.com/zextras/carbonio-files-ui/issues/211)
+
+### [2.0.3](https://github.com/zextras/carbonio-files-ui/compare/v2.0.2...v2.0.3) (2023-05-08)
+
+### [2.0.2](https://github.com/zextras/carbonio-files-ui/compare/v2.0.1...v2.0.2) (2023-04-27)
+
+
+### Bug Fixes
+
+* add translation for share button ([4e18f66](https://github.com/zextras/carbonio-files-ui/commit/4e18f660eb1465663929ab41d700f8b0fb56af3a)), closes [#201](https://github.com/zextras/carbonio-files-ui/issues/201)
+* replace click with onClick ([c0f5388](https://github.com/zextras/carbonio-files-ui/commit/c0f53889f6031f3ad42d62c500ecf723d162d02a)), closes [#203](https://github.com/zextras/carbonio-files-ui/issues/203)
+* translate label for search module selector ([54191e9](https://github.com/zextras/carbonio-files-ui/commit/54191e97eb289786e896348fd745756aa91586d8)), closes [#200](https://github.com/zextras/carbonio-files-ui/issues/200)
+
+### [2.0.1](https://github.com/zextras/carbonio-files-ui/compare/v2.0.0...v2.0.1) (2023-03-13)
+
+## [2.0.0](https://github.com/zextras/carbonio-files-ui/compare/v1.1.1...v2.0.0) (2023-03-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove 'files-select-nodes' integrated action
+
+### Bug Fixes
+
+* use click prop in chip input options ([25d47c7](https://github.com/zextras/carbonio-files-ui/commit/25d47c7cf9ae7db4f5b67f8a40a419d80a9df08e)), closes [#193](https://github.com/zextras/carbonio-files-ui/issues/193)
+
+
+* remove click prop in favor of onClick ([3d329a4](https://github.com/zextras/carbonio-files-ui/commit/3d329a45a10b3ccbce5c2c9ea7867f37c2bc5380)), closes [#191](https://github.com/zextras/carbonio-files-ui/issues/191)
+
+### [1.1.1](https://github.com/zextras/carbonio-files-ui/compare/v1.1.0...v1.1.1) (2023-02-13)
+
+## [1.1.0](https://github.com/zextras/carbonio-files-ui/compare/v1.0.0...v1.1.0) (2023-02-02)
+
+
+### Features
+
+* add item type as advanced filter criteria ([b91df95](https://github.com/zextras/carbonio-files-ui/commit/b91df9549870d161b30a1a092db0c53963dc2280)), closes [#181](https://github.com/zextras/carbonio-files-ui/issues/181)
+* add owner as advanced filter criteria  ([600f79b](https://github.com/zextras/carbonio-files-ui/commit/600f79b8d59fd1e220a4e86380265e5339bf2d2f)), closes [#180](https://github.com/zextras/carbonio-files-ui/issues/180)
+* enable and disable carbonioFeatureFilesEnabled should show and hide Files Module ([79af589](https://github.com/zextras/carbonio-files-ui/commit/79af589e5ee2a957bcc6c6571087163929ef4271)), closes [#182](https://github.com/zextras/carbonio-files-ui/issues/182)
+
+## [1.0.0](https://github.com/zextras/carbonio-files-ui/compare/v0.2.10...v1.0.0) (2023-01-16)
+
+### [0.2.10](https://github.com/zextras/carbonio-files-ui/compare/v0.2.9...v0.2.10) (2023-01-10)
+
+
+### Bug Fixes
+
+* upload button not working on folders ([c4b580a](https://github.com/zextras/carbonio-files-ui/commit/c4b580a55af02cbda21eddb21d23d0e6a52f6abe))
+* upload button not working on folders ([a27395f](https://github.com/zextras/carbonio-files-ui/commit/a27395f13d20e964d7bb847276a4640acf834915))
+
+### [0.2.9](https://github.com/zextras/carbonio-files-ui/compare/v0.2.8...v0.2.9) (2023-01-05)
+
+
+### Features
+
+* upload folder from os ([a835d7e](https://github.com/zextras/carbonio-files-ui/commit/a835d7ed0a9588e0e27222f5b08b31402e8b3aee)), closes [#167](https://github.com/zextras/carbonio-files-ui/issues/167)
+
+### [0.2.8](https://github.com/zextras/carbonio-files-ui/compare/v0.2.7...v0.2.8) (2022-12-05)
+
+
+### Bug Fixes
+
+* disable thumbnail for docs documents ([aefb0e2](https://github.com/zextras/carbonio-files-ui/commit/aefb0e20a829602dae21b2a0f51927bd9147d468)), closes [#162](https://github.com/zextras/carbonio-files-ui/issues/162)
+
+### [0.2.7](https://github.com/zextras/carbonio-files-ui/compare/v0.2.6...v0.2.7) (2022-12-01)
+
+
+### Bug Fixes
+
+* fix typo in calc which is causing the broken ui in dev package ([3828860](https://github.com/zextras/carbonio-files-ui/commit/38288604af2deb0a0c1c148719f825056fe246c9))
+
+### [0.2.6](https://github.com/zextras/carbonio-files-ui/compare/v0.2.5...v0.2.6) (2022-11-24)
+
+
+### Features
+
+* add destinationId in upload-to ([6dc8de7](https://github.com/zextras/carbonio-files-ui/commit/6dc8de706191ec26c0c9d295a258fb34ce39ad6b)), closes [#151](https://github.com/zextras/carbonio-files-ui/issues/151)
+
+### [0.2.5](https://github.com/zextras/carbonio-files-ui/compare/v0.2.4...v0.2.5) (2022-11-15)
+
+
+### Features
+
+* convert px to rem ([dfd1328](https://github.com/zextras/carbonio-files-ui/commit/dfd13285a6d12bcb1d04aed7f374c005d3d5a3cd)), closes [#136](https://github.com/zextras/carbonio-files-ui/issues/136)
+* disable force-cache to allow revalidation ([42be8eb](https://github.com/zextras/carbonio-files-ui/commit/42be8ebacafac298e061aec8c4233faaf5c830f8)), closes [#145](https://github.com/zextras/carbonio-files-ui/issues/145)
+
+
+### Bug Fixes
+
+* hide custom message input ([eb57784](https://github.com/zextras/carbonio-files-ui/commit/eb57784a1aaa5e4f9f874c992f22304506796d8c)), closes [#142](https://github.com/zextras/carbonio-files-ui/issues/142)
+* update modals to restore spaces and fonts ([eb8ae08](https://github.com/zextras/carbonio-files-ui/commit/eb8ae0818e5f56fc2a62874fb576efc54190f5fb)), closes [#143](https://github.com/zextras/carbonio-files-ui/issues/143)
+
+### [0.2.4](https://github.com/zextras/carbonio-files-ui/compare/v0.2.3...v0.2.4) (2022-11-08)
+
+### [0.2.3](https://github.com/zextras/carbonio-files-ui/compare/v0.2.2...v0.2.3) (2022-10-27)
+
+
+### Features
+
+* add recents filter ([ba68f88](https://github.com/zextras/carbonio-files-ui/commit/ba68f880b45df8a5907f3c69da7793d5ae02bd66)), closes [#137](https://github.com/zextras/carbonio-files-ui/issues/137)
+
+### [0.2.2](https://github.com/zextras/carbonio-files-ui/compare/v0.2.1...v0.2.2) (2022-10-17)
+
+
+### Bug Fixes
+
+* apply TabBar breaking change ([e98a931](https://github.com/zextras/carbonio-files-ui/commit/e98a931283e89abae25bb2197dd5455453a87361)), closes [#128](https://github.com/zextras/carbonio-files-ui/issues/128)
+* compose modals with DS components and prevent overflowing on resize ([9c6ff41](https://github.com/zextras/carbonio-files-ui/commit/9c6ff412fb0524e0d9c3a3f3452bd1b1afd51de5)), closes [#129](https://github.com/zextras/carbonio-files-ui/issues/129)
+
+### [0.2.1](https://github.com/zextras/carbonio-files-ui/compare/v0.2.0...v0.2.1) (2022-10-12)
+
+## [0.2.0](https://github.com/zextras/carbonio-files-ui/compare/v0.1.10...v0.2.0) (2022-09-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to @zextras/carbonio-design-system v0.4.0
+
+### Features
+
+* allow user to create different formats of documents ([dc5135c](https://github.com/zextras/carbonio-files-ui/commit/dc5135c407052068f9004612f4ca5a81c7137f05)), closes [#118](https://github.com/zextras/carbonio-files-ui/issues/118)
+* integrate preview document selector ([3d9e70a](https://github.com/zextras/carbonio-files-ui/commit/3d9e70a79da6d4d4f280e619a193d60e0ee2e1ea)), closes [#122](https://github.com/zextras/carbonio-files-ui/issues/122)
+* update new document action labels ([97584b8](https://github.com/zextras/carbonio-files-ui/commit/97584b863c91720290d5bb8cf618a7d97f1cb7b6)), closes [#120](https://github.com/zextras/carbonio-files-ui/issues/120)
+
+
+### Bug Fixes
+
+* avoid link chips to overflow and shrink buttons ([b94a04d](https://github.com/zextras/carbonio-files-ui/commit/b94a04d5ee305ba97b518e1ed3c0ce6eeb551b01)), closes [#126](https://github.com/zextras/carbonio-files-ui/issues/126)
+* request shares from network when querying for more than cached limit ([e3aff4c](https://github.com/zextras/carbonio-files-ui/commit/e3aff4c4d2fe3d3645a8a4cd038730902dab2816)), closes [#124](https://github.com/zextras/carbonio-files-ui/issues/124)
+
+
+* migrate to @zextras/carbonio-design-system v0.4.0 ([f8dcb93](https://github.com/zextras/carbonio-files-ui/commit/f8dcb93d01bb04c33c5d5528eeb48f9b878a9a0b)), closes [#115](https://github.com/zextras/carbonio-files-ui/issues/115)
+
+### [0.1.10](https://github.com/zextras/carbonio-files-ui/compare/v0.1.9...v0.1.10) (2022-09-12)
+
+### [0.1.9](https://github.com/zextras/carbonio-files-ui/compare/v0.1.8...v0.1.9) (2022-09-01)
+
+
+### Features
+
+* add getLinksInfo type to getLink integration function ([09979cf](https://github.com/zextras/carbonio-files-ui/commit/09979cfc6d991403413a24958969df3ca3142290)), closes [#96](https://github.com/zextras/carbonio-files-ui/issues/96)
+* add tooltip on disabled actions on versions ([789d8c0](https://github.com/zextras/carbonio-files-ui/commit/789d8c048d285a96c39a9fae4ced8dd6bc3a81d0)), closes [#97](https://github.com/zextras/carbonio-files-ui/issues/97)
+* add update-link ([15458bf](https://github.com/zextras/carbonio-files-ui/commit/15458bf8e9b06b8e432862b61e7c8eab2c819605)), closes [#95](https://github.com/zextras/carbonio-files-ui/issues/95)
+* allow drop on opened folder during drag-move ([a361b43](https://github.com/zextras/carbonio-files-ui/commit/a361b43a048b9d9f69ab8d8574fa6aeeb67d6a70)), closes [#106](https://github.com/zextras/carbonio-files-ui/issues/106)
+* implement collaboration link ([7778b60](https://github.com/zextras/carbonio-files-ui/commit/7778b602615bfd414bcd6f559fb02bd8dbc6de2b)), closes [#104](https://github.com/zextras/carbonio-files-ui/issues/104)
+* improve chip of shares ([77fed99](https://github.com/zextras/carbonio-files-ui/commit/77fed99f4f7f2b39d8e8a34fb76dc658025f7254)), closes [#99](https://github.com/zextras/carbonio-files-ui/issues/99)
+* wait for save result before closing dialog on unsaved changes ([8dbb759](https://github.com/zextras/carbonio-files-ui/commit/8dbb75921e665c56d61b01a9cf3f347f35056934)), closes [#107](https://github.com/zextras/carbonio-files-ui/issues/107)
+
+
+### Bug Fixes
+
+* align filter params by using a global constant ([557694a](https://github.com/zextras/carbonio-files-ui/commit/557694a59cf0f644e20146510cdd195d480b1432)), closes [#105](https://github.com/zextras/carbonio-files-ui/issues/105)
+
+### [0.1.8](https://github.com/zextras/carbonio-files-ui/compare/v0.1.7...v0.1.8) (2022-08-01)
+
+### [0.1.7](https://github.com/zextras/carbonio-files-ui/compare/v0.1.6...v0.1.7) (2022-07-21)
+
+
+### Features
+
+* add function for select-nodes integration ([2b57259](https://github.com/zextras/carbonio-files-ui/commit/2b57259491631aab135f587a34f901ec1537a3c3)), closes [#83](https://github.com/zextras/carbonio-files-ui/issues/83)
+* add indicator for trashed nodes on search results ([b08e6a1](https://github.com/zextras/carbonio-files-ui/commit/b08e6a110f57912589b3f3e474141be50e722ceb)), closes [#86](https://github.com/zextras/carbonio-files-ui/issues/86)
+* add limit to upload queue ([0105751](https://github.com/zextras/carbonio-files-ui/commit/0105751d4be5cc915d5713ca3b585f50297a20f4)), closes [#88](https://github.com/zextras/carbonio-files-ui/issues/88)
+* add loader on thumbnail preview inside displayer ([da84c57](https://github.com/zextras/carbonio-files-ui/commit/da84c571f99a79214220241460d2e04498a470ec)), closes [#90](https://github.com/zextras/carbonio-files-ui/issues/90)
+* allow creation of folders from nodes selection modal ([c2ad0f0](https://github.com/zextras/carbonio-files-ui/commit/c2ad0f03bfc7c91c0e147453a96dc8dbf96cf59f)), closes [#79](https://github.com/zextras/carbonio-files-ui/issues/79)
+* open displayer with partial data and shim missing data ([7283cdc](https://github.com/zextras/carbonio-files-ui/commit/7283cdcf4e469ddb593b83d6cefa49cb4bca6bea)), closes [#87](https://github.com/zextras/carbonio-files-ui/issues/87)
+* search by default in subfolders in advanced search ([b7ff09d](https://github.com/zextras/carbonio-files-ui/commit/b7ff09db0e0f05780d0e9ba0cca80f00bbf84e55)), closes [#85](https://github.com/zextras/carbonio-files-ui/issues/85)
+* use contact groups in sharing feature ([de7786c](https://github.com/zextras/carbonio-files-ui/commit/de7786c0b30cf8946a2307faa3c42b48c8526b05)), closes [#84](https://github.com/zextras/carbonio-files-ui/issues/84)
+* use RouteLeavingGuard on unsaved changes ([d857aae](https://github.com/zextras/carbonio-files-ui/commit/d857aae91c4c8016dff9c5f4c739df5726f85e61)), closes [#89](https://github.com/zextras/carbonio-files-ui/issues/89)
+
+
+### Bug Fixes
+
+* show preview for pdf with size 0 ([53c88f2](https://github.com/zextras/carbonio-files-ui/commit/53c88f2645d293b095a82b1ab67bba6ccbefe540)), closes [#80](https://github.com/zextras/carbonio-files-ui/issues/80)
+
+### [0.1.6](https://github.com/zextras/carbonio-files-ui/compare/v0.1.5...v0.1.6) (2022-06-20)
+
+### [0.1.5](https://github.com/zextras/carbonio-files-ui/compare/v0.1.4...v0.1.5) (2022-06-09)
+
+
+### Features
+
+* add in or under on search folder chip ([7ed8e85](https://github.com/zextras/carbonio-files-ui/commit/7ed8e8505dc4682104738b666c362446a00e1446)), closes [#68](https://github.com/zextras/carbonio-files-ui/issues/68)
+* add integration to retrieve node metadata ([7d5569c](https://github.com/zextras/carbonio-files-ui/commit/7d5569ca834296ea186ebddf5be8d9e71238c925)), closes [#66](https://github.com/zextras/carbonio-files-ui/issues/66)
+* handle limit of versions ([6ee16f1](https://github.com/zextras/carbonio-files-ui/commit/6ee16f1beb11ff9e4649bb2fe47431fb503a709c)), closes [#62](https://github.com/zextras/carbonio-files-ui/issues/62)
+
+
+### Bug Fixes
+
+* align behaviour of list on mutations updates ([51ae9f2](https://github.com/zextras/carbonio-files-ui/commit/51ae9f23b5626e7b0317645c7af26c61039a12b0)), closes [#75](https://github.com/zextras/carbonio-files-ui/issues/75)
+* avoid to push on stack of modals on viewport change ([0f9b412](https://github.com/zextras/carbonio-files-ui/commit/0f9b412c3bc6c53b0a9bb16a0ac4daf29187367f)), closes [#64](https://github.com/zextras/carbonio-files-ui/issues/64)
+* remove item from folder list when delete your own share ([2cfad03](https://github.com/zextras/carbonio-files-ui/commit/2cfad03e6eb739d3c2878a29af83f77743c68882)), closes [#63](https://github.com/zextras/carbonio-files-ui/issues/63)
+
+### [0.1.4](https://github.com/zextras/carbonio-files-ui/compare/v0.1.3...v0.1.4) (2022-05-25)
+
+### [0.1.3](https://github.com/zextras/carbonio-files-ui/compare/v0.1.2...v0.1.3) (2022-05-25)
+
+### [0.1.2](https://github.com/zextras/carbonio-files-ui/compare/v0.1.1...v0.1.2) (2022-05-12)
+
+
+### Features
+
+* add preview on displayer ([96c5a4a](https://github.com/zextras/carbonio-files-ui/commit/96c5a4a613072ff8f2fac5223d105ba9dc5b99e1)), closes [#55](https://github.com/zextras/carbonio-files-ui/issues/55)
+
+
+### Bug Fixes
+
+* remove custom paddings from secondary bar items ([686b621](https://github.com/zextras/carbonio-files-ui/commit/686b62176d5bb36eea2ef7c80a26aa3839474f82)), closes [#58](https://github.com/zextras/carbonio-files-ui/issues/58)
+* update secondary bar nested items indentation ([e5023d0](https://github.com/zextras/carbonio-files-ui/commit/e5023d0fd086b09ad4a9ca060be4e48e7b4f9f4f)), closes [#57](https://github.com/zextras/carbonio-files-ui/issues/57)
+* use error policy all on getChildren and findNodes queries ([c13017d](https://github.com/zextras/carbonio-files-ui/commit/c13017d42dea056c73c92df5525ba3efd3018690)), closes [#56](https://github.com/zextras/carbonio-files-ui/issues/56)
+
+### [0.1.1](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0...v0.1.1) (2022-05-09)
+
+
+### Bug Fixes
+
+* allow set of action label and icon for select nodes integration ([281236a](https://github.com/zextras/carbonio-files-ui/commit/281236a4058d485b8ae75b7d5ba57b00f80474e4))
+
+## [0.1.0](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.6...v0.1.0) (2022-05-09)
+
+
+### Features
+
+* add thumbnails on list avatars ([4ad3f99](https://github.com/zextras/carbonio-files-ui/commit/4ad3f99c790d702958474c0cde674d7d38c9f63a)), closes [#36](https://github.com/zextras/carbonio-files-ui/issues/36)
+* allow send via mail ([21faeed](https://github.com/zextras/carbonio-files-ui/commit/21faeed59ec6846a966925a3548dd13dac04d2de)), closes [#46](https://github.com/zextras/carbonio-files-ui/issues/46)
+* get link function integration ([752d43d](https://github.com/zextras/carbonio-files-ui/commit/752d43dbe28021d2163f837a19ff22a0d6089e51)), closes [#40](https://github.com/zextras/carbonio-files-ui/issues/40)
+* support preview of documents  ([dda77e1](https://github.com/zextras/carbonio-files-ui/commit/dda77e16db269d1f941a7ca18083403eea286449)), closes [#41](https://github.com/zextras/carbonio-files-ui/issues/41)
+
+
+### Bug Fixes
+
+* add check for folders in upload with drag and drop ([09f2a83](https://github.com/zextras/carbonio-files-ui/commit/09f2a834bc69a50c0d2195746d871178522af730)), closes [#42](https://github.com/zextras/carbonio-files-ui/issues/42)
+* avoid to trigger a new request while the previous is still loading ([ca31427](https://github.com/zextras/carbonio-files-ui/commit/ca314278e3f61336f22ebc2dad4a5b35923bb43c)), closes [#45](https://github.com/zextras/carbonio-files-ui/issues/45)
+* fix upload folder content in update unordered items case ([77aa886](https://github.com/zextras/carbonio-files-ui/commit/77aa8864520ada5fcdb455a38f922777f1d5089a)), closes [#39](https://github.com/zextras/carbonio-files-ui/issues/39)
+* remove useless new actions on views unmount ([77a63af](https://github.com/zextras/carbonio-files-ui/commit/77a63af09a846264e24a0ce463d9ac7351041be3)), closes [#35](https://github.com/zextras/carbonio-files-ui/issues/35)
+* set value of hidden params on search queries ([5f90b7b](https://github.com/zextras/carbonio-files-ui/commit/5f90b7b5a705c7bd0db70d7b37765be9bb99421b)), closes [#37](https://github.com/zextras/carbonio-files-ui/issues/37)
+
+## [0.1.0-rc.6](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.5...v0.1.0-rc.6) (2022-04-13)
+
+
+### Features
+
+* implement pdf preview ([0c8daff](https://github.com/zextras/carbonio-files-ui/commit/0c8daffca69169501cd5138b6ef9e782901eef65)), closes [#23](https://github.com/zextras/carbonio-files-ui/issues/23)
+* upload to target integrated function ([20fc60a](https://github.com/zextras/carbonio-files-ui/commit/20fc60aaa15fa217c168b6f6594ff7313ca8dc3b)), closes [#28](https://github.com/zextras/carbonio-files-ui/issues/28)
+
+
+### Bug Fixes
+
+* typo ([84d6e40](https://github.com/zextras/carbonio-files-ui/commit/84d6e406961168fd4c114f928ab6955b4cf0f269)), closes [#30](https://github.com/zextras/carbonio-files-ui/issues/30)
+
+## [0.1.0-rc.5](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.4...v0.1.0-rc.5) (2022-04-01)
+
+
+### Features
+
+* create integration modal to select nodes ([86e68b3](https://github.com/zextras/carbonio-files-ui/commit/86e68b343497c4e985461e48670acdaf74827961)), closes [#17](https://github.com/zextras/carbonio-files-ui/issues/17)
+
+
+### Bug Fixes
+
+* remove shell references from common submodule ([27cf214](https://github.com/zextras/carbonio-files-ui/commit/27cf214591957919de56008e7b55ad01550b5188)), closes [#24](https://github.com/zextras/carbonio-files-ui/issues/24)
+
+## [0.1.0-rc.4](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.3...v0.1.0-rc.4) (2022-03-24)
+
+
+### Features
+
+* add preview of images with previewer ([c9b6979](https://github.com/zextras/carbonio-files-ui/commit/c9b6979ecabaf220b7b4da2aaa0e5de5da362298)), closes [#19](https://github.com/zextras/carbonio-files-ui/issues/19)
+* handle enter key on description input ([0146ec4](https://github.com/zextras/carbonio-files-ui/commit/0146ec45aec4e9038f0c6cdb767c1fbb17144365)), closes [#14](https://github.com/zextras/carbonio-files-ui/issues/14)
+
+
+### Bug Fixes
+
+* encode filename in base64 for upload request  ([391238b](https://github.com/zextras/carbonio-files-ui/commit/391238bdacb3a7506a18339e921becdbdea1de91)), closes [#18](https://github.com/zextras/carbonio-files-ui/issues/18)
+
+## [0.1.0-rc.3](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.2...v0.1.0-rc.3) (2022-02-24)
+
+
+### Bug Fixes
+
+* fix edit public link expiration date  ([eacc9b2](https://github.com/zextras/carbonio-files-ui/commit/eacc9b2e8c7a0942fc07347a6b147e236230387b)), closes [#9](https://github.com/zextras/carbonio-files-ui/issues/9)
+
+## [0.1.0-rc.2](https://github.com/zextras/carbonio-files-ui/compare/v0.1.0-rc.1...v0.1.0-rc.2) (2022-02-16)
+
+
+### Features
+
+* while decreasing your own share permission show a confirmation dialog ([b7049a2](https://github.com/zextras/carbonio-files-ui/commit/b7049a2e62543688a1fe3fc0db2b978c55a60598)), closes [#4](https://github.com/zextras/carbonio-files-ui/issues/4)
+
+
+### Bug Fixes
+
+* apply timezone where missing, edit description glitch and send mail integration ([f05d85f](https://github.com/zextras/carbonio-files-ui/commit/f05d85f9d44796ff8527b7c3f40c384bcbbd094e)), closes [#3](https://github.com/zextras/carbonio-files-ui/issues/3)
+* fix navigation to trash and shared trash filter ([5a20896](https://github.com/zextras/carbonio-files-ui/commit/5a2089640b852f7e8f2836988bd781cd951b5dbb))
+
+## 0.1.0-rc.1 (2022-02-11)
+
+
+### Features
+
+* first commit ([2571057](https://github.com/zextras/carbonio-files-ui/commit/2571057447a0ca1f7edbe2758270f5d905bd0634))
+* first release commit ([8d20431](https://github.com/zextras/carbonio-files-ui/commit/8d20431ab214a008a9aae5c1301b815ef0afad23))

@@ -1,0 +1,16 @@
+{
+	"extends": "@zextras/carbonio-ui-configs/rules/tsconfig.type-check.json",
+	"compilerOptions": {
+		"noUncheckedIndexedAccess": false,
+		"baseUrl": "./src",
+		"types": ["vitest/globals"],
+		"paths": {
+			"@test-mocks/*": ["../__mocks__/*"],
+			"@test-utils/*": ["__test__/mocks/*"],
+			"@browser-test-utils/*": ["__test__/browser/*"],
+			"@test-setup": ["__test__/test-setup.tsx"]
+		}
+	},
+	"include": ["**/*", ".eslintrc.js"],
+	"exclude": ["./node_modules/*", "./dist/*"]
+}

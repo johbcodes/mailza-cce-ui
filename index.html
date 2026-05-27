@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mailza — Premium B2B Collaboration Suite</title>
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="mailza-theme.css">
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Lucid Icons for Modern Custom Iconography -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- ============================================== -->
+  <!-- MODULE: AUTHENTICATION / LOGIN SCREEN -->
+  <!-- ============================================== -->
+  <div id="module-auth" class="auth-viewport">
+    <div class="auth-card-container">
+      
+      <!-- Left Branding Panel (Consumer B2B visual) -->
+      <div class="auth-graphic-side">
+        <div class="auth-logo-row">
+          <div class="logo-mark"><i data-lucide="mail"></i></div>
+          <span class="logo-text brand-font">Mailza</span>
+        </div>
+        <div class="auth-graphic-content">
+          <h1>Smarter B2B Collaboration for East African SMEs</h1>
+          <p>Bring your emails, calendar schedules, workspace folders, and instant chats into one highly secure, consumer-grade desktop platform.</p>
+          <div class="trusted-badge-row">
+            <div class="badge-item"><i data-lucide="shield-check"></i> <span>256-bit Encryption</span></div>
+            <div class="badge-item"><i data-lucide="zap"></i> <span>Instant Syncing</span></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Form Control Panel -->
+      <div class="auth-form-side">
+        <div class="form-scroll-wrapper">
+          <div class="auth-form-header">
+            <h2 id="auth-welcome-header">Welcome back to Mailza</h2>
+            <p class="text-muted" id="auth-welcome-subheader">Your secure B2B gateway for SME collaboration in East Africa.</p>
+          </div>
+          
+          <!-- Credentials Input Form -->
+          <div class="auth-fields-stack">
+            <div class="input-group">
+              <label for="auth-username" id="auth-label-user">Username or Professional Email</label>
+              <div class="input-icon-wrapper">
+                <i data-lucide="mail" class="input-field-icon"></i>
+                <input type="email" id="auth-username" placeholder="e.g., nicholas@mailza.co" value="nicholas@mailza.co">
+              </div>
+            </div>
+            
+            <div class="input-group">
+              <div class="label-row-forgot">
+                <label for="auth-password" id="auth-label-pass">Secure Password</label>
+                <a href="#" class="forgot-pass-link" id="auth-forgot-link">Help, I forgot my password</a>
+              </div>
+              <div class="input-icon-wrapper">
+                <i data-lucide="lock" class="input-field-icon"></i>
+                <input type="password" id="auth-password" placeholder="••••••••••••" value="password123">
+                <button id="auth-pass-toggle-btn" class="input-action-btn" aria-label="Toggle password visibility">
+                  <i data-lucide="eye" id="auth-eye-icon"></i>
+                </button>
+              </div>
+              
+              <!-- Caps-Lock Alert Indicator -->
+              <div id="auth-capslock-indicator" class="capslock-warning-box hidden">
+                <i data-lucide="keyboard"></i>
+                <span id="auth-capslock-text">Warning: Caps Lock is active!</span>
+              </div>
+            </div>
+            
+            <!-- Custom scale click Login Action button -->
+            <button id="auth-login-btn" class="btn-primary btn-animate w-full auth-btn">
+              <span id="auth-btn-label">Log Into My Workspace</span>
+              <div id="auth-btn-spinner" class="spinner-small hidden"></div>
+            </button>
+          </div>
+          
+          <div class="auth-form-footer">
+            <i data-lucide="shield-check" class="footer-secure-icon"></i>
+            <span class="text-muted text-xs" id="auth-secure-badge">Industry-grade 256-bit secure collaboration layer</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- CORE GLOBAL LAYOUT SHELL (HIDDEN BY DEFAULT) -->
+  <!-- ============================================== -->
+  <div id="mailza-shell" class="shell-layout hidden-shell">
+    
+    <!-- 1. GLOBAL SIDEBAR NAVIGATION -->
+    <aside id="shell-sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-container">
+          <div class="logo-mark"><i data-lucide="mail"></i></div>
+          <span class="logo-text brand-font">Mailza</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button id="nav-mail" class="nav-item active" aria-label="Mail Module">
+          <i data-lucide="inbox"></i>
+          <span class="nav-label">Mail</span>
+          <span class="badge" id="badge-mail">3</span>
+        </button>
+        <button id="nav-calendar" class="nav-item" aria-label="Calendar Module">
+          <i data-lucide="calendar"></i>
+          <span class="nav-label">Calendar</span>
+        </button>
+        <button id="nav-files" class="nav-item" aria-label="Files Module">
+          <i data-lucide="folder-open"></i>
+          <span class="nav-label">Files</span>
+        </button>
+        <button id="nav-chat" class="nav-item" aria-label="Chat Module">
+          <i data-lucide="message-square"></i>
+          <span class="nav-label">Chat</span>
+          <span class="badge badge-teal" id="badge-chat">2</span>
+        </button>
+        <button id="nav-settings" class="nav-item" aria-label="Settings Module">
+          <i data-lucide="settings"></i>
+          <span class="nav-label">Settings</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button id="sidebar-collapse-btn" class="nav-item collapse-btn" aria-label="Collapse Navigation">
+          <i data-lucide="chevron-left" id="collapse-icon"></i>
+          <span class="nav-label">Minimize</span>
+        </button>
+      </div>
+    </aside>
+    
+    <!-- MAIN CONTENT VIEW WRAPPER -->
+    <div class="main-wrapper">
+      
+      <!-- 2. TOP BAR / HEADER -->
+      <header id="shell-header" class="header-bar">
+        <div class="header-left">
+          <button id="mobile-menu-btn" class="mobile-toggle" aria-label="Open navigation menu">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="search-container">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="global-search-input" placeholder="Search emails, events, files, chats..." aria-label="Universal Search">
+            <span class="search-hint">⌘K</span>
+          </div>
+        </div>
+        
+        <div class="header-right">
+          <!-- Light/Dark Mode Quick Toggle -->
+          <button id="theme-toggle-btn" class="header-action-btn" aria-label="Toggle visual theme">
+            <i data-lucide="moon" id="theme-icon"></i>
+          </button>
+          
+          <!-- Notifications Center -->
+          <button id="notification-bell-btn" class="header-action-btn notification-bell" aria-label="Notifications Panel">
+            <i data-lucide="bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+          
+          <!-- User Profile Dropdown -->
+          <div class="user-profile-wrapper" id="profile-dropdown-trigger">
+            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Nico" alt="User Avatar" class="user-avatar" id="shell-avatar">
+            <span class="online-indicator" id="network-indicator-dot"></span>
+            <div class="profile-details-hint">
+              <span class="user-name">Nicholas Biwott</span>
+              <span class="user-status-text">Active and online</span>
+            </div>
+            
+            <!-- Quick Dropdown Menu -->
+            <div class="profile-dropdown-card" id="profile-dropdown">
+              <div class="dropdown-header">
+                <strong>Nicholas Biwott</strong>
+                <p>nicholas@mailza.co</p>
+              </div>
+              <hr class="divider">
+              <div class="status-selector">
+                <button class="status-option active" id="status-online"><span class="dot dot-green"></span> Online</button>
+                <button class="status-option" id="status-away"><span class="dot dot-orange"></span> Away</button>
+                <button class="status-option" id="status-dnd"><span class="dot dot-red"></span> Busy</button>
+              </div>
+              <hr class="divider">
+              <button class="dropdown-link" id="dropdown-settings-link"><i data-lucide="user"></i> Edit Profile</button>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- 3. DYNAMIC CONTENT AREA -->
+      <main id="shell-content" class="content-viewport">
+        
+        <!-- SKELETON LOADER PANEL (Simulating 3G Load) -->
+        <div id="skeleton-container" class="skeleton-pane hidden">
+          <div class="skeleton-header">
+            <div class="skeleton-loader skeleton-title"></div>
+            <div class="skeleton-loader skeleton-actions"></div>
+          </div>
+          <div class="skeleton-body">
+            <div class="skeleton-sidebar">
+              <div class="skeleton-loader skeleton-sidebar-item"></div>
+              <div class="skeleton-loader skeleton-sidebar-item"></div>
+              <div class="skeleton-loader skeleton-sidebar-item"></div>
+            </div>
+            <div class="skeleton-content">
+              <div class="skeleton-loader skeleton-card"></div>
+              <div class="skeleton-loader skeleton-card"></div>
+              <div class="skeleton-loader skeleton-card"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODULE A: MAIL MODULE -->
+        <!-- ============================================== -->
+        <div id="module-mail" class="module-view active-view">
+          <div class="mail-container">
+            <!-- Mail Folders / Sidebar -->
+            <aside class="module-inner-sidebar">
+              <button id="compose-fab" class="btn-primary btn-animate w-full compose-btn">
+                <i data-lucide="plus"></i> <span>Write Email</span>
+              </button>
+              <div class="folder-list">
+                <button class="folder-item active"><i data-lucide="inbox"></i> Inbox <span class="folder-count">3</span></button>
+                <button class="folder-item"><i data-lucide="file-text"></i> Drafts</button>
+                <button class="folder-item"><i data-lucide="send"></i> Sent</button>
+                <button class="folder-item"><i data-lucide="archive"></i> Archive</button>
+                <button class="folder-item"><i data-lucide="trash-2"></i> Trash</button>
+              </div>
+            </aside>
+            
+            <!-- Mail List Pane -->
+            <section class="mail-list-pane">
+              <div class="pane-header">
+                <h2>Inbox</h2>
+                <span class="text-muted" id="mail-list-caption">3 conversations</span>
+              </div>
+              <div class="mail-cards-stack" id="mail-cards-container">
+                <!-- Injected Dynamically by JS -->
+              </div>
+            </section>
+            
+            <!-- Mail Preview Pane -->
+            <section class="mail-preview-pane" id="mail-preview-container">
+              <!-- Injected Dynamically by JS -->
+            </section>
+          </div>
+          
+          <!-- Desktop Floating Compose Modal -->
+          <div id="compose-modal" class="modal-overlay hidden">
+            <div class="modal-card modal-animate-enter">
+              <div class="modal-header">
+                <h3>New Conversation</h3>
+                <button id="close-compose-btn" class="modal-close" aria-label="Close modal"><i data-lucide="x"></i></button>
+              </div>
+              <div class="modal-body">
+                <div class="input-group">
+                  <label for="compose-to">To</label>
+                  <input type="email" id="compose-to" placeholder="Who is this email for?">
+                </div>
+                <div class="input-group">
+                  <label for="compose-subject">Subject</label>
+                  <input type="text" id="compose-subject" placeholder="Give your conversation a subject...">
+                </div>
+                <div class="input-group text-editor-group">
+                  <label for="compose-body">Message</label>
+                  <textarea id="compose-body" placeholder="Start typing your thoughts here..."></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button id="send-email-btn" class="btn-primary btn-animate"><i data-lucide="send"></i> Send Message</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODULE B: CALENDAR MODULE -->
+        <!-- ============================================== -->
+        <div id="module-calendar" class="module-view hidden-view">
+          <div class="calendar-container">
+            <!-- Calendar Navigation Header -->
+            <div class="calendar-header-panel">
+              <div class="calendar-nav-left">
+                <h2>May 2026</h2>
+                <div class="btn-group">
+                  <button class="btn-outline btn-icon-only"><i data-lucide="chevron-left"></i></button>
+                  <button class="btn-outline">Today</button>
+                  <button class="btn-outline btn-icon-only"><i data-lucide="chevron-right"></i></button>
+                </div>
+              </div>
+              <div class="calendar-nav-right">
+                <button id="create-event-btn" class="btn-primary btn-animate"><i data-lucide="plus"></i> Schedule Event</button>
+              </div>
+            </div>
+            
+            <!-- Calendar Monthly Grid View -->
+            <div class="calendar-grid">
+              <div class="grid-day-header">Sun</div>
+              <div class="grid-day-header">Mon</div>
+              <div class="grid-day-header">Tue</div>
+              <div class="grid-day-header">Wed</div>
+              <div class="grid-day-header">Thu</div>
+              <div class="grid-day-header">Fri</div>
+              <div class="grid-day-header">Sat</div>
+              
+              <!-- 35 Calendar Grid cells injected by JS -->
+              <div class="calendar-grid-cells" id="calendar-grid-cells-container"></div>
+            </div>
+          </div>
+          
+          <!-- Event Modal -->
+          <div id="event-modal" class="modal-overlay hidden">
+            <div class="modal-card modal-animate-enter">
+              <div class="modal-header">
+                <h3>Schedule Event</h3>
+                <button id="close-event-btn" class="modal-close" aria-label="Close modal"><i data-lucide="x"></i></button>
+              </div>
+              <div class="modal-body">
+                <div class="input-group">
+                  <label for="event-title">Event Title</label>
+                  <input type="text" id="event-title" placeholder="Weekly Sync, Launch Party, Review...">
+                </div>
+                <div class="row-group">
+                  <div class="input-group">
+                    <label for="event-date">Date</label>
+                    <input type="date" id="event-date" value="2026-05-28">
+                  </div>
+                  <div class="input-group">
+                    <label for="event-time">Time</label>
+                    <input type="time" id="event-time" value="10:00">
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label for="event-attendees">Attendees</label>
+                  <input type="text" id="event-attendees" placeholder="Who should we invite to this meeting?">
+                </div>
+                <div class="input-group">
+                  <label for="event-location">Location / Link</label>
+                  <input type="text" id="event-location" placeholder="Add a physical location or video link">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button id="save-event-btn" class="btn-primary btn-animate"><i data-lucide="check"></i> Create Event</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODULE C: FILES MODULE -->
+        <!-- ============================================== -->
+        <div id="module-files" class="module-view hidden-view">
+          <div class="files-container">
+            <!-- Files Top Bar controls -->
+            <div class="files-controls">
+              <div class="breadcrumb-trail">
+                <span class="crumb active"><i data-lucide="database"></i> My Cloud Drive</span>
+              </div>
+              <div class="files-view-toggles">
+                <button id="view-grid-btn" class="toggle-btn active" aria-label="Grid view"><i data-lucide="layout-grid"></i></button>
+                <button id="view-list-btn" class="toggle-btn" aria-label="List view"><i data-lucide="list"></i></button>
+                <button id="upload-trigger-btn" class="btn-primary btn-animate"><i data-lucide="upload-cloud"></i> Upload File</button>
+              </div>
+            </div>
+            
+            <!-- Files Layout Area -->
+            <div class="files-layout-split">
+              <!-- Left Folder Tree -->
+              <aside class="files-folder-tree">
+                <div class="tree-item active"><i data-lucide="folder"></i> <span>All Documents</span></div>
+                <div class="tree-item"><i data-lucide="folder"></i> <span>Business Receipts</span></div>
+                <div class="tree-item"><i data-lucide="folder"></i> <span>Client Proposals</span></div>
+                <div class="tree-item"><i data-lucide="folder"></i> <span>Brand Guidelines</span></div>
+              </aside>
+              
+              <!-- Core Files Grid/List Area -->
+              <section class="files-core-viewer" id="files-viewer-panel">
+                <div class="files-grid" id="files-grid-stack">
+                  <!-- File cards dynamically injected by JS -->
+                </div>
+              </section>
+            </div>
+          </div>
+          
+          <!-- Upload File Modal -->
+          <div id="upload-modal" class="modal-overlay hidden">
+            <div class="modal-card modal-animate-enter">
+              <div class="modal-header">
+                <h3>Upload Document</h3>
+                <button id="close-upload-btn" class="modal-close" aria-label="Close modal"><i data-lucide="x"></i></button>
+              </div>
+              <div class="modal-body">
+                <div class="drag-drop-zone" id="drag-drop-zone">
+                  <i data-lucide="upload-cloud" class="upload-large-icon"></i>
+                  <h4>Drag your files here to start uploading</h4>
+                  <p class="text-muted">Or browse from your computer (PDFs, Images, Docs)</p>
+                  <input type="file" id="file-input-selector" class="hidden-input">
+                </div>
+                
+                <!-- Upload Progress Injected Dynamically -->
+                <div class="upload-progress-container hidden" id="upload-progress-box">
+                  <div class="progress-info">
+                    <span class="file-progress-name" id="progress-file-name">invoice_proposal.pdf</span>
+                    <span class="file-progress-pct" id="progress-file-pct">0%</span>
+                  </div>
+                  <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODULE D: CHAT MODULE -->
+        <!-- ============================================== -->
+        <div id="module-chat" class="module-view hidden-view">
+          <div class="chat-container">
+            <!-- Left Chats Sidebar List -->
+            <aside class="chat-threads-sidebar">
+              <div class="chat-search">
+                <i data-lucide="search"></i>
+                <input type="text" placeholder="Search team discussions...">
+              </div>
+              <div class="chat-threads-stack" id="chat-threads-container">
+                <!-- Chat threads injected dynamically by JS -->
+              </div>
+            </aside>
+            
+            <!-- Chat Conversation Window -->
+            <section class="chat-messages-viewer">
+              <!-- Chat conversation Header -->
+              <div class="chat-window-header" id="chat-header-pane">
+                <!-- Injected Dynamically by JS -->
+              </div>
+              
+              <!-- Message Bubble Stream -->
+              <div class="chat-message-stream" id="chat-message-stream">
+                <!-- Message bubbles injected by JS -->
+              </div>
+              
+              <!-- Typing Indicator Overlay -->
+              <div class="chat-typing-indicator hidden" id="chat-typing-indicator">
+                <div class="typing-bubble">
+                  <span class="typing-dot"></span>
+                  <span class="typing-dot"></span>
+                  <span class="typing-dot"></span>
+                </div>
+                <span class="typing-label-text" id="typing-indicator-text">Nico is typing...</span>
+              </div>
+              
+              <!-- Rich Message Input Area -->
+              <div class="chat-input-bar">
+                <div class="rich-toolbar">
+                  <button class="toolbar-btn" aria-label="Make text bold"><i data-lucide="bold"></i></button>
+                  <button class="toolbar-btn" aria-label="Make text italic"><i data-lucide="italic"></i></button>
+                  <button class="toolbar-btn" aria-label="Insert a hyperlink"><i data-lucide="link"></i></button>
+                  <button class="toolbar-btn" aria-label="Attach file"><i data-lucide="paperclip"></i></button>
+                </div>
+                <div class="input-form">
+                  <input type="text" id="chat-text-input" placeholder="Send a secure message to your team..." aria-label="Message Input">
+                  <button id="send-chat-btn" class="btn-primary btn-animate btn-icon-only" aria-label="Send message">
+                    <i data-lucide="send"></i>
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODULE E: SETTINGS MODULE -->
+        <!-- ============================================== -->
+        <div id="module-settings" class="module-view hidden-view">
+          <div class="settings-container">
+            <!-- Settings left Category links -->
+            <aside class="settings-tabs-sidebar">
+              <button class="settings-tab-btn active" data-target="settings-pane-profile"><i data-lucide="user"></i> My Account</button>
+              <button class="settings-tab-btn" data-target="settings-pane-appearance"><i data-lucide="palette"></i> Interface Appearance</button>
+              <button class="settings-tab-btn" data-target="settings-pane-security"><i data-lucide="shield-check"></i> Login & Security</button>
+            </aside>
+            
+            <!-- Settings right panel contents -->
+            <section class="settings-core-panel">
+              
+              <!-- Category 1: Profile -->
+              <div id="settings-pane-profile" class="settings-subpane">
+                <div class="settings-pane-header">
+                  <h2>My Account Settings</h2>
+                  <p class="text-muted">Manage your public information and East African regional preferences.</p>
+                </div>
+                
+                <div class="settings-section-card">
+                  <h3>Profile Photo</h3>
+                  <div class="avatar-uploader-row">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Nico" alt="Profile Picture" class="avatar-large" id="settings-avatar-img">
+                    <div class="upload-avatar-actions">
+                      <button id="change-avatar-btn" class="btn-outline btn-animate">Change Avatar</button>
+                      <p class="text-muted text-xs">Supports SVG or PNG formats up to 1MB.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="settings-section-card">
+                  <h3>Personal Information</h3>
+                  <div class="grid-2-col">
+                    <div class="input-group">
+                      <label for="settings-fullname">Full Name</label>
+                      <input type="text" id="settings-fullname" value="Nicholas Biwott">
+                    </div>
+                    <div class="input-group">
+                      <label for="settings-email">Email Address</label>
+                      <input type="email" id="settings-email" value="nicholas@mailza.co" disabled>
+                    </div>
+                    <div class="input-group">
+                      <label for="settings-phone">Phone Number</label>
+                      <input type="tel" id="settings-phone" value="+254 712 345678">
+                    </div>
+                    <div class="input-group">
+                      <label for="settings-timezone">Timezone</label>
+                      <select id="settings-timezone">
+                        <option value="EAT" selected>East Africa Time (GMT+3:00) — Nairobi</option>
+                        <option value="CAT">Central Africa Time (GMT+2:00) — Kigali</option>
+                        <option value="UTC">Coordinated Universal Time (GMT+0:00)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="settings-footer">
+                  <button id="save-profile-btn" class="btn-primary btn-animate"><i data-lucide="check"></i> Save Account Settings</button>
+                </div>
+              </div>
+              
+              <!-- Category 2: Appearance -->
+              <div id="settings-pane-appearance" class="settings-subpane hidden">
+                <div class="settings-pane-header">
+                  <h2>Interface Appearance</h2>
+                  <p class="text-muted">Adjust themes, sizes, and fonts to create your optimal daily workspace.</p>
+                </div>
+                
+                <div class="settings-section-card">
+                  <h3>Choose your theme</h3>
+                  <p class="text-muted">Select a comfortable color scheme to reduce eye strain.</p>
+                  
+                  <div class="theme-picker-grid">
+                    <button class="theme-card active" id="theme-btn-light">
+                      <div class="theme-preview light-preview">
+                        <div class="theme-preview-sidebar"></div>
+                        <div class="theme-preview-content"></div>
+                      </div>
+                      <span>Sunny Light</span>
+                    </button>
+                    <button class="theme-card" id="theme-btn-dark">
+                      <div class="theme-preview dark-preview">
+                        <div class="theme-preview-sidebar"></div>
+                        <div class="theme-preview-content"></div>
+                      </div>
+                      <span>Obsidian Dark</span>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="settings-section-card">
+                  <h3>Typography & Scale</h3>
+                  <div class="input-group">
+                    <div class="slider-label-row">
+                      <label for="settings-font-slider">Adjust text size for reading comfort</label>
+                      <span id="font-slider-value" class="slider-val-badge">100%</span>
+                    </div>
+                    <input type="range" id="settings-font-slider" min="80" max="130" value="100" class="custom-range-slider">
+                  </div>
+                </div>
+                
+                <div class="settings-footer">
+                  <button id="save-appearance-btn" class="btn-primary btn-animate"><i data-lucide="check"></i> Save Visual Preferences</button>
+                </div>
+              </div>
+              
+              <!-- Category 3: Security -->
+              <div id="settings-pane-security" class="settings-subpane hidden">
+                <div class="settings-pane-header">
+                  <h2>Login & Security Settings</h2>
+                  <p class="text-muted">Ensure your account and company secrets remain safe.</p>
+                </div>
+                
+                <div class="settings-section-card">
+                  <h3>Change Password</h3>
+                  <div class="input-group">
+                    <label for="security-current-pass">Current Password</label>
+                    <input type="password" id="security-current-pass">
+                  </div>
+                  <div class="grid-2-col">
+                    <div class="input-group">
+                      <label for="security-new-pass">New Password</label>
+                      <input type="password" id="security-new-pass">
+                    </div>
+                    <div class="input-group">
+                      <label for="security-confirm-pass">Confirm Password</label>
+                      <input type="password" id="security-confirm-pass">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="settings-footer">
+                  <button id="save-security-btn" class="btn-primary btn-animate"><i data-lucide="check"></i> Update Security Credentials</button>
+                </div>
+              </div>
+              
+            </section>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Global Action Feedback Notifications Toast Stack -->
+  <div id="toast-container" class="toast-stack">
+    <!-- Toasts dynamically appended here -->
+  </div>
+
+  <!-- Frontend Application JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>

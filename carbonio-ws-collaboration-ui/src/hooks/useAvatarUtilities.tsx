@@ -1,0 +1,52 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import { useMemo } from 'react';
+
+import { useTheme } from '@zextras/carbonio-design-system';
+
+import { getIsUserGuest, getUserName, getIsAnonymousUser } from '../store/selectors/UsersSelectors';
+import useStore from '../store/Store';
+import { calcAvatarMeetingColor, calculateAvatarColor } from '../utils/styleUtils';
+
+const useAvatarUtilities = (
+	userId: string,
+	onMeeting?: boolean
+): {
+	avatarColor: string;
+	avatarPicture: string | undefined;
+	avatarIcon: string | undefined;
+	isLoading: boolean;
+} => {
+	const isAnonymousUser = useStore((store) => getIsAnonymousUser(store, userId));
+	const userName: string = useStore((store) => getUserName(store, userId));
+	const isUserGuest = useStore((store) => getIsUserGuest(store, userId));
+
+	const themeColor = useTheme();
+
+	const color = useMemo(() => {
+		const color = calculateAvatarColor(userName);
+		if (isAnonymousUser) return `#828282`;
+		if (onMeeting) return calcAvatarMeetingColor(themeColor.avatarColors[color]);
+		return `${themeColor.avatarColors[color]}`;
+	}, [userName, isAnonymousUser, themeColor.avatarColors, onMeeting]);
+
+	const icon = useMemo(() => {
+		if (isAnonymousUser) return 'QuestionMarkCircleOutline';
+		if (isUserGuest) return 'SmileOutline';
+		return undefined;
+	}, [isAnonymousUser, isUserGuest]);
+
+	const isLoading = useMemo(() => userName === '', [userName]);
+
+	return {
+		avatarColor: color,
+		avatarPicture: undefined,
+		avatarIcon: icon,
+		isLoading
+	};
+};
+export default useAvatarUtilities;

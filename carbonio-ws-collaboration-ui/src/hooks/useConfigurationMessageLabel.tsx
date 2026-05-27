@@ -1,0 +1,291 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+/* eslint-disable react/jsx-no-useless-fragment */
+
+import React, { Fragment, useMemo } from 'react';
+
+import moment from 'moment-timezone';
+import { Trans, useTranslation } from 'react-i18next';
+
+import {
+	getOwnershipOfTheRoom,
+	getRoomNameSelector,
+	getRoomTypeSelector
+} from '../store/selectors/RoomsSelectors';
+import { getUserId } from '../store/selectors/SessionSelectors';
+import { getIsAnonymousUser, getUserName } from '../store/selectors/UsersSelectors';
+import useStore from '../store/Store';
+import { ConfigurationMessage, OperationType } from '../types/store/ChatsRegistryTypes';
+import { RoomType } from '../types/store/RoomTypes';
+import { formatDate } from '../utils/dateUtils';
+
+export const useConfigurationMessageLabel = (
+	message: ConfigurationMessage
+): React.JSX.Element | string | undefined => {
+	const [t] = useTranslation();
+
+	const loggedUserId = useStore(getUserId);
+	const roomName = useStore((store) => getRoomNameSelector(store, message.roomId));
+	const roomType = useStore((store) => getRoomTypeSelector(store, message.roomId));
+	const actionMakerUsername = useStore((store) => getUserName(store, message.from));
+	const affiliatedUsername = useStore((store) => getUserName(store, message.value));
+	const isAffiliatedUserAnonymous = useStore((store) => getIsAnonymousUser(store, message.value));
+	const amIModerator = useStore((store) => getOwnershipOfTheRoom(store, message.roomId));
+
+	const roomNameChangedLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return (
+				<Trans
+					i18nKey="configurationMessages.user.roomNameChanged"
+					defaults='You changed the title of this Group in <i>"{{roomName}}"</i>.'
+					values={{ roomName: message.value }}
+				/>
+			);
+		}
+		return (
+			<Trans
+				i18nKey="configurationMessages.member.roomNameChanged"
+				defaults='{{name}} changed the title of this Group in <i>"{{roomName}}"</i>.'
+				values={{ name: actionMakerUsername, roomName: message.value }}
+			/>
+		);
+	}, [loggedUserId, message, actionMakerUsername]);
+
+	const roomDescriptionChangedLabel = useMemo(() => {
+		if (message.value === '') {
+			if (loggedUserId === message.from) {
+				return t(
+					'configurationMessages.user.roomTopicRemoved',
+					"You removed {{roomName}}'s topic.",
+					{ roomName }
+				);
+			}
+			return t(
+				'configurationMessages.member.roomTopicRemoved',
+				`{{name}} removed {{roomName}}'s topic.`,
+				{
+					name: actionMakerUsername,
+					roomName
+				}
+			);
+		}
+		if (loggedUserId === message.from) {
+			return (
+				<Trans
+					i18nKey="configurationMessages.user.roomTopicChanged"
+					defaults='You changed the topic of {{roomName}} in "<i>{{topicName}}</i>".'
+					values={{ roomName, topicName: message.value }}
+				/>
+			);
+		}
+		return (
+			<Trans
+				i18nKey="configurationMessages.member.roomTopicChanged"
+				defaults='{{name}} changed the topic of {{roomName}} in "<i>{{topicName}}</i>".'
+				values={{ name: actionMakerUsername, roomName, topicName: message.value }}
+			/>
+		);
+	}, [message, loggedUserId, actionMakerUsername, roomName, t]);
+
+	const roomPictureUpdatedLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return t(
+				'configurationMessages.user.roomPictureUpdated',
+				"You changed {{roomName}}'s image.",
+				{ roomName }
+			);
+		}
+		return t(
+			'configurationMessages.member.roomPictureUpdated',
+			`{{name}} changed {{roomName}}'s image.`,
+			{ name: actionMakerUsername, roomName }
+		);
+	}, [actionMakerUsername, loggedUserId, message.from, roomName, t]);
+
+	const roomPictureDeletedLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return t(
+				'configurationMessages.user.roomPictureDeleted',
+				"You have restored the default {{roomName}}'s image.",
+				{ roomName }
+			);
+		}
+		return t(
+			'configurationMessages.member.roomPictureDeleted',
+			`{{name}} restored the default {{roomName}}'s image.`,
+			{ name: actionMakerUsername, roomName }
+		);
+	}, [actionMakerUsername, loggedUserId, message.from, roomName, t]);
+
+	const memberAddedLabel = useMemo(() => {
+		if (roomType === RoomType.ONE_TO_ONE)
+			return t('affiliationMessages.oneToOneCreated', 'New Chat created!');
+		if (isAffiliatedUserAnonymous || !affiliatedUsername) return undefined;
+		if (loggedUserId === message.value) {
+			return t('affiliationMessages.user.Added', 'You have been added to {{roomName}}.', {
+				roomName
+			});
+		}
+		return t('affiliationMessages.member.Added', `{{userName}} has been added to {{roomName}}.`, {
+			userName: affiliatedUsername,
+			roomName
+		});
+	}, [
+		affiliatedUsername,
+		isAffiliatedUserAnonymous,
+		loggedUserId,
+		message.value,
+		roomName,
+		roomType,
+		t
+	]);
+
+	const memberRemovedLabel = useMemo(() => {
+		if (isAffiliatedUserAnonymous || !affiliatedUsername) return undefined;
+		if (loggedUserId === message.value) {
+			return t('affiliationMessages.user.Removed', 'You are no longer a member of {{roomName}}.', {
+				roomName
+			});
+		}
+		return t(
+			'affiliationMessages.member.Removed',
+			`{{userName}} is no longer a member of {{roomName}}.`,
+			{ userName: affiliatedUsername, roomName }
+		);
+	}, [affiliatedUsername, isAffiliatedUserAnonymous, loggedUserId, message.value, roomName, t]);
+
+	const pinMessageLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return t('configurationMessages.user.pinMessage', 'You pinned a message');
+		}
+		return t(
+			'configurationMessages.member.pinMessage',
+			'{{actionMakerUsername}} pinned a message',
+			{
+				actionMakerUsername
+			}
+		);
+	}, [actionMakerUsername, loggedUserId, message.from, t]);
+
+	const unpinMessageLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return t('configurationMessages.user.unpinMessage', 'You unpinned a message');
+		}
+		return t(
+			'configurationMessages.member.unpinMessage',
+			'{{actionMakerUsername}} unpinned a message',
+			{
+				actionMakerUsername
+			}
+		);
+	}, [actionMakerUsername, loggedUserId, message.from, t]);
+
+	const meetingTime = useMemo(() => formatDate(message.date, 'HH:mm'), [message.date]);
+
+	const meetingStartedLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return t('configurationMessages.user.meetingStarted', 'You called at {{time}}', {
+				time: meetingTime
+			});
+		}
+		return t('configurationMessages.member.meetingStarted', '{{name}} called you at {{time}}', {
+			name: actionMakerUsername,
+			time: meetingTime
+		});
+	}, [actionMakerUsername, loggedUserId, meetingTime, message.from, t]);
+
+	const meetingEndedLabel = useMemo(() => {
+		let duration = '';
+		if (message.value) {
+			const totalSeconds = Number(message.value);
+			const hours = Math.floor(totalSeconds / 3600);
+			const minutes = Math.floor((totalSeconds % 3600) / 60);
+			if (totalSeconds < 60) {
+				duration = moment.duration(totalSeconds, 'seconds').humanize();
+			} else if (hours < 1) {
+				duration = `${Math.floor(totalSeconds / 60)} min`;
+			} else {
+				duration = minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+			}
+		}
+		return (
+			t('configurationMessages.meetingEnded', 'Call ended at {{time}}', {
+				time: meetingTime
+			}) + (duration ? ` - ${duration}` : '')
+		);
+	}, [meetingTime, message.value, t]);
+
+	const meetingDeclinedLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return t('configurationMessages.user.meetingDeclined', 'You declined the call at {{time}}', {
+				time: meetingTime
+			});
+		}
+		return t(
+			'configurationMessages.member.meetingDeclined',
+			'{{name}} declined the call at {{time}}',
+			{ name: actionMakerUsername, time: meetingTime }
+		);
+	}, [actionMakerUsername, loggedUserId, meetingTime, message.from, t]);
+
+	const clearHistoryLabel = useMemo(() => {
+		if (loggedUserId === message.from) {
+			return t('configurationMessages.user.clearHistory', 'You have cleared the chat history');
+		}
+		if (amIModerator) {
+			return t(
+				'configurationMessages.moderator.clearHistory',
+				'Chat history has been cleared by {{actionMakerUsername}}.',
+				{
+					actionMakerUsername
+				}
+			);
+		}
+		return t('affiliationMessages.oneToOneCreated', 'New Chat created!');
+	}, [actionMakerUsername, amIModerator, loggedUserId, message.from, t]);
+
+	switch (message.operation) {
+		case OperationType.ROOM_NAME_CHANGED:
+			return roomNameChangedLabel;
+		case OperationType.ROOM_DESCRIPTION_CHANGED:
+			return roomDescriptionChangedLabel;
+		case OperationType.ROOM_PICTURE_UPDATED:
+			return roomPictureUpdatedLabel;
+		case OperationType.ROOM_PICTURE_DELETED:
+			return roomPictureDeletedLabel;
+		case OperationType.MEMBER_ADDED:
+			return memberAddedLabel;
+		case OperationType.MEMBER_REMOVED:
+			return memberRemovedLabel;
+		case OperationType.ROOM_CREATION:
+			return t('affiliationMessages.groupCreated', `${roomName} created!`, { roomName });
+		case OperationType.MESSAGE_PINNED:
+			return pinMessageLabel;
+		case OperationType.MESSAGE_UNPINNED:
+			return unpinMessageLabel;
+		case OperationType.CLEARED_HISTORY:
+			return clearHistoryLabel;
+		case OperationType.MEETING_STARTED:
+			return meetingStartedLabel;
+		case OperationType.MEETING_ENDED:
+			return meetingEndedLabel;
+		case OperationType.MEETING_DECLINED:
+			return meetingDeclinedLabel;
+		default: {
+			console.warn('Configuration message to replace: ', message.operation);
+			return undefined;
+		}
+	}
+};
+
+export const ConfigurationMessageLabel = ({
+	message
+}: {
+	message: ConfigurationMessage;
+}): React.JSX.Element => {
+	const configurationMessageLabel = useConfigurationMessageLabel(message);
+	return <Fragment>{configurationMessageLabel}</Fragment>;
+};

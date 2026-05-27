@@ -1,0 +1,191 @@
+/*
+ * SPDX-FileCopyrightText: 2021 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+import React, { useCallback, useEffect, useMemo } from 'react';
+
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import {
+	Container,
+	Button,
+	pseudoClasses,
+	Tooltip,
+	Padding,
+	AnyColor
+} from '@zextras/carbonio-design-system';
+import type { ToolbarProps } from 'react-big-calendar';
+import { useTranslation } from 'react-i18next';
+
+import { CalendarToolbar } from '../../components/calendar-toolbar';
+import { useSplitLayoutPrefs } from '../../hooks/use-split-layout-prefs';
+import { useAppStatusStore } from '../../store/zustand/store';
+import { EventType } from '../../types/event';
+
+const CustomContainer = styled(Container)<{ $color?: AnyColor }>`
+	border: 0.0625rem solid;
+	border-radius: 0.25rem;
+	height: fit-content;
+	${({ $color = 'primary', theme }): ReturnType<typeof css> =>
+		pseudoClasses(theme, $color, 'border-color')};
+`;
+
+const CustomButton = styled(Button)`
+	border-radius: 0;
+`;
+
+export const CustomToolbar = ({
+	label,
+	onView,
+	onNavigate,
+	view
+}: ToolbarProps<EventType>): React.JSX.Element => {
+	const [t] = useTranslation();
+	const [prefSplitLayoutEnabled, setPrefSplitLayoutEnabled] = useSplitLayoutPrefs();
+
+	const today = useCallback(() => onNavigate('TODAY'), [onNavigate]);
+	const next = useCallback(() => onNavigate('NEXT'), [onNavigate]);
+	const prev = useCallback(() => onNavigate('PREV'), [onNavigate]);
+	const week = useCallback(() => {
+		useAppStatusStore.setState({ calendarView: 'week' });
+		return onView('week');
+	}, [onView]);
+	const day = useCallback(() => {
+		useAppStatusStore.setState({ calendarView: 'day' });
+		return onView('day');
+	}, [onView]);
+	const month = useCallback(() => {
+		useAppStatusStore.setState({ calendarView: 'month' });
+		return onView('month');
+	}, [onView]);
+	const workView = useCallback(() => {
+		useAppStatusStore.setState({ calendarView: 'work_week' });
+		return onView('work_week');
+	}, [onView]);
+
+	const leftClickLabel = useMemo(() => {
+		if (view === 'month') {
+			return t('previous_month', 'Previous month');
+		}
+		if (view === 'week' || view === 'work_week') {
+			return t('previous_week', 'Previous week');
+		}
+		return t('previous_day', 'Previous day');
+	}, [t, view]);
+
+	const rightClickLabel = useMemo(() => {
+		if (view === 'month') {
+			return t('next_month', 'Next month');
+		}
+		if (view === 'week' || view === 'work_week') {
+			return t('next_week', 'Next week');
+		}
+		return t('next_day', 'Next day');
+	}, [t, view]);
+
+	const isSplitLayoutDisabled = view !== 'day';
+
+	const splitLayoutTooltip = useMemo(() => {
+		if (isSplitLayoutDisabled) {
+			return t(
+				'label.splitLayoutDisabledTooltip',
+				'Split layout not available in the current view'
+			);
+		}
+		return prefSplitLayoutEnabled
+			? t('label.disableSplitLayoutTooltip', 'Disable split layout')
+			: t('label.enableSplitLayoutTooltip', 'Enable split layout');
+	}, [isSplitLayoutDisabled, prefSplitLayoutEnabled, t]);
+
+	const splitLayoutButtonColor = useMemo(
+		() => (prefSplitLayoutEnabled && !isSplitLayoutDisabled ? 'highlight' : undefined),
+		[isSplitLayoutDisabled, prefSplitLayoutEnabled]
+	);
+
+	const onSplitLayoutButtonClick = useCallback(() => {
+		setPrefSplitLayoutEnabled((prevValue) => !prevValue);
+	}, [setPrefSplitLayoutEnabled]);
+
+	useEffect(() => {
+		useAppStatusStore.setState({ calendarView: view });
+		onView(view);
+	});
+
+	return (
+		<Container width="fill" height="fit" padding={{ bottom: 'small' }}>
+			<Container
+				data-testid="CalendarToolbar"
+				orientation="horizontal"
+				width="fill"
+				height="3rem"
+				mainAlignment="flex-start"
+				background={'gray5'}
+				padding={{ horizontal: 'small' }}
+			>
+				<CalendarToolbar
+					dateLabel={label}
+					resetButtonLabel={t('label.today', 'today')}
+					leftArrowLabel={leftClickLabel}
+					rightArrowLabel={rightClickLabel}
+					onLeftArrowAction={prev}
+					onRightArrowAction={next}
+					onResetAction={today}
+				/>
+				<Container width="fit" orientation="horizontal" mainAlignment="flex-end">
+					<Padding right={'large'}>
+						<Tooltip label={splitLayoutTooltip}>
+							<Button
+								type="outlined"
+								icon={'WeekViewOutline'}
+								size={'large'}
+								backgroundColor={splitLayoutButtonColor}
+								disabled={isSplitLayoutDisabled}
+								onClick={onSplitLayoutButtonClick}
+							/>
+						</Tooltip>
+					</Padding>
+
+					<CustomContainer width="fit" orientation="horizontal" mainAlignment="flex-end">
+						<CustomButton
+							backgroundColor={view === 'month' ? 'highlight' : 'transparent'}
+							labelColor={'primary'}
+							label={t('label.month', 'month')}
+							type="default"
+							onClick={month}
+							data-testid="MonthButton"
+							minWidth={'fit-content'}
+						/>
+						<CustomButton
+							backgroundColor={view === 'week' ? 'highlight' : 'transparent'}
+							labelColor={'primary'}
+							label={t('label.week', 'week')}
+							type="default"
+							onClick={week}
+							data-testid="WeekButton"
+							minWidth={'fit-content'}
+						/>
+						<CustomButton
+							backgroundColor={view === 'day' ? 'highlight' : 'transparent'}
+							labelColor={'primary'}
+							label={t('label.day', 'day')}
+							type="default"
+							onClick={day}
+							data-testid="DayButton"
+							minWidth={'fit-content'}
+						/>
+						<CustomButton
+							backgroundColor={view === 'work_week' ? 'highlight' : 'transparent'}
+							labelColor={'primary'}
+							label={t('label.work_week', 'work week')}
+							type="default"
+							onClick={workView}
+							data-testid="WorkWeekButton"
+							minWidth={'fit-content'}
+						/>
+					</CustomContainer>
+				</Container>
+			</Container>
+		</Container>
+	);
+};

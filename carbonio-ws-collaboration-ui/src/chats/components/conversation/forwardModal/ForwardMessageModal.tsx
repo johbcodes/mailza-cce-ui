@@ -1,0 +1,255 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import React, {
+	FunctionComponent,
+	MouseEventHandler,
+	ReactElement,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState
+} from 'react';
+
+import styled from '@emotion/styled';
+import {
+	ChipInput,
+	ChipItem,
+	Container,
+	ListItem,
+	List,
+	Modal,
+	Padding,
+	Text
+} from '@zextras/carbonio-design-system';
+import {
+	difference,
+	differenceBy,
+	filter,
+	find,
+	includes,
+	keyBy,
+	map,
+	mapValues,
+	omit,
+	orderBy,
+	remove,
+	size
+} from 'lodash';
+import { useTranslation } from 'react-i18next';
+
+import ForwardMessageConversationChip from './ForwardMessageConversationChip';
+import ForwardMessageConversationListItem from './ForwardMessageConversationListItem';
+import { MEETINGS_PATH } from '../../../../constants/appConstants';
+import useRouting from '../../../../hooks/useRouting';
+import { forwardMessages } from '../../../../network';
+import { getRoomIdsWithLastMessage } from '../../../../store/selectors/ChatsRegistrySelectors';
+import { getRoomNameSelector } from '../../../../store/selectors/RoomsSelectors';
+import useStore from '../../../../store/Store';
+import { TextMessage } from '../../../../types/store/ChatsRegistryTypes';
+import { RoomType } from '../../../../types/store/RoomTypes';
+
+const CustomContainer = styled(Container)`
+	cursor: default;
+`;
+
+type ForwardMessageModalProps = {
+	open: boolean;
+	onClose: () => void;
+	roomId: string;
+	messagesToForward: TextMessage[] | undefined;
+};
+
+export type ChatListItemProp = {
+	id: string;
+	onClickCb: (roomId: string) => MouseEventHandler<HTMLDivElement> | undefined;
+};
+
+const ForwardMessageModal: FunctionComponent<ForwardMessageModalProps> = ({
+	open,
+	onClose,
+	roomId,
+	messagesToForward
+}): ReactElement => {
+	const roomName = useStore((state) => getRoomNameSelector(state, roomId));
+	const roomsNotOrdered = useStore(getRoomIdsWithLastMessage);
+	const rooms = useMemo(
+		() => orderBy(roomsNotOrdered, ['lastMessageTimestamp'], ['desc']),
+		[roomsNotOrdered]
+	);
+
+	const [t] = useTranslation();
+	const modalTitle = t('modal.forward.title', `Forward message from ${roomName}`, {
+		chatName: roomName
+	});
+	const modalDescription = t(
+		'modal.forward.description',
+		'Choose a target chat to forward the message'
+	);
+
+	const closeLabel = t('action.close', 'Close');
+	const noMatchLabel = t(
+		'participantsList.noMatch.general',
+		'Your search returned no results, try another keyword.'
+	);
+	const inputPlaceholder = t('modal.forward.inputPlaceholder', 'Start typing or pick a chat');
+	const forwardActionLabel = t('action.forward', 'Forward');
+	const chooseOneChatLabel = t('modal.forward.chooseAtLeastOneChat', 'Choose at least one chat');
+
+	const inputRef = useRef<HTMLInputElement>(null);
+	const [inputValue, setInputValue] = useState('');
+	const [selected, setSelected] = useState<{ [id: string]: boolean }>({});
+	const [chatList, setChatList] = useState<ChatListItemProp[]>([]);
+	const [chips, setChips] = useState<ChipItem<{ id: string }>[]>([]);
+
+	const { goToRoomPage } = useRouting();
+
+	const select = useCallback(
+		(id: string) => setSelected((s) => (s[id] ? omit(s, id) : { ...s, [id]: true })),
+		[]
+	);
+
+	const onClickListItem = useCallback(
+		(roomId: string) => (): void => {
+			select(roomId);
+			const newChip = {
+				value: {
+					id: roomId
+				}
+			};
+			setChips((oldChips) =>
+				find(oldChips, (chip) => chip.value?.id === roomId)
+					? differenceBy(oldChips, [newChip], (chip) => chip.value?.id)
+					: [...oldChips, newChip]
+			);
+
+			if (inputRef.current) {
+				inputRef.current.value = '';
+				setInputValue('');
+			}
+		},
+		[select]
+	);
+
+	// Update conversation list on filter updating
+	useEffect(() => {
+		let roomList: ChatListItemProp[];
+		const singleAndGroup = filter(rooms, (room) =>
+			includes([RoomType.ONE_TO_ONE, RoomType.GROUP], room.roomType)
+		);
+		if (inputValue === '') {
+			roomList = map(singleAndGroup, (room) => ({ id: room.roomId, onClickCb: onClickListItem }));
+		} else {
+			roomList = [];
+			map(singleAndGroup, ({ roomId }) => {
+				const roomName = getRoomNameSelector(useStore.getState(), roomId);
+				if (roomName.toLocaleLowerCase().includes(inputValue.toLocaleLowerCase())) {
+					roomList.push({ id: roomId, onClickCb: onClickListItem });
+				}
+			});
+		}
+		// Remove from roomList the message original conversation
+		remove(roomList, (room) => room.id === roomId);
+		setChatList(roomList);
+	}, [inputValue, onClickListItem, roomId, rooms]);
+
+	const handleChangeText = useCallback(
+		(event: React.KeyboardEvent<HTMLInputElement> & { textContent: string | null }) => {
+			if (event.textContent !== null) {
+				setInputValue(event.textContent);
+			}
+		},
+		[]
+	);
+
+	const removeContactFromChip = useCallback(
+		(items: ChipItem<{ id: string }>[]) => {
+			setSelected(
+				mapValues(
+					keyBy(items, (item) => item.value?.id),
+					() => true
+				)
+			);
+			const differenceChip = difference(chips, items)[0];
+			if (size(chips) > size(items) && differenceChip) {
+				setChips((chips) => differenceBy(chips, [differenceChip], (chip) => chip.value?.id));
+			}
+		},
+		[chips]
+	);
+
+	const forwardMessage = useCallback(() => {
+		const roomsId = map(selected, (key, value) => value);
+		forwardMessages(roomsId, messagesToForward || [])
+			.then(() => {
+				if (roomsId.length === 1 && !window.location.pathname.includes(MEETINGS_PATH)) {
+					goToRoomPage(roomsId[0]);
+				}
+				onClose();
+			})
+			.catch(() => onClose());
+	}, [goToRoomPage, messagesToForward, onClose, selected]);
+
+	const disabledForwardButton = useMemo(() => size(selected) === 0, [selected]);
+
+	const items = useMemo(
+		() =>
+			map(chatList, (item) => (
+				<ListItem key={item.id} active={selected[item.id]}>
+					{() => <ForwardMessageConversationListItem item={item} isSelected={selected[item.id]} />}
+				</ListItem>
+			)),
+		[chatList, selected]
+	);
+
+	return (
+		<Modal
+			open={open}
+			size="small"
+			title={modalTitle}
+			showCloseIcon
+			onClose={onClose}
+			closeIconTooltip={closeLabel}
+			onConfirm={forwardMessage}
+			confirmLabel={forwardActionLabel}
+			confirmDisabled={disabledForwardButton}
+			confirmTooltip={disabledForwardButton ? chooseOneChatLabel : forwardActionLabel}
+		>
+			<Text overflow="break-word" size="small">
+				{modalDescription}
+			</Text>
+			<Padding bottom="large" />
+			<ChipInput
+				data-testid="chip_input_forward_modal"
+				inputRef={inputRef}
+				background={'gray5'}
+				placeholder={inputPlaceholder}
+				onInputType={handleChangeText}
+				value={chips}
+				onChange={removeContactFromChip}
+				requireUniqueChips
+				ChipComponent={ForwardMessageConversationChip}
+				confirmChipOnBlur={false}
+				separators={[]}
+			/>
+			<Padding bottom="large" />
+			<Container height="9.375rem">
+				{size(chatList) === 0 ? (
+					<CustomContainer padding="large">
+						<Text color="gray1" size="small" weight="light">
+							{noMatchLabel}
+						</Text>
+					</CustomContainer>
+				) : (
+					<List data-testid="list_forward_modal">{items}</List>
+				)}
+			</Container>
+		</Modal>
+	);
+};
+
+export default ForwardMessageModal;

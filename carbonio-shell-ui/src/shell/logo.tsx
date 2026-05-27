@@ -1,0 +1,20 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+import { useLogo } from '../store/login/hooks';
+import { useLoginConfigStore } from '../store/login/store';
+
+export const Logo = (props: Record<string, unknown>): React.JSX.Element => {
+	const loaded = useLoginConfigStore((s) => s.loaded);
+	const LogoElement = useLogo();
+
+	return loaded ? (
+		(typeof LogoElement === 'string' && <img alt={''} {...props} src={LogoElement} />) || (
+			<LogoElement {...props} />
+		)
+	) : (
+		<></>
+	);
+};

@@ -1,0 +1,123 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import { execSync } from 'child_process';
+import CopyPlugin from 'copy-webpack-plugin';
+import dotenv from 'dotenv';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'path';
+import { DefinePlugin } from 'webpack';
+import type { WebpackConfiguration } from 'webpack-cli';
+
+dotenv.config();
+
+const commitHash = execSync('git rev-parse HEAD').toString().trim();
+
+const baseStaticPath = `/static/iris/carbonio-shell-ui/${commitHash}/`;
+
+const configFn = (
+	initialConf: WebpackConfiguration,
+	pkg: string,
+	options: { host: string; port: number },
+	mode: 'development' | 'production'
+): WebpackConfiguration => {
+	const conf: WebpackConfiguration = { ...initialConf };
+	const server = `https://${options.host}`;
+	const root = 'carbonio';
+	conf.entry = {
+		index: path.resolve(process.cwd(), 'src', 'index.tsx')
+	};
+	conf.output = {
+		...conf.output,
+		filename: mode === 'development' ? 'zapp-shell.bundle.js' : '[name].[chunkhash:8].js'
+	};
+	const extensions = conf.resolve?.extensions ?? [];
+	extensions.push('.d.ts');
+	conf.resolve = {
+		...conf.resolve,
+		extensions
+	};
+	conf.plugins = conf.plugins ?? [];
+	conf.plugins.push(
+		new CopyPlugin({
+			patterns: [
+				{
+					from: 'assets/',
+					to: ''
+				}
+			]
+		}),
+		new DefinePlugin({
+			COMMIT_ID: JSON.stringify(commitHash.toString().trim()),
+			BASE_PATH: JSON.stringify(baseStaticPath),
+			POSTHOG_API_KEY: JSON.stringify(process.env.POSTHOG_API_KEY),
+			POSTHOG_API_HOST: JSON.stringify(process.env.POSTHOG_API_HOST)
+		}),
+		new HtmlWebpackPlugin({
+			inject: true,
+			template: path.resolve(process.cwd(), 'src', 'index.template.html'),
+			chunks: ['index'],
+			BASE_PATH: baseStaticPath
+		}),
+		new HtmlWebpackPlugin({
+			inject: false,
+			template: path.resolve(process.cwd(), 'commit.template'),
+			filename: 'commit',
+			COMMIT_ID: commitHash
+		})
+	);
+	conf.devServer = {
+		port: options.port,
+		historyApiFallback: {
+			index: `${baseStaticPath}/index.html`,
+			rewrites: [
+				{
+					from: new RegExp(`/${root}/*`),
+					to: `${baseStaticPath}/index.html`
+				}
+			]
+		},
+		server: 'https',
+		open: [`/${root}/`],
+		proxy: [
+			{
+				context: ['/static/login/**'],
+				target: server,
+				secure: false,
+				cookieDomainRewrite: {
+					'*': server,
+					[server]: `localhost:${options.port}`
+				}
+			},
+			{
+				context: ['!/static/iris/carbonio-shell-ui/**/*', `!/${root}/`, `!/${root}/**/*`],
+				target: server,
+				secure: false,
+				logLevel: 'debug',
+				cookieDomainRewrite: {
+					'*': server,
+					[server]: `localhost:${options.port}`
+				}
+			}
+		]
+	};
+	conf.externals = {};
+	const rules: NonNullable<WebpackConfiguration['module']>['rules'] = conf.module?.rules ?? [];
+	rules.push({
+		test: /\.(woff(2)?|ttf|eot)$/,
+		type: 'asset/resource',
+		generator: {
+			filename: './files/[name][ext]'
+		}
+	});
+	conf.module = {
+		...conf.module,
+		rules
+	};
+	return conf;
+};
+
+export = configFn;

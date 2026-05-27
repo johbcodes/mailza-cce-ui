@@ -1,0 +1,50 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Zextras <https://www.zextras.com>
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+import { legacySoapFetch } from '@zextras/carbonio-ui-soap-lib';
+
+type Props = {
+	deleteSingleInstance: boolean;
+	inst?: any;
+	id: string;
+	isOrganizer: boolean;
+	m: any;
+	s: number;
+	comp: number;
+};
+
+export type CancelAppointmentRejectedType = { error: boolean; m?: never; Fault: any };
+export type CancelAppointmentFulfilledType = { m: any; Fault?: never; error?: never };
+export type CancelAppointmentReturnType =
+	| CancelAppointmentFulfilledType
+	| CancelAppointmentRejectedType;
+
+export const cancelAppointmentRequest = async ({
+	deleteSingleInstance,
+	inst,
+	id,
+	isOrganizer,
+	m,
+	s,
+	comp
+}: Props): Promise<CancelAppointmentReturnType> => {
+	const body = deleteSingleInstance
+		? {
+				_jsns: 'urn:zimbraMail',
+				inst,
+				id,
+				comp,
+				s,
+				m: isOrganizer ? m : { ...m, e: [] }
+			}
+		: {
+				_jsns: 'urn:zimbraMail',
+				id,
+				comp,
+				m: isOrganizer ? m : { ...m, e: [] }
+			};
+	const response: CancelAppointmentReturnType = await legacySoapFetch('CancelAppointment', body);
+	return response?.Fault ? { ...response.Fault, error: true } : response;
+};
