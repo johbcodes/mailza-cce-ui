@@ -35,7 +35,7 @@ for MODULE in "${UI_MODULES[@]}"; do
     echo "🌐 Patching live server directory: /usr/share/zextras/$MODULE/html/"
     
     # Optional: You can uncomment the line below to create backups
-    # cp -r "/usr/share/zextras/$MODULE/html" "/usr/share/zextras/$MODULE/html.bak"
+    cp -r "/usr/share/zextras/$MODULE/html" "/usr/share/zextras/$MODULE/html.bak"
     
     # Sync the new build directly into the live Nginx path
     rsync -avz --delete dist/ "/usr/share/zextras/$MODULE/html/"
