@@ -32,7 +32,7 @@ deploy_module() {
 
   # ── 1. Build ──────────────────────────────────────────────────
   echo "⚙️  Installing dependencies…"
-  pnpm install
+  pnpm install --ignore-scripts
 
   echo "⚙️  Building…"
   pnpm build
